@@ -19,7 +19,11 @@ exports.create = (req, res) => {
     username: req.body.username,
     password: req.body.password,
     status: "0",
-    roleId: req.body.roleId
+    role: req.body.role,
+    employeeId:req.body.employeeId,
+    designation:req.body.designation,
+    createdBy:req.body.createdBy,
+    updatedBy:req.body.updatedBy
   };
 
   // Save User in the database

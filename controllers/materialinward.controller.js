@@ -13,11 +13,12 @@ exports.create = (req, res) => {
     return;
   }
 
+  var serialNumberId = Date.now();
   // Create a MaterialInward
   const materialinward = {
     materialCode: req.body.materialCode,
     batchNumber: req.body.batchNumber,
-    serialNumber: req.body.serialNumber,
+    serialNumber: serialNumberId,
     isScrapped: false,
     dispatchSlipId:null,
     status:true,
@@ -91,6 +92,30 @@ exports.update = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message: "Error updating MaterialInward with id=" + id
+      });
+    });
+};
+
+exports.updateWithBarcode = (req, res) => {
+  const serialNumber = req.query.barcodeSerial;
+  console.log("Barcode Serial",req.query.barcodeSerial);
+  MaterialInward.update(req.body, {
+    where: { serialNumber: serialNumber }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "MaterialInward was updated successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot update MaterialInward with barcodeSerial=${serialNumber}. Maybe MaterialInward was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating MaterialInward with barcodeSerial=" + serialNumber
       });
     });
 };

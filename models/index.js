@@ -24,5 +24,8 @@ db.materialinwards = require("./materialinward.model.js")(sequelize, Sequelize);
 db.users = require("./user.model.js")(sequelize, Sequelize);
 db.materialtypes = require("./materialtype.model.js")(sequelize, Sequelize);
 db.materials = require("./material.model.js")(sequelize, Sequelize);
+db.packagingtypes = require("./packagingtype.model.js")(sequelize, Sequelize);
+db.ttats = require("./ttat.model.js")(sequelize, Sequelize);
+db.depos = require("./depo.model.js")(sequelize, Sequelize);
 
 module.exports = db;

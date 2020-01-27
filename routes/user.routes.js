@@ -62,5 +62,7 @@ var users = require('../controllers/user.controller');
 // router.delete('/:id', departmentsController.destroy);
 
 router.post("/sign_in", users.sign_in);
+router.post("/", users.create);
+router.get("/", users.findAll);
 
 module.exports = router;

@@ -16,9 +16,25 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.STRING,
       allowNull:true
     },
-    roleId:{
+    role:{
       type:DataTypes.STRING,
       allowNull:false
+    },
+    employeeId:{
+      type:DataTypes.STRING,
+      allowNull:false
+    },
+    designation:{
+      type:DataTypes.STRING,
+      allowNull:false
+    },
+    createdBy:{
+      type:DataTypes.STRING,
+      allowNull:true
+    },
+    updatedBy:{
+      type:DataTypes.STRING,
+      allowNull:true
     }
   }, {
     hooks: {

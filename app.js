@@ -11,6 +11,9 @@ var materialinwardRouter = require('./routes/materialinward.routes');
 var usersRouter = require('./routes/user.routes');
 var materialtypeRouter = require('./routes/materialtype.routes');
 var materialRouter = require('./routes/material.routes');
+var packagingtypeRouter = require('./routes/packagingtype.routes');
+var ttatRouter = require('./routes/ttat.routes');
+var depoRouter = require('./routes/depo.routes');
 
 const app = express();
 
@@ -50,6 +53,9 @@ app.use('/api/users', usersRouter);
 app.use('/api/materialinwards', materialinwardRouter);
 app.use('/api/materialtype', materialtypeRouter);
 app.use('/api/material', materialRouter);
+app.use('/api/packagingtype', packagingtypeRouter);
+app.use('/api/ttat', ttatRouter);
+app.use('/api/depo', depoRouter);
 
 //sync
 const db = require("./models");

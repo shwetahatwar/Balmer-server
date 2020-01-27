@@ -43,5 +43,6 @@ var users = require('../controllers/user.controller');
 
 router.post("/", users.loginRequired,materialinwards.create);
 router.get("/", users.loginRequired,materialinwards.findAll);
+router.put("/update/updateWithBarcode", users.loginRequired,materialinwards.updateWithBarcode);
 
 module.exports = router;

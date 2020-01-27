@@ -1,47 +1,43 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Material = sequelize.define("material", {
-    materialType: {
+  const Ttat = sequelize.define("ttat", {
+    truckNumber: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    materialCode: {
+    capacity: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    materialDescription: {
+    inTime: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    genericName: {
+    outTime: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    packingType: {
+    driver: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    packSize: {
+    loadStartTime: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    netWeight: {
+    loadEndTime: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    grossWeight: {
+    loadingTime: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    tareWeight: {
+    inOutTime: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    UOM: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    status:{
+    idleTime:{
       type:DataTypes.STRING,
       allowNull:false
     },
@@ -55,5 +51,5 @@ module.exports = (sequelize, DataTypes) => {
     }
     
   });
-  return Material;
+  return Ttat;
 };

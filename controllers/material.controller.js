@@ -23,6 +23,7 @@ exports.create = (req, res) => {
     packSize: req.body.packSize,
     netWeight: req.body.netWeight,
     grossWeight: req.body.grossWeight,
+    tareWeight: req.body.tareWeight,
     UOM: req.body.UOM,
     status:true,
     createdBy:req.body.createdBy,
