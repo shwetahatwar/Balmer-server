@@ -6,5 +6,6 @@ var users = require('../controllers/user.controller');
 router.post("/", users.loginRequired,ttats.create);
 router.get("/", users.loginRequired,ttats.findAll);
 router.get("/:id", users.loginRequired,ttats.findOne);
+router.put("/put/truckOut", users.loginRequired,ttats.truckOut);
 
 module.exports = router;

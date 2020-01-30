@@ -47,7 +47,12 @@ exports.findAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
   console.log();
-  Ttat.findAll({ where: condition })
+  Ttat.findAll({ 
+    where: condition,
+    order: [
+            ['id', 'DESC'],
+        ],
+    })
     .then(data => {
       res.send(data);
     })
@@ -87,4 +92,28 @@ exports.findByTtatCode = (req, res) => {
       message: "Error retrieving TtatInward with id=" + id
     });
   });
+};
+
+exports.truckOut = (req, res) => {
+  const id = req.body.id;
+  // console.log("Barcode Serial",req.query.barcodeSerial);
+  Ttat.update(req.body, {
+    where: { id: id }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "Ttat was updated successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot update Ttat with id=${id}. Maybe Ttat was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating Ttat with id=" + id
+      });
+    });
 };

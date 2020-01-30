@@ -1,5 +1,6 @@
 const db = require("../models");
 const MaterialInward = db.materialinwards;
+const ScrapandRecover = db.scrapandrecovers;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new MaterialInward
@@ -41,7 +42,8 @@ exports.create = (req, res) => {
 
 // Retrieve all MaterialInwards from the database.
 exports.findAll = (req, res) => {
-  const title = req.query.title;
+  // console.log(req)
+  const title = req.params.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
   MaterialInward.findAll({ where: condition })
@@ -163,15 +165,109 @@ exports.deleteAll = (req, res) => {
 };
 
 // Find all published MaterialInwards
-exports.findAllPublished = (req, res) => {
-  MaterialInward.findAll({ where: { published: true } })
-    .then(data => {
-      res.send(data);
+// exports.findAllPublished = (req, res) => {
+//   MaterialInward.findAll({ where: { published: true } })
+//     .then(data => {
+//       res.send(data);
+//     })
+//     .catch(err => {
+//       res.status(500).send({
+//         message:
+//           err.message || "Some error occurred while retrieving materialinwards."
+//       });
+//     });
+// };
+
+exports.updateScrapAndRecover = (req, res) => {
+  console.log(req.body);
+  MaterialInward.update(req.body, {
+    where: { id: req.body.id }
+  })
+    .then(num => {
+      if (num == 1) {
+        const scrapandrecover = {
+          materialInwardId: req.body.id,
+          comments:req.body.comments,
+          transactionType:req.body.transactionType,
+          createdBy:req.body.createdBy,
+          updatedBy:req.body.updatedBy
+        };
+
+        // Save MaterialInward in the database
+        ScrapandRecover.create(scrapandrecover)
+          .then(data => {
+            res.send(data);
+          })
+          .catch(err => {
+            res.status(500).send({
+              message:
+                err.message || "Some error occurred while creating the MaterialInward."
+            });
+          });
+        // res.send({
+        //   message: "MaterialInward was updated successfully."
+        // });
+      } else {
+        res.send({
+          message: `Cannot update MaterialInward with id=${id}. Maybe MaterialInward was not found or req.body is empty!`
+        });
+      }
     })
     .catch(err => {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving materialinwards."
+        message: "Error updating MaterialInward with id=" + id
       });
     });
+}; 
+
+exports.findAllByBatchCode = (req, res) => {
+  MaterialInward.findAll({ 
+    where: {
+      batchNumber:req.query.batchNumber
+    }
+  })
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving materialinwards."
+    });
+  });
+};
+
+exports.findAllByMaterialCode = (req, res) => {
+  MaterialInward.findAll({ 
+    where: {
+      materialCode:req.query.materialCode
+    }
+  })
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving materialinwards."
+    });
+  });
+};
+
+exports.findAllByMaterialCodeandBatchCode = (req, res) => {
+  MaterialInward.findAll({ 
+    where: {
+      materialCode:req.query.materialCode,
+      batchNumber:req.query.batchNumber
+    }
+  })
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving materialinwards."
+    });
+  });
 };

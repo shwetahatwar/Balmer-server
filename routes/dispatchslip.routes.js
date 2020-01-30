@@ -4,7 +4,7 @@ var dispatchslips = require('../controllers/dispatchslip.controller');
 var users = require('../controllers/user.controller');
 
 router.post("/", users.loginRequired,dispatchslips.create);
-router.get("/", users.loginRequired,dispatchslips.getAll);
-router.get("/:id", users.loginRequired,dispatchslips.getById);
+router.get("/", users.loginRequired,dispatchslips.findAll);
+router.get("/:id", users.loginRequired,dispatchslips.findOne);
 
 module.exports = router;

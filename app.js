@@ -14,6 +14,10 @@ var materialRouter = require('./routes/material.routes');
 var packagingtypeRouter = require('./routes/packagingtype.routes');
 var ttatRouter = require('./routes/ttat.routes');
 var depoRouter = require('./routes/depo.routes');
+var dispatchRouter = require('./routes/dispatchslip.routes');
+var dispatchSlipMaterialListRouter = require('./routes/dispatchslipmateriallist.routes');
+var projectRouter = require('./routes/project.routes');
+var projectAuditItemsRouter = require('./routes/projectaudititems.routes');
 
 const app = express();
 
@@ -56,6 +60,11 @@ app.use('/api/material', materialRouter);
 app.use('/api/packagingtype', packagingtypeRouter);
 app.use('/api/ttat', ttatRouter);
 app.use('/api/depo', depoRouter);
+app.use('/api/dispatchslips', dispatchRouter);
+app.use('/api/dispatchslipmateriallists', dispatchSlipMaterialListRouter);
+app.use('/api/projects', projectRouter);
+app.use('/api/projectaudititems', projectAuditItemsRouter);
+
 
 //sync
 const db = require("./models");

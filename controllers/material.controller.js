@@ -32,15 +32,15 @@ exports.create = (req, res) => {
 
   // Save material in the database
   Material.create(material)
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the material."
-      });
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while creating the material."
     });
+  });
 };
 
 // Retrieve all materials from the database.
@@ -49,16 +49,55 @@ exports.findAll = (req, res) => {
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
   console.log();
   Material.findAll({ where: condition })
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving materials."
-      });
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving materials."
     });
+  });
 };
+
+exports.findAllScrapped = (req, res) => {
+  Material.findAll({ 'status': 0})
+  .then(data => {
+    res.send(data);
+  })
+};
+
+exports.findAllRecovered = (req, res) => {
+  Material.findAll({ 'status': 1})
+  .then(data => {
+    res.send(data);
+  })
+};
+
+exports.update = (req, res) => {
+  const id = req.params.id;
+
+  Material.update(req.body, {
+    where: { id: id }
+  })
+  .then(num => {
+    if (num == 1) {
+      res.send({
+        message: "Material was updated successfully."
+      });
+    } else {
+      res.send({
+        message: `Cannot update Material with id=${id}. Maybe Material was not found or req.body is empty!`
+      });
+    }
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error updating Material with id=" + id
+    });
+  });
+};
+
 
 // exports.findOne = (req, res) => {
 //   const id = req.params.id;
@@ -76,10 +115,10 @@ exports.findAll = (req, res) => {
 
 exports.findByMaterialCode = (req, res) => {
   Material.findAll({
-     where: {
-        'materialCode': req.query.materialCode
-    }
-  })
+   where: {
+    'materialCode': req.query.materialCode
+  }
+})
   .then(data => {
     res.send(data);
   })

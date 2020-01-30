@@ -27,5 +27,10 @@ db.materials = require("./material.model.js")(sequelize, Sequelize);
 db.packagingtypes = require("./packagingtype.model.js")(sequelize, Sequelize);
 db.ttats = require("./ttat.model.js")(sequelize, Sequelize);
 db.depos = require("./depo.model.js")(sequelize, Sequelize);
+db.dispatchslips = require("./dispatchslip.model.js")(sequelize, Sequelize);
+db.dispatchslipmateriallists = require("./dispatchslipmateriallist.model.js")(sequelize, Sequelize);
+db.projects = require("./project.model.js")(sequelize, Sequelize);
+db.projectaudititems = require("./projectaudititems.model.js")(sequelize, Sequelize);
+db.scrapandrecovers = require("./scrapandrecover.model.js")(sequelize, Sequelize);
 
 module.exports = db;

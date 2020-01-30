@@ -44,5 +44,9 @@ var users = require('../controllers/user.controller');
 router.post("/", users.loginRequired,materialinwards.create);
 router.get("/", users.loginRequired,materialinwards.findAll);
 router.put("/update/updateWithBarcode", users.loginRequired,materialinwards.updateWithBarcode);
+router.put("/update/updateScrapAndRecover", users.loginRequired,materialinwards.updateScrapAndRecover);
+router.get("/get/findAllByBatchCode", users.loginRequired,materialinwards.findAllByBatchCode);
+router.get("/get/findAllByMaterialCode", users.loginRequired,materialinwards.findAllByMaterialCode);
+router.get("/get/findAllByMaterialCodeandBatchCode", users.loginRequired,materialinwards.findAllByMaterialCodeandBatchCode);
 
 module.exports = router;
