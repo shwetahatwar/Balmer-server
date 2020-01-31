@@ -18,6 +18,8 @@ var dispatchRouter = require('./routes/dispatchslip.routes');
 var dispatchSlipMaterialListRouter = require('./routes/dispatchslipmateriallist.routes');
 var projectRouter = require('./routes/project.routes');
 var projectAuditItemsRouter = require('./routes/projectaudititems.routes');
+var dispatchPickerRelationRouter = require('./routes/dispatchpickerrelation.routes');
+var dispatchLoaderRelationRouter = require('./routes/dispatchloaderrelation.routes');
 
 const app = express();
 
@@ -61,10 +63,11 @@ app.use('/api/packagingtype', packagingtypeRouter);
 app.use('/api/ttat', ttatRouter);
 app.use('/api/depo', depoRouter);
 app.use('/api/dispatchslips', dispatchRouter);
-app.use('/api/dispatchslipmateriallists', dispatchSlipMaterialListRouter);
 app.use('/api/projects', projectRouter);
 app.use('/api/projectaudititems', projectAuditItemsRouter);
-
+app.use('/api/dispatchslipmateriallists', dispatchSlipMaterialListRouter);
+app.use('/api/dispatchpickerrelations', dispatchPickerRelationRouter);
+app.use('/api/dispatchloaderrelations', dispatchLoaderRelationRouter);
 
 //sync
 const db = require("./models");

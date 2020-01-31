@@ -32,5 +32,7 @@ db.dispatchslipmateriallists = require("./dispatchslipmateriallist.model.js")(se
 db.projects = require("./project.model.js")(sequelize, Sequelize);
 db.projectaudititems = require("./projectaudititems.model.js")(sequelize, Sequelize);
 db.scrapandrecovers = require("./scrapandrecover.model.js")(sequelize, Sequelize);
+db.dispatchpickerrelations = require("./dispatchpickerrelation.model.js")(sequelize, Sequelize);
+db.dispatchloaderrelations = require("./dispatchloaderrelation.model.js")(sequelize, Sequelize);
 
 module.exports = db;

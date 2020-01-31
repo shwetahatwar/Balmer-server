@@ -11,30 +11,8 @@ exports.create = (req, res,async) => {
       message: "Content can not be empty!"
     });
     return;
-  }
-
-  // Create a DispatchSlip
-  // const dispatchslip = {
-  //   dispatchSlipNumber: req.body.dispatchSlipNumber,
-  //   truckId: req.body.truckId,
-  //   depoId: req.body.depoId,
-  //   status:true,
-  //   createdBy:req.body.createdBy,
-  //   updatedBy:req.body.updatedBy
-  // };
-
-  // // Save DispatchSlip in the database
-  // DispatchSlip.create(dispatchslip)
-  //   .then(data => {
-  //     res.send(data);
-  //   })
-  //   .catch(err => {
-  //     res.status(500).send({
-  //       message:
-  //         err.message || "Some error occurred while creating the DispatchSlip."
-  //     });
-  //   });
-  DispatchSlip.sequelize.transaction(t => {
+  }  
+  DispatchSlip.sequelize.transaction(async t => {
     return DispatchSlip.create({
       dispatchSlipNumber: req.body.dispatchSlipNumber,
       truckId: req.body.truckId,
@@ -54,43 +32,90 @@ exports.create = (req, res,async) => {
             'materialCode':req.body.material[i].materialCode
           }
         })
-       .then(async data=>{
+        .then(async data=>{
           checkMaterialQty = data;
           console.log("Line 59:",checkMaterialQty);
           console.log(checkMaterialQty);
-          console.log("Line 60:",req.body.material[i]["batchNumber"]);
+          // console.log("Line 60:",req.body.material[i]["batchNumber"]);
           if(checkMaterialQty >= req.body.material[i].numberOfPacks){
-            console.log("Line 63",req.body.material[i]["batchNumber"]);
-            await DispatchSlipMaterialList.create({  
-              dispatchSlipId: dispatchSlip.id,
-              batchNo: req.body.material[i]["batchNumber"],
-              numberOfPacks:req.body.material[i]["numberOfPacks"],
-              materialCode:req.body.material[i]["materialCode"],
-              createdBy:req.body.material[i]["createdBy"],
-              updatedBy:req.body.material[i]["updatedBy"]
-            })
-            .then(dispatchSlipMaterialList=>{
-              console.log(dispatchSlipMaterialList);
-            })
-            .catch(err=>{
-              console.log(err);
-              t.rollback();
-              res.status(500).send(err);
+            var getBatchCode = await MaterialInward.findAll({
+              where: {
+                'materialCode':req.body.material[i].materialCode
+              },
+              order: [
+              ['createdAt', 'ASC'],
+              ]
             });
+            var counter = req.body.material[i]["numberOfPacks"];
+            // var checkCondition = true;
+            // var foundQuantity=0;
+            // while(checkCondition == true)
+            var dups = [];
+            var arr = getBatchCode.filter(function(el) {
+            // If it is not a duplicate, return true
+              if (dups.indexOf(el["batchNumber"]) == -1) {
+                dups.push(el["batchNumber"]);
+                return true;
+              }
+              return false;
+            });
+            console.log("Unique Data :",dups);
+            for(var s=0;s<dups.length;s++){
+              var batchQuantity = await MaterialInward.count({
+                where:{
+                  'materialCode':req.body.material[i].materialCode,
+                  'batchNumber':dups[i]
+                }
+              });
+              if(batchQuantity > counter){
+                // console.log("Line 63",req.body.material[i]["batchNumber"]);
+                await DispatchSlipMaterialList.create({  
+                  dispatchSlipId: dispatchSlip.id,
+                  batchNumber: dups[i] ,
+                  numberOfPacks:req.body.material[i]["numberOfPacks"],
+                  materialCode:req.body.material[i]["materialCode"],
+                  createdBy:req.body.material[i]["createdBy"],
+                  updatedBy:req.body.material[i]["updatedBy"]
+                })
+                .then(dispatchSlipMaterialList=>{
+                  console.log(dispatchSlipMaterialList);
+                })
+                .catch(err=>{
+                  console.log(err);
+                  t.rollback();
+                });
+                break;
+              }
+              else{
+                // console.log("Line 63",req.body.material[i]["batchNumber"]);
+                req.body.material[i]["numberOfPacks"] = batchQuantity;
+                await DispatchSlipMaterialList.create({  
+                  dispatchSlipId: dispatchSlip.id,
+                  batchNumber: dups[i],
+                  numberOfPacks:req.body.material[i]["numberOfPacks"],
+                  materialCode:req.body.material[i]["materialCode"],
+                  createdBy:req.body.material[i]["createdBy"],
+                  updatedBy:req.body.material[i]["updatedBy"]
+                })
+                .then(dispatchSlipMaterialList=>{
+                  console.log(dispatchSlipMaterialList);
+                })
+                .catch(err=>{
+                  console.log(err);
+                  t.rollback();
+                });
+              }
+            }
           }
         });
-        // console.log("checkMaterialQty",checkMaterialQty);
       }
       return dispatchSlip
-    }).catch(err=>{
+    })
+    .catch(err=>{
       t.rollback();
       res.status(500).send(err);
-   });
- }).then(result=>{ 
-  res.status(200).send(result);
-}).catch(err=>{
-  res.status(400).send(err);
-})
+    });
+  })
 };
 
 // Retrieve all DispatchSlips from the database.

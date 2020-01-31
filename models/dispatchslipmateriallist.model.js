@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    batchNo:{
+    batchNumber:{
       type: DataTypes.STRING,
       allowNull: false
     },

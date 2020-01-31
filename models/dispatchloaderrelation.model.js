@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const DispatchPickerRelation = sequelize.define("dispatchpickerrelation", {
+  const DispatchLoaderRelation = sequelize.define("dispatchloaderrelation", {
     dispatchId: {
       type: DataTypes.INTEGER,
       allowNull: false
@@ -19,5 +19,5 @@ module.exports = (sequelize, DataTypes) => {
     }
     
   });
-  return DispatchPickerRelation;
+  return DispatchLoaderRelation;
 };
