@@ -1,8 +1,20 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const DispatchLoaderRelation = sequelize.define("dispatchloaderrelation", {
+  const DispatchLoadingMaterialList = sequelize.define("dispatchloadingmateriallist", {
     dispatchId: {
       type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    materialCode:{
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    batchNumber:{
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    serialNumber:{
+      type: DataTypes.STRING,
       allowNull: false
     },
     userId:{
@@ -19,5 +31,5 @@ module.exports = (sequelize, DataTypes) => {
     }
     
   });
-  return DispatchLoaderRelation;
+  return DispatchLoadingMaterialList;
 };

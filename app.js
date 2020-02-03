@@ -2,7 +2,8 @@
 var express = require('express');
 var path = require('path');
 // var cookieParser = require('cookie-parser');
-// var logger = require('morgan');
+var morgan = require('morgan');
+var winston = require('./config/winston');
 var bodyParser = require('body-parser');
 var jwt = require("jsonwebtoken");
 const cors = require("cors");
@@ -20,6 +21,9 @@ var projectRouter = require('./routes/project.routes');
 var projectAuditItemsRouter = require('./routes/projectaudititems.routes');
 var dispatchPickerRelationRouter = require('./routes/dispatchpickerrelation.routes');
 var dispatchLoaderRelationRouter = require('./routes/dispatchloaderrelation.routes');
+var dispatchPickingMaterialListRouter = require('./routes/dispatchpickingmateriallist.routes');
+var dispatchLoadingMaterialListRouter = require('./routes/dispatchloadingmateriallist.routes');
+var roleRouter = require('./routes/role.routes');
 
 const app = express();
 
@@ -38,6 +42,9 @@ app.use(function (req, res, next) {
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
+
+//logger
+app.use(morgan('combined', { stream: winston.stream }));
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -68,7 +75,9 @@ app.use('/api/projectaudititems', projectAuditItemsRouter);
 app.use('/api/dispatchslipmateriallists', dispatchSlipMaterialListRouter);
 app.use('/api/dispatchpickerrelations', dispatchPickerRelationRouter);
 app.use('/api/dispatchloaderrelations', dispatchLoaderRelationRouter);
-
+app.use('/api/dispatchpickingmateriallists', dispatchPickingMaterialListRouter);
+app.use('/api/dispatchloadingmateriallists', dispatchLoadingMaterialListRouter);
+app.use('/api/role', roleRouter);
 //sync
 const db = require("./models");
 db.sequelize.sync();
@@ -81,6 +90,20 @@ app.get("/", (req, res) => {
 // require("./routes/tutorial.routes")(app);
 // require("./routes/materialinward.routes")(app);
 // require("./routes/user.routes")(app);
+
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // add this line to include winston logging
+  winston.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;

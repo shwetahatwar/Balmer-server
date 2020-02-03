@@ -34,5 +34,7 @@ db.projectaudititems = require("./projectaudititems.model.js")(sequelize, Sequel
 db.scrapandrecovers = require("./scrapandrecover.model.js")(sequelize, Sequelize);
 db.dispatchpickerrelations = require("./dispatchpickerrelation.model.js")(sequelize, Sequelize);
 db.dispatchloaderrelations = require("./dispatchloaderrelation.model.js")(sequelize, Sequelize);
-
+db.dispatchpickingmateriallists = require("./dispatchpickingmateriallist.model.js")(sequelize, Sequelize);
+db.dispatchloadingmateriallists = require("./dispatchloadingmateriallist.model.js")(sequelize, Sequelize);
+db.roles = require("./role.model.js")(sequelize, Sequelize);
 module.exports = db;
