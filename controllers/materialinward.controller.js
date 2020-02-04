@@ -2,9 +2,10 @@ const db = require("../models");
 const MaterialInward = db.materialinwards;
 const ScrapandRecover = db.scrapandrecovers;
 const Op = db.Sequelize.Op;
+const Material = db.materials;
 
 // Create and Save a new MaterialInward
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   console.log(req.body);
   // Validate request
   if (!req.body.materialCode) {
@@ -14,9 +15,23 @@ exports.create = (req, res) => {
     return;
   }
 
+  const materialCode = req.body.materialCode;
+  var materialData;
+  await Material.findAll({
+    where: {materialCode: materialCode}
+  })
+  .then(data => {
+    materialData = data[0]["dataValues"]["id"];
+    // console.log(data[0]["dataValues"]["id"]);
+    // res.send(data);
+    console.log("Line 26", materialData);
+  });
+  
+
   var serialNumberId = Date.now();
-  // Create a MaterialInward
+  //Create a MaterialInward
   const materialinward = {
+    materialId: materialData,
     materialCode: req.body.materialCode,
     batchNumber: req.body.batchNumber,
     serialNumber: serialNumberId,
@@ -28,7 +43,7 @@ exports.create = (req, res) => {
   };
 
   // Save MaterialInward in the database
-  MaterialInward.create(materialinward)
+  await MaterialInward.create(materialinward)
     .then(data => {
       res.send(data);
     })
@@ -46,7 +61,10 @@ exports.findAll = (req, res) => {
   const title = req.params.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
-  MaterialInward.findAll({ where: condition })
+  MaterialInward.findAll({ 
+    where: condition,
+    include: [{model: Material}] 
+  })
     .then(data => {
       res.send(data);
     })

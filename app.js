@@ -24,6 +24,7 @@ var dispatchLoaderRelationRouter = require('./routes/dispatchloaderrelation.rout
 var dispatchPickingMaterialListRouter = require('./routes/dispatchpickingmateriallist.routes');
 var dispatchLoadingMaterialListRouter = require('./routes/dispatchloadingmateriallist.routes');
 var roleRouter = require('./routes/role.routes');
+var setupDataRouter = require('./routes/setupdata.routes');
 
 const app = express();
 
@@ -78,6 +79,7 @@ app.use('/api/dispatchloaderrelations', dispatchLoaderRelationRouter);
 app.use('/api/dispatchpickingmateriallists', dispatchPickingMaterialListRouter);
 app.use('/api/dispatchloadingmateriallists', dispatchLoadingMaterialListRouter);
 app.use('/api/role', roleRouter);
+app.use('/api/setupData', setupDataRouter);
 //sync
 const db = require("./models");
 db.sequelize.sync();

@@ -2,8 +2,11 @@
 module.exports = (sequelize, DataTypes) => {
   const ScarpandRecover = sequelize.define("scarpandrecover", {
     materialInwardId: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: DataTypes.INTEGER,
+      references: {
+          model: 'materialinwards', 
+          key: 'id',
+       }
     },
     comments:{
       type:DataTypes.STRING,
@@ -22,6 +25,52 @@ module.exports = (sequelize, DataTypes) => {
       allowNull:true
     }
     
+  }),
+
+  MaterialInward = sequelize.define("materialinward", {
+    materialId: {
+      type: DataTypes.INTEGER,
+      references: {
+          model: 'materials', 
+          key: 'id',
+       }
+    },
+    materialCode: {
+      type: DataTypes.INTEGER,
+      allowNull:false
+    },
+    batchNumber:{
+      type:DataTypes.STRING,
+      allowNull:false
+    },
+    serialNumber:{
+      type:DataTypes.STRING,
+      allowNull:false
+    },
+    isScrapped:{
+      type:DataTypes.BOOLEAN,
+      allowNull:true
+    },
+    dispatchSlipId:{
+      type:DataTypes.INTEGER,
+      allowNull:true
+    },
+    status:{
+      type:DataTypes.BOOLEAN,
+      allowNull:false
+    },
+    createdBy:{
+      type:DataTypes.INTEGER,
+      allowNull:true
+    },
+    updatedBy:{
+      type:DataTypes.INTEGER,
+      allowNull:true
+    }
+    
   });
+
+  ScarpandRecover.belongsTo(MaterialInward, {foreignKey: 'materialInwardId',onDelete: 'CASCADE'});
+
   return ScarpandRecover;
 };

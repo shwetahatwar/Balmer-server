@@ -1,7 +1,8 @@
 const db = require("../models");
 const ProjectAuditItems = db.projectaudititems;
+// const Project = db.projects;
 const Op = db.Sequelize.Op;
-// const Project = require("../models").Project;
+const Project = db.projects;
 
 
 // Create and Save a new Project audit items
@@ -41,13 +42,18 @@ exports.create = (req, res) => {
 
 // Retrieve all ProjectAuditItems from the database.
 exports.findAll = (req, res) => {
+  // console.log(Project);
+  // res.send(Project);
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
 
  // ProjectAuditItems.findAll({
  //  include:[{model:Project}], where: condition })
-  ProjectAuditItems.findAll({where: condition })
+  ProjectAuditItems.findAll({
+    where: condition,
+    include: [{model: Project}]
+   })
     .then(data => {
       res.send(data);
     })

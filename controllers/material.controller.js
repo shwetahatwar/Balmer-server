@@ -128,3 +128,35 @@ exports.findByMaterialCode = (req, res) => {
     });
   });
 };
+
+exports.createEach = (req, res) => {
+  console.log(req.body);
+  //for(var i=0;i<req.body)
+  // const material = {
+  //   materialCode: req.body.materialCode,
+  //   materialType: req.body.materialType,
+  //   materialDescription: req.body.materialDescription,
+  //   genericName: req.body.genericName,
+  //   packingType: req.body.packingType,
+  //   packSize: req.body.packSize,
+  //   netWeight: req.body.netWeight,
+  //   grossWeight: req.body.grossWeight,
+  //   tareWeight: req.body.tareWeight,
+  //   UOM: req.body.UOM,
+  //   status:true,
+  //   createdBy:req.body.createdBy,
+  //   updatedBy:req.body.updatedBy
+  // };
+
+  // // Save material in the database
+  // Material.create(material)
+  // .then(data => {
+  //   res.send(data);
+  // })
+  // .catch(err => {
+  //   res.status(500).send({
+  //     message:
+  //     err.message || "Some error occurred while creating the material."
+  //   });
+  // });
+};

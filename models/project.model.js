@@ -6,8 +6,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     auditors:{
-      type:DataTypes.STRING,
-      allowNull:false
+      type: DataTypes.STRING,
+      allowNull: false
     },
     start:{
       type:DataTypes.STRING,

@@ -26,13 +26,35 @@ module.exports = (sequelize, DataTypes) => {
       allowNull:true
     }
     
+  }),
+
+  DispatchSlip = sequelize.define("dispatchslip", {
+    dispatchSlipNumber: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    truckId:{
+      type:DataTypes.INTEGER,
+      allowNull:false
+    },
+    depoId:{
+      type:DataTypes.INTEGER,
+      allowNull:false
+    },
+    status:{
+      type:DataTypes.STRING,
+      allowNull:false
+    },
+    createdBy:{
+      type:DataTypes.INTEGER,
+      allowNull:true
+    },
+    updatedBy:{
+      type:DataTypes.INTEGER,
+      allowNull:true
+    }
   });
 
-  DispatchSlipMaterialList.associate = function(models) {
-    
-    DispatchSlipMaterialList.belongsTo(models.DispatchSlip, {
-      foreignKey: 'dispatchSlipId'
-    });
-  };
+  DispatchSlipMaterialList.belongsTo(DispatchSlip, {foreignKey: 'dispatchSlipId',onDelete: 'CASCADE'})
   return DispatchSlipMaterialList;
 };

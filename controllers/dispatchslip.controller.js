@@ -3,6 +3,7 @@ const DispatchSlip = db.dispatchslips;
 const DispatchSlipMaterialList = db.dispatchslipmateriallists;
 const MaterialInward = db.materialinwards;
 const Op = db.Sequelize.Op;
+const Ttat = db.ttats;
 
 // Create and Save a new DispatchSlip
 exports.create = (req, res,async) => {
@@ -123,7 +124,10 @@ exports.findAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
-  DispatchSlip.findAll({ where: condition })
+  DispatchSlip.findAll({ 
+    where: condition,
+    include: [{model: Ttat}] 
+  })
   .then(data => {
     res.send(data);
   })
