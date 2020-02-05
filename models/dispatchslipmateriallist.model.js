@@ -56,5 +56,6 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   DispatchSlipMaterialList.belongsTo(DispatchSlip, {foreignKey: 'dispatchSlipId',onDelete: 'CASCADE'})
+  // DispatchSlipMaterialList.belongsTo(Material, {foreignKey: 'materialCode',onDelete: 'CASCADE'})
   return DispatchSlipMaterialList;
 };

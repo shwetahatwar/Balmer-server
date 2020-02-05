@@ -6,5 +6,6 @@ var users = require('../controllers/user.controller');
 router.post("/", users.loginRequired,dispatchpickingmateriallists.create);
 router.get("/", users.loginRequired,dispatchpickingmateriallists.getAll);
 router.get("/:id", users.loginRequired,dispatchpickingmateriallists.getById);
+router.post("/get/getAllorCreateNew", users.loginRequired,dispatchpickingmateriallists.getAllorCreateNew);
 
 module.exports = router;

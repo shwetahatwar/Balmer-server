@@ -79,4 +79,91 @@ exports.getById = (req,res) => {
       message: "Error retrieving MaterialInward with id=" + id
     });
   });
-}
+};
+
+exports.getAllorCreateNew = async (req,res) =>{
+  await DispatchLoadingMaterialList.findAll({
+    where: { 
+      dispatchId: req.body.dispatchId,
+      userId: req.body.userId
+    }
+  })
+  .then(async data => {
+      
+      if(data[0] != null){
+        console.log("Get Data");
+        res.send(data);
+      }
+      else{
+        console.log("No Data");
+        await DispatchSlipMaterialList.findAll({
+          where: {
+            dispatchSlipId: req.body.dispatchId
+          }
+        })
+        .then(async data1=>{
+          console.log(data1[0]["numberOfPacks"]);
+          for(var i=0;i<data1.length;i++){
+            await MaterialInward.findAll({
+              where:{
+                batchNumber:data1[i]["batchNumber"],
+                materialCode:data1[i]["materialCode"]
+              }
+            })
+            .then(async data2=>{
+              console.log("Line 101",data2.length);
+              for(var k=0;k<data2.length;k++){
+                if(data1[i]["numberOfPacks"] > k){
+                  const dispatchpickingmateriallist = {
+                    dispatchId: req.body.dispatchId,
+                    userId:req.body.userId,
+                    createdBy:req.body.userId,
+                    updatedBy:req.body.userId,
+                    materialCode:data2[k]["materialCode"],
+                    batchNumber:data2[k]["batchNumber"],
+                    serialNumber:data2[k]["serialNumber"]
+                  };
+
+                  // Save MaterialInward in the database
+                  await DispatchLoadingMaterialList.create(dispatchpickingmateriallist)
+                  .then(data3 => {
+                    // res.send(data3);
+                  })
+                  .catch(err => {
+                    // res.status(500).send({
+                    //   message:
+                    //     err.message || "Some error occurred while creating the MaterialInward."
+                    // });
+                  });
+                }
+              }
+              // res.send(data2);  
+            })
+            .catch(err => {
+              res.send(err);
+            });
+          }
+          // res.send(data1);
+        })
+        .catch(err=>{
+          console.log(err);
+          res.send(err);
+        })
+        await DispatchLoadingMaterialList.findAll({
+          where: {
+            dispatchId: req.body.dispatchId
+          }
+        })
+        .then(resultData =>{
+          res.send(resultData);
+        })
+        // res.send("No Data");
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving materialinwards."
+      });
+    });
+};

@@ -1,6 +1,8 @@
 const db = require("../models");
 const DispatchSlipMaterialList = db.dispatchslipmateriallists;
 const Op = db.Sequelize.Op;
+const DispatchSlip = db.dispatchslips;
+const Material = db.materials;
 // const DispatchSlip = require("../models").DispatchSlip;
 
 
@@ -46,10 +48,15 @@ exports.findAll = (req, res) => {
 
  // DispatchSlipMaterialList.findAll({
  //  include:[{model:DispatchSlip}], where: condition })
- DispatchSlipMaterialList.findAll({where: condition })
+ DispatchSlipMaterialList.findAll({
+  where: condition,
+  include: [{
+      model: DispatchSlip
+    }] 
+  })
  .then(data => {
-  res.send(data);
-})
+    res.send(data);
+  })
  .catch(err => {
   res.status(500).send({
     message:
@@ -136,6 +143,25 @@ exports.deleteAll = (req, res) => {
     res.status(500).send({
       message:
       err.message || "Some error occurred while removing all DispatchSlipMaterialList."
+    });
+  });
+};
+
+exports.findAllByDispatchSlip = (req, res) => {
+  var dispatchSlipId = req.query.dispatchSlipId
+  DispatchSlipMaterialList.findAll({
+    where: { dispatchSlipId : dispatchSlipId },
+    include: [{
+      model: DispatchSlip
+    }] 
+  })
+ .then(data => {
+    res.send(data);
+  })
+ .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving dispatchslips."
     });
   });
 };
