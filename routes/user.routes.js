@@ -65,5 +65,6 @@ router.post("/sign_in", users.sign_in);
 router.post("/", users.create);
 router.get("/", users.findAll);
 router.get("/:id", users.findOne);
+router.put("/:id", users.update);
 
 module.exports = router;

@@ -2,10 +2,11 @@ const db = require("../models");
 const Project = db.projects;
 const ProjectAuditItems = db.projectaudititems;
 const Op = db.Sequelize.Op;
+const MaterialInward = db.materialinwards;
 
 // Create and Save a new Project
 exports.create = (req, res) => {
-  console.log(req.body[0]);
+  console.log("Line 9", req.body);
   // Validate request
   if (!req.body.name) {
     res.status(400).send({
@@ -13,8 +14,8 @@ exports.create = (req, res) => {
     });
     return;
   }
-
-const project = {
+  var projectId;
+  const project = {
       name: req.body.name,
       auditors: req.body.auditors,
       start: req.body.start,
@@ -23,10 +24,37 @@ const project = {
       createdBy:req.user.id,
       updatedBy:req.user.id
   };
-
   // Save material in the database
   Project.create(project)
   .then(data => {
+    projectId = data["id"]
+    MaterialInward.findAll({
+      where:{
+        status:true,
+        isScrapped: false,
+        isInward: true
+      }
+    })
+    .then(async materialInwardData => {
+      for(var i=0;i < materialInwardData.length;i++){
+        console.log("Line 38",materialInwardData[i]["dataValues"]["materialCode"]);
+        var materialCode = materialInwardData[i]["dataValues"]["materialCode"];
+        var batchNumber = materialInwardData[i]["dataValues"]["batchNumber"];
+        var serialNumber = materialInwardData[i]["dataValues"]["serialNumber"];
+        await ProjectAuditItems.create({
+          projectId: projectId,
+          materialCode:materialCode,
+          batchNumber:batchNumber,
+          serialNumber:serialNumber,
+          status:true,
+          createdBy:req.user.id,
+          updatedBy:req.user.id
+        });
+      }
+    })
+    .catch(err=>{
+      console.log(err);
+    })
     res.send(data);
   })
   .catch(err => {
