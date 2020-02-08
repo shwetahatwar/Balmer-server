@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull:false
     },
     status:{
-      type:DataTypes.STRING,
+      type:DataTypes.BOOLEAN,
       allowNull:false
     },
     createdBy:{
@@ -79,7 +79,7 @@ module.exports = (sequelize, DataTypes) => {
     
   }),
 
-  Depo = sequelize.define("depo", {
+  Depot = sequelize.define("depot", {
     name: {
       type: DataTypes.STRING,
       allowNull: false
@@ -89,7 +89,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     status:{
-      type:DataTypes.STRING,
+      type:DataTypes.BOOLEAN,
       allowNull:false
     },
     createdBy:{
@@ -103,6 +103,6 @@ module.exports = (sequelize, DataTypes) => {
     
   });
   DispatchSlip.belongsTo(Ttat, {foreignKey: 'truckId',onDelete: 'CASCADE'});
-  DispatchSlip.belongsTo(Depo, {foreignKey: 'depoId',onDelete: 'CASCADE'})
+  DispatchSlip.belongsTo(Depot, {foreignKey: 'depoId',onDelete: 'CASCADE'})
   return DispatchSlip;
 };

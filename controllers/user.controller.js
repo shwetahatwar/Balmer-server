@@ -18,12 +18,12 @@ exports.create = (req, res) => {
   const user = {
     username: req.body.username,
     password: req.body.password,
-    status: "0",
+    status: "1",
     role: req.body.role,
     employeeId:req.body.employeeId,
     designation:req.body.designation,
-    createdBy:req.body.createdBy,
-    updatedBy:req.body.updatedBy
+    createdBy:req.user.id,
+    updatedBy:req.user.id
   };
 
   // Save User in the database
@@ -71,7 +71,7 @@ exports.findAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
-  User.findAll({ where: condition })
+  User.findAll({ where: req.query })
     .then(data => {
       res.send(data);
     })
@@ -180,7 +180,7 @@ exports.findAllPublished = (req, res) => {
 };
 
 exports.loginRequired = (req,res,next) => {
-  // console.log(req.user);
+  console.log(req.user);
   if (req.user) {
     next();
   } else {

@@ -23,8 +23,8 @@ exports.create = (req, res) => {
     batchNumber: req.body.batchNumber,
     numberOfPacks: req.body.numberOfPacks,
     materialCode:req.body.materialCode,
-    createdBy:req.body.createdBy,
-    updatedBy:req.body.updatedBy
+    createdBy:req.user.id,
+    updatedBy:req.user.id
   };
 
   // Save DispatchSlipMateriallist in the database
@@ -49,7 +49,7 @@ exports.findAll = (req, res) => {
  // DispatchSlipMaterialList.findAll({
  //  include:[{model:DispatchSlip}], where: condition })
  DispatchSlipMaterialList.findAll({
-  where: condition,
+  where: req.query,
   include: [{
       model: DispatchSlip
     }] 
@@ -147,7 +147,7 @@ exports.deleteAll = (req, res) => {
   });
 };
 
-exports.findAllByDispatchSlip = (req, res) => {
+exports.findByDispatchSlip = (req, res) => {
   var dispatchSlipId = req.query.dispatchSlipId
   DispatchSlipMaterialList.findAll({
     where: { dispatchSlipId : dispatchSlipId },

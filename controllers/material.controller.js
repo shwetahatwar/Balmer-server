@@ -26,8 +26,8 @@ exports.create = (req, res) => {
     tareWeight: req.body.tareWeight,
     UOM: req.body.UOM,
     status:true,
-    createdBy:req.body.createdBy,
-    updatedBy:req.body.updatedBy
+    createdBy:req.user.id,
+    updatedBy:req.user.id
   };
 
   // Save material in the database
@@ -48,7 +48,7 @@ exports.findAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
   console.log();
-  Material.findAll({ where: condition })
+  Material.findAll({ where: req.query })
   .then(data => {
     res.send(data);
   })
@@ -59,6 +59,20 @@ exports.findAll = (req, res) => {
     });
   });
 };
+
+exports.getById = (req,res) => {
+  const id = req.params.id;
+
+  Material.findByPk(id)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error retrieving MaterialInward with id=" + id
+      });
+    });
+}
 
 exports.findAllScrapped = (req, res) => {
   Material.findAll({ 'status': 0})
@@ -78,24 +92,24 @@ exports.update = (req, res) => {
   const id = req.params.id;
 
   Material.update(req.body, {
-    where: { id: id }
+    where: req.params
   })
-  .then(num => {
-    if (num == 1) {
-      res.send({
-        message: "Material was updated successfully."
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "Material was updated successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot update Material with id=${id}. Maybe Material was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating Material with id=" + id
       });
-    } else {
-      res.send({
-        message: `Cannot update Material with id=${id}. Maybe Material was not found or req.body is empty!`
-      });
-    }
-  })
-  .catch(err => {
-    res.status(500).send({
-      message: "Error updating Material with id=" + id
     });
-  });
 };
 
 

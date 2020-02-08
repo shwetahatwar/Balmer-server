@@ -25,8 +25,8 @@ exports.create = (req, res) => {
     loadingTime: req.body.loadingTime,
     inOutTime: req.body.inOutTime,
     idleTime: req.body.idleTime,
-    createdBy:req.body.createdBy,
-    updatedBy:req.body.updatedBy
+    createdBy:req.user.id,
+    updatedBy:req.user.id
   };
 
   // Save ttat in the database
@@ -42,13 +42,37 @@ exports.create = (req, res) => {
     });
 };
 
+exports.update = (req, res) => {
+  const id = req.params.id;
+
+  Ttat.update(req.body, {
+    where: req.params
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "Role was updated successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot update Role with id=${id}. Maybe Role was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating Role with id=" + id
+      });
+    });
+};
+
 // Retrieve all ttats from the database.
 exports.findAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
-  console.log();
+  // console.log();
   Ttat.findAll({ 
-    where: condition,
+    where: req.query,
     order: [
             ['id', 'DESC'],
         ],

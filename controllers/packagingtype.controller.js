@@ -17,8 +17,8 @@ exports.create = (req, res) => {
   const packagingtype = {
     name: req.body.name,
     status:true,
-    createdBy:req.body.createdBy,
-    updatedBy:req.body.updatedBy
+    createdBy:req.user.id,
+    updatedBy:req.user.id
   };
 
   // Save MaterialInward in the database
@@ -35,7 +35,9 @@ exports.create = (req, res) => {
 };
 
 exports.getAll = (req,res) =>{
-  PackagingType.findAll()
+  PackagingType.findAll({
+    where:req.query
+  })
   .then(data => {
       res.send(data);
     })
@@ -60,3 +62,27 @@ exports.getById = (req,res) => {
       });
     });
 }
+
+exports.update = (req, res) => {
+  const id = req.params.id;
+
+  PackagingType.update(req.body, {
+    where: req.params
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "PackagingType was updated successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot update PackagingType with id=${id}. Maybe PackagingType was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating PackagingType with id=" + id
+      });
+    });
+};

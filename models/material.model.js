@@ -26,15 +26,15 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     netWeight: {
-      type: DataTypes.STRING,
+      type: DataTypes.FLOAT,
       allowNull: false
     },
     grossWeight: {
-      type: DataTypes.STRING,
+      type: DataTypes.FLOAT,
       allowNull: false
     },
     tareWeight: {
-      type: DataTypes.STRING,
+      type: DataTypes.FLOAT,
       allowNull: false
     },
     UOM: {
@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     status:{
-      type:DataTypes.STRING,
+      type:DataTypes.BOOLEAN,
       allowNull:false
     },
     createdBy:{

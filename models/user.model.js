@@ -13,12 +13,15 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     status:{
-      type:DataTypes.STRING,
+      type:DataTypes.BOOLEAN,
       allowNull:true
     },
-    role:{
-      type:DataTypes.STRING,
-      allowNull:false
+    roleId:{
+      type: DataTypes.INTEGER,
+      references: {
+          model: 'roles', 
+          key: 'id',
+       }
     },
     employeeId:{
       type:DataTypes.STRING,
@@ -73,7 +76,29 @@ module.exports = (sequelize, DataTypes) => {
         attributes: { },
       }
     }
+  }),
+
+  Role = sequelize.define("role", {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    status:{
+      type:DataTypes.BOOLEAN,
+      allowNull:false
+    },
+    createdBy:{
+      type:DataTypes.INTEGER,
+      allowNull:true
+    },
+    updatedBy:{
+      type:DataTypes.INTEGER,
+      allowNull:true
+    }
+    
   });
+
+  User.belongsTo(Role, {foreignKey: 'roleId',onDelete: 'CASCADE'});
 
   User.associate = function(models) {
     // associations can be defined here

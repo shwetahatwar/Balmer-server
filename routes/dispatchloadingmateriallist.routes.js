@@ -7,4 +7,5 @@ router.post("/", users.loginRequired,dispatchloadingmateriallists.create);
 router.get("/", users.loginRequired,dispatchloadingmateriallists.getAll);
 router.get("/:id", users.loginRequired,dispatchloadingmateriallists.getById);
 router.get("/getbydispatchslip/:id", users.loginRequired,dispatchloadingmateriallists.getAllByDispatchSlipId);
+router.post("/get/getAllorCreateNew", users.loginRequired,dispatchloadingmateriallists.getAllorCreateNew);
 module.exports = router;

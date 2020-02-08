@@ -4,7 +4,7 @@ const DispatchSlipMaterialList = db.dispatchslipmateriallists;
 const MaterialInward = db.materialinwards;
 const Op = db.Sequelize.Op;
 const Ttat = db.ttats;
-const Depo = db.depos;
+const Depot = db.depots;
 
 // Create and Save a new DispatchSlip
 exports.create = async (req, res) => {
@@ -29,7 +29,7 @@ exports.create = async (req, res) => {
 
   const depoNumber = req.body.depoId;
   var depoData;
-  await Depo.findAll({
+  await Depot.findAll({
     where: {name: depoNumber}
   })
   .then(data => {
@@ -45,8 +45,8 @@ exports.create = async (req, res) => {
       truckId: truckData,
       depoId: depoData,
       status:true,
-      createdBy:req.body.createdBy,
-      updatedBy:req.body.updatedBy
+      createdBy:req.user.id,
+      updatedBy:req.user.id
     },{transaction: t})
     .then(async (dispatchSlip)=>{
       var counter=0;
@@ -101,8 +101,8 @@ exports.create = async (req, res) => {
                     batchNumber: dups[i],
                     numberOfPacks:counter,
                     materialCode:req.body.material[i]["materialCode"],
-                    createdBy:req.body.material[i]["createdBy"],
-                    updatedBy:req.body.material[i]["updatedBy"]
+                    createdBy:req.user.id,
+                    updatedBy:req.user.id
                   }
                   DispatchSlipMaterialList.create(dispatchSlipMaterialListData)
                   .then(dispatchSlipMaterialList=>{
@@ -126,8 +126,8 @@ exports.create = async (req, res) => {
                     batchNumber: dups[i],
                     numberOfPacks:counter,
                     materialCode:req.body.material[i]["materialCode"],
-                    createdBy:req.body.material[i]["createdBy"],
-                    updatedBy:req.body.material[i]["updatedBy"]
+                    createdBy:req.user.id,
+                    updatedBy:req.user.id
                   }
                   DispatchSlipMaterialList.create(dispatchSlipMaterialListData)
                   .then(dispatchSlipMaterialList=>{
@@ -164,12 +164,12 @@ exports.findAll = (req, res) => {
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
   DispatchSlip.findAll({ 
-    where: condition,
+    where: req.query,
     include: [{
       model: Ttat
     },
     {
-      model: Depo
+      model: Depot
     }] 
   })
   .then(data => {

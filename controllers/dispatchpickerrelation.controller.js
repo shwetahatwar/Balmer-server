@@ -17,8 +17,8 @@ exports.create = (req, res) => {
   const dispatchpickerrelation = {
     dispatchId: req.body.dispatchId,
     userId:req.body.userId,
-    createdBy:req.body.createdBy,
-    updatedBy:req.body.updatedBy
+    createdBy:req.user.id,
+    updatedBy:req.user.id
   };
 
   // Save MaterialInward in the database
@@ -35,7 +35,9 @@ exports.create = (req, res) => {
 };
 
 exports.getAll = (req,res) =>{
-  DispatchPickerRelation.findAll()
+  DispatchPickerRelation.findAll({
+    where:req.query
+  })
   .then(data => {
       res.send(data);
     })
@@ -59,4 +61,28 @@ exports.getById = (req,res) => {
         message: "Error retrieving MaterialInward with id=" + id
       });
     });
-}
+};
+
+exports.update = (req, res) => {
+  const id = req.params.id;
+
+  DispatchPickerRelation.update(req.body, {
+    where: req.params
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "DispatchPickerRelation was updated successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot update DispatchPickerRelation with id=${id}. Maybe DispatchPickerRelation was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating DispatchPickerRelation with id=" + id
+      });
+    });
+};

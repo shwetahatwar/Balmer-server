@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     status:{
-      type:DataTypes.STRING,
+      type:DataTypes.BOOLEAN,
       allowNull:false
     },
     createdBy:{

@@ -14,7 +14,7 @@ var materialtypeRouter = require('./routes/materialtype.routes');
 var materialRouter = require('./routes/material.routes');
 var packagingtypeRouter = require('./routes/packagingtype.routes');
 var ttatRouter = require('./routes/ttat.routes');
-var depoRouter = require('./routes/depo.routes');
+var depotRouter = require('./routes/depot.routes');
 var dispatchRouter = require('./routes/dispatchslip.routes');
 var dispatchSlipMaterialListRouter = require('./routes/dispatchslipmateriallist.routes');
 var projectRouter = require('./routes/project.routes');
@@ -25,6 +25,9 @@ var dispatchPickingMaterialListRouter = require('./routes/dispatchpickingmateria
 var dispatchLoadingMaterialListRouter = require('./routes/dispatchloadingmateriallist.routes');
 var roleRouter = require('./routes/role.routes');
 var setupDataRouter = require('./routes/setupdata.routes');
+var inventoryTransactionRouter = require('./routes/inventorytransaction.routes');
+var scrapandrecoveriesRouter = require('./routes/scrapandrecover.routes');
+
 
 const app = express();
 
@@ -52,9 +55,19 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(function(req, res, next) {
   if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
-    jwt.verify(req.headers.authorization.split(' ')[1], 'THISISLONGSTRINGKEY', function(err, decode) {
+    jwt.verify(req.headers.authorization.split(' ')[1], 'THISISLONGSTRINGKEY', async function(err, decode) {
       if (err) req.user = undefined;
-      req.user = decode;
+      // console.log("Line 57 Decode: ", decode);
+      // req.user = decode;
+      const User = db.users;
+      await User.findAll({
+        where:{
+          username: decode["username"]
+        }
+      }).then(data=>{
+        // console.log("Line 65",data[0]["dataValues"]);
+        req.user = data[0]["dataValues"]
+      });
       next();
     });
   } else {
@@ -63,23 +76,26 @@ app.use(function(req, res, next) {
   }
 });
 
-app.use('/api/users', usersRouter);
-app.use('/api/materialinwards', materialinwardRouter);
-app.use('/api/materialtype', materialtypeRouter);
-app.use('/api/material', materialRouter);
-app.use('/api/packagingtype', packagingtypeRouter);
-app.use('/api/ttat', ttatRouter);
-app.use('/api/depo', depoRouter);
-app.use('/api/dispatchslips', dispatchRouter);
-app.use('/api/projects', projectRouter);
-app.use('/api/projectaudititems', projectAuditItemsRouter);
-app.use('/api/dispatchslipmateriallists', dispatchSlipMaterialListRouter);
-app.use('/api/dispatchpickerrelations', dispatchPickerRelationRouter);
-app.use('/api/dispatchloaderrelations', dispatchLoaderRelationRouter);
-app.use('/api/dispatchpickingmateriallists', dispatchPickingMaterialListRouter);
-app.use('/api/dispatchloadingmateriallists', dispatchLoadingMaterialListRouter);
-app.use('/api/role', roleRouter);
-app.use('/api/setupData', setupDataRouter);
+app.use('/users', usersRouter);
+app.use('/materialinwards', materialinwardRouter);
+app.use('/materialtypes', materialtypeRouter);
+app.use('/materials', materialRouter);
+app.use('/packagingtypes', packagingtypeRouter);
+app.use('/ttats', ttatRouter);
+app.use('/depots', depotRouter);
+app.use('/dispatchslips', dispatchRouter);
+app.use('/projects', projectRouter);
+app.use('/projectaudititems', projectAuditItemsRouter);
+app.use('/dispatchslipmateriallists', dispatchSlipMaterialListRouter);
+app.use('/dispatchpickerrelations', dispatchPickerRelationRouter);
+app.use('/dispatchloaderrelations', dispatchLoaderRelationRouter);
+app.use('/dispatchpickingmateriallists', dispatchPickingMaterialListRouter);
+app.use('/dispatchloadingmateriallists', dispatchLoadingMaterialListRouter);
+app.use('/roles', roleRouter);
+app.use('/setupData', setupDataRouter);
+app.use('/inventorytransactions', inventoryTransactionRouter);
+app.use('/scrapandrecoveries', scrapandrecoveriesRouter);
+
 //sync
 const db = require("./models");
 db.sequelize.sync();
@@ -104,7 +120,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.json({ error: err })
 });
 
 // set port, listen for requests

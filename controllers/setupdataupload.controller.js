@@ -4,7 +4,7 @@ const db = require("../models");
 const Material = db.materials;
 
 exports.uploadMaterialMaster = async (req,res) =>{
-  var filepath10 = 'C:\\All Projects\\Balmer Lawrie\\Test Server\\documents\\templates\\bulk-upload\\MATERIAL_MASTER.xlsx';
+  var filepath10 = 'D:\\All Project\\Balmer Lawrie\\Test Server\\documents\\templates\\bulk-upload\\MATERIAL_MASTER.xlsx';
   var workbook10 = XLSX.readFile(filepath10);
   var sheet10 = workbook10.Sheets[workbook10.SheetNames[0]];
   var num_rows10 = xls_utils.decode_range(sheet10['!ref']).e.r;
@@ -74,8 +74,8 @@ exports.uploadMaterialMaster = async (req,res) =>{
         tareWeight: tareWeightResult,
         UOM: uomResult,
         status: true,
-        createdBy: 1,
-        updatedBy: 1
+        createdBy: req.user.id,
+        updatedBy: req.user.id
       };
 
       Material.create(material)

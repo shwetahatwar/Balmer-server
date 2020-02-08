@@ -3,6 +3,7 @@ const MaterialInward = db.materialinwards;
 const ScrapandRecover = db.scrapandrecovers;
 const Op = db.Sequelize.Op;
 const Material = db.materials;
+const InventoryTransaction = db.inventorytransactions;
 
 // Create and Save a new MaterialInward
 exports.create = async (req, res) => {
@@ -28,7 +29,7 @@ exports.create = async (req, res) => {
   });
   
 
-  var serialNumberId = Date.now();
+  var serialNumberId = Date.now() + "#" + req.body.materialCode + "#" + req.body.batchNumber;
   //Create a MaterialInward
   const materialinward = {
     materialId: materialData,
@@ -36,15 +37,31 @@ exports.create = async (req, res) => {
     batchNumber: req.body.batchNumber,
     serialNumber: serialNumberId,
     isScrapped: false,
+    isInward:true,
     dispatchSlipId:null,
     status:true,
-    createdBy:req.body.createdBy,
-    updatedBy:req.body.updatedBy
+    createdBy:req.user.id,
+    updatedBy:req.user.id
   };
-
+  console.log("Line 45",materialinward);
   // Save MaterialInward in the database
   await MaterialInward.create(materialinward)
     .then(data => {
+      InventoryTransaction.create({
+        transactionTimestamp: Date.now(),
+        performedBy:req.user.id,
+        transactionType:"Inward",
+        materialInwardId:data["id"],
+        batchNumber: req.body.batchNumber,
+        createdBy:req.user.id,
+        updatedBy:req.user.id
+      })
+      .then(data => {
+        console.log(data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
       res.send(data);
     })
     .catch(err => {
@@ -62,7 +79,7 @@ exports.findAll = (req, res) => {
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
   MaterialInward.findAll({ 
-    where: condition,
+    where: req.query,
     include: [{model: Material}] 
   })
     .then(data => {
@@ -96,7 +113,7 @@ exports.update = (req, res) => {
   const id = req.params.id;
 
   MaterialInward.update(req.body, {
-    where: { id: id }
+    where: req.params
   })
     .then(num => {
       if (num == 1) {
@@ -117,10 +134,10 @@ exports.update = (req, res) => {
 };
 
 exports.updateWithBarcode = (req, res) => {
-  const serialNumber = req.query.barcodeSerial;
-  console.log("Barcode Serial",req.query.barcodeSerial);
+  // const serialNumber = req.query.barcodeSerial;
+  // console.log("Barcode Serial",req.query.barcodeSerial);
   MaterialInward.update(req.body, {
-    where: { serialNumber: serialNumber }
+    where: req.body
   })
     .then(num => {
       if (num == 1) {
@@ -207,8 +224,8 @@ exports.updateScrapAndRecover = (req, res) => {
           materialInwardId: req.body.id,
           comments:req.body.comments,
           transactionType:req.body.transactionType,
-          createdBy:req.body.createdBy,
-          updatedBy:req.body.updatedBy
+          createdBy:req.user.id,
+          updatedBy:req.user.id
         };
 
         // Save MaterialInward in the database
@@ -277,6 +294,23 @@ exports.findAllByMaterialCodeandBatchCode = (req, res) => {
     where: {
       materialCode:req.query.materialCode,
       batchNumber:req.query.batchNumber
+    }
+  })
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving materialinwards."
+    });
+  });
+};
+
+exports.findAllByBarcode = (req, res) => {
+  MaterialInward.findAll({ 
+    where: {
+      serialNumber:req.query.serialNumber
     }
   })
   .then(data => {

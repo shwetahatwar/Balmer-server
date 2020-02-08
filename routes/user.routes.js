@@ -64,5 +64,6 @@ var users = require('../controllers/user.controller');
 router.post("/sign_in", users.sign_in);
 router.post("/", users.create);
 router.get("/", users.findAll);
+router.get("/:id", users.findOne);
 
 module.exports = router;

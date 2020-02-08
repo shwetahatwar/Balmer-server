@@ -17,8 +17,8 @@ exports.create = (req, res) => {
   const dispatchloaderrelation = {
     dispatchId: req.body.dispatchId,
     userId:req.body.userId,
-    createdBy:req.body.createdBy,
-    updatedBy:req.body.updatedBy
+    createdBy:req.user.id,
+    updatedBy:req.user.id
   };
 
   // Save MaterialInward in the database
@@ -35,7 +35,9 @@ exports.create = (req, res) => {
 };
 
 exports.getAll = (req,res) =>{
-  DispatchLoaderRelation.findAll()
+  DispatchLoaderRelation.findAll({
+    where:req.query
+  })
   .then(data => {
       res.send(data);
     })
@@ -59,4 +61,28 @@ exports.getById = (req,res) => {
         message: "Error retrieving MaterialInward with id=" + id
       });
     });
-}
+};
+
+exports.update = (req, res) => {
+  const id = req.params.id;
+
+  DispatchLoaderRelation.update(req.body, {
+    where: req.params
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "DispatchLoaderRelation was updated successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot update DispatchLoaderRelation with id=${req.params}. Maybe DispatchLoaderRelation was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating DispatchLoaderRelation with id=" + req.params
+      });
+    });
+};

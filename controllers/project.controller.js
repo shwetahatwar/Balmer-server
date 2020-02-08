@@ -20,8 +20,8 @@ const project = {
       start: req.body.start,
       end: req.body.end,
       status:true,
-      createdBy:req.body.createdBy,
-      updatedBy:req.body.updatedBy
+      createdBy:req.user.id,
+      updatedBy:req.user.id
   };
 
   // Save material in the database
@@ -42,7 +42,7 @@ exports.findAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
-  Project.findAll({ where: condition })
+  Project.findAll({ where: req.query })
   .then(data => {
     res.send(data);
   })

@@ -51,6 +51,10 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.BOOLEAN,
       allowNull:true
     },
+    isInward:{
+      type:DataTypes.BOOLEAN,
+      allowNull:true
+    },
     dispatchSlipId:{
       type:DataTypes.INTEGER,
       allowNull:true

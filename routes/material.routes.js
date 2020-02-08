@@ -13,6 +13,7 @@ var users = require('../controllers/user.controller');
 
 router.post("/", users.loginRequired,materials.create);
 router.get("/", users.loginRequired,materials.findAll);
+router.get("/:id", users.loginRequired,materials.getById);
 router.get("/get/findByMaterialCode", users.loginRequired,materials.findByMaterialCode);
 router.put('/:id',users.loginRequired,materials.update);
 

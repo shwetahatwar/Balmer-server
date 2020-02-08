@@ -7,5 +7,6 @@ router.post("/", users.loginRequired,ttats.create);
 router.get("/", users.loginRequired,ttats.findAll);
 router.get("/:id", users.loginRequired,ttats.findOne);
 router.put("/put/truckOut", users.loginRequired,ttats.truckOut);
+router.put("/:id", users.loginRequired,ttats.update);
 
 module.exports = router;

@@ -23,8 +23,8 @@ exports.create = (req, res) => {
     materialCode:req.body.materialCode,
     serialNumber:req.body.serialNumber,
     status:true,
-    createdBy:req.body.createdBy,
-    updatedBy:req.body.updatedBy
+    createdBy:req.user.id,
+    updatedBy:req.user.id
   };
 
   // Save ProjectAuditItems in the database
@@ -51,7 +51,7 @@ exports.findAll = (req, res) => {
  // ProjectAuditItems.findAll({
  //  include:[{model:Project}], where: condition })
   ProjectAuditItems.findAll({
-    where: condition,
+    where: req.query,
     include: [{model: Project}]
    })
     .then(data => {

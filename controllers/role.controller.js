@@ -16,8 +16,8 @@ exports.create = (req, res) => {
   const role = {
     name: req.body.name,
     status:true,
-    createdBy:req.body.createdBy,
-    updatedBy:req.body.updatedBy
+    createdBy:req.user.id,
+    updatedBy:req.user.id
   };
 
   
@@ -34,7 +34,10 @@ exports.create = (req, res) => {
 };
 
 exports.getAll = (req,res) =>{
-  Role.findAll()
+  console.log("Line 37 IN");
+  Role.findAll({
+    where:req.query
+  })
   .then(data => {
       res.send(data);
     })
@@ -50,7 +53,7 @@ exports.update = (req, res) => {
   const id = req.params.id;
 
   Role.update(req.body, {
-    where: { id: id }
+    where: req.params
   })
     .then(num => {
       if (num == 1) {
