@@ -1,6 +1,8 @@
 const db = require("../models");
 const DispatchSlip = db.dispatchslips;
 const DispatchSlipMaterialList = db.dispatchslipmateriallists;
+const DispatchLoadingMaterialList = db.dispatchloadingmateriallists;
+const DispatchPickingMaterialList = db.dispatchpickingmateriallists;
 const MaterialInward = db.materialinwards;
 const Op = db.Sequelize.Op;
 const Ttat = db.ttats;
@@ -203,7 +205,7 @@ exports.update = (req, res) => {
   const id = req.params.id;
 
   DispatchSlip.update(req.body, {
-    where: { id: id }
+    where: req.params
   })
   .then(num => {
     if (num == 1) {
@@ -265,16 +267,302 @@ exports.deleteAll = (req, res) => {
   });
 };
 
-// Find all published DispatchSlips
-// exports.findAllPublished = (req, res) => {
-//   DispatchSlip.findAll({ where: { published: true } })
-//     .then(data => {
-//       res.send(data);
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message:
-//           err.message || "Some error occurred while retrieving dispatchslips."
-//       });
-//     });
-// };
+// Material List
+exports.getDispatchSlipMaterialLists = (req, res) => {
+
+  DispatchSlipMaterialList.findAll({ 
+    where: req.params
+  })
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving dispatchslips."
+    });
+  });
+};
+
+exports.postDispatchSlipMaterialLists = async (req, res) => {
+  console.log(req.body);
+  // Validate request
+  if (!req.body.dispatchId) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    });
+    return;
+  }
+
+  console.log(req.body.material.length);
+  for(var i=0;i<req.body.material.length;i++){
+    console.log(req.body.material[i]);
+    // Create a MaterialInward
+    const dispatchpickingmateriallist = {
+      dispatchId: req.params.dispatchId,
+      userId:req.body.userId,
+      createdBy:req.user.id,
+      updatedBy:req.user.id,
+      materialCode:req.body.material[i].materialCode,
+      batchNumber:req.body.material[i].batchNumber,
+      serialNumber:req.body.material[i].serialNumber
+    };
+
+    // Save MaterialInward in the database
+    await DispatchSlipMaterialList.create(dispatchpickingmateriallist)
+    .then(data => {
+      // res.send(data);
+    })
+    .catch(err => {
+      // res.status(500).send({
+      //   message:
+      //     err.message || "Some error occurred while creating the MaterialInward."
+      // });
+    });
+  }
+  res.status(200).send({
+    message:
+      "Completed Successfully."
+  });
+  
+};
+exports.getDispatchSlipMaterialList = (req, res) => {
+
+  DispatchSlipMaterialList.findAll({ 
+    where: req.params
+  })
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving DispatchSlipMaterialList."
+    });
+  });
+};
+
+exports.putDispatchSlipMaterialList = (req, res) => {
+  const id = req.params.id;
+
+  DispatchSlipMaterialList.update(req.body, {
+    where: req.params
+  })
+  .then(num => {
+    if (num == 1) {
+      res.send({
+        message: "DispatchSlipMaterialList was updated successfully."
+      });
+    } else {
+      res.send({
+        message: `Cannot update DispatchSlipMaterialList with id=${id}. Maybe DispatchSlipMaterialList was not found or req.body is empty!`
+      });
+    }
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error updating DispatchSlipMaterialList with id=" + id
+    });
+  });
+};
+
+
+//Picking 
+exports.getDispatchSlipPickingMaterialLists = (req, res) => {
+
+  DispatchPickingMaterialList.findAll({ 
+    where: req.params
+  })
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving dispatchslips."
+    });
+  });
+};
+
+exports.postDispatchSlipPickingMaterialLists = async (req, res) => {
+  console.log(req.body);
+  // Validate request
+  // if (!req.body.dispatchId) {
+  //   res.status(400).send({
+  //     message: "Content can not be empty!"
+  //   });
+  //   return;
+  // }
+
+  console.log(req.body.material.length);
+  for(var i=0;i<req.body.material.length;i++){
+    console.log(req.body.material[i]);
+    // Create a MaterialInward
+    const dispatchpickingmateriallist = {
+      dispatchId: req.body.dispatchId,
+      userId:req.user.id,
+      createdBy:req.user.id,
+      updatedBy:req.user.id,
+      materialCode:req.body.material[i].materialCode,
+      batchNumber:req.body.material[i].batchNumber,
+      serialNumber:req.body.material[i].serialNumber
+    };
+
+    // Save MaterialInward in the database
+    await DispatchPickingMaterialList.create(dispatchpickingmateriallist)
+    .then(data => {
+      // res.send(data);
+    })
+    .catch(err => {
+      // res.status(500).send({
+      //   message:
+      //     err.message || "Some error occurred while creating the MaterialInward."
+      // });
+    });
+  }
+  res.status(200).send({
+    message:
+      "Completed Successfully."
+  });
+  
+};
+
+exports.getDispatchSlipPickingMaterialList = (req, res) => {
+
+  DispatchPickingMaterialList.findAll({ 
+    where: req.params
+  })
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving DispatchPickingMaterialList."
+    });
+  });
+};
+
+exports.putDispatchSlipPickingMaterialList = (req, res) => {
+  const id = req.params.id;
+
+  DispatchPickingMaterialList.update(req.body, {
+    where: req.params
+  })
+  .then(num => {
+    if (num == 1) {
+      res.send({
+        message: "DispatchPickingMaterialList was updated successfully."
+      });
+    } else {
+      res.send({
+        message: `Cannot update DispatchPickingMaterialList with id=${id}. Maybe DispatchPickingMaterialList was not found or req.body is empty!`
+      });
+    }
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error updating DispatchPickingMaterialList with id=" + id
+    });
+  });
+};
+
+//Loading
+exports.getDispatchSlipLoadingMaterialLists = (req, res) => {
+
+  DispatchLoadingMaterialList.findAll({ 
+    where: req.params
+  })
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving dispatchslips."
+    });
+  });
+};
+
+exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
+  console.log(req.body);
+  // Validate request
+  if (!req.body.dispatchId) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    });
+    return;
+  }
+
+  console.log(req.body.material.length);
+  for(var i=0;i<req.body.material.length;i++){
+    console.log(req.body.material[i]);
+    // Create a Material picking
+    const dispatchloadingmateriallist = {
+      dispatchId: req.body.dispatchId,
+      userId:req.body.userId,
+      createdBy:req.user.id,
+      updatedBy:req.user.id,
+      materialCode:req.body.material[i].materialCode,
+      batchNumber:req.body.material[i].batchNumber,
+      serialNumber:req.body.material[i].serialNumber
+    };
+
+    // Save MaterialInward in the database
+    await DispatchLoadingMaterialList.create(dispatchloadingmateriallist)
+    .then(data => {
+      // res.send(data);
+    })
+    .catch(err => {
+      // res.status(500).send({
+      //   message:
+      //     err.message || "Some error occurred while creating the MaterialInward."
+      // });
+    });
+  }
+  res.status(200).send({
+    message:
+      "Completed Successfully."
+  });
+  
+};
+
+exports.getDispatchSlipLoadingMaterialList = (req, res) => {
+
+  DispatchLoadingMaterialList.findAll({ 
+    where: req.params
+  })
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving DispatchLoadingMaterialList."
+    });
+  });
+};
+
+exports.putDispatchSlipLoadingMaterialList = (req, res) => {
+  const id = req.params.id;
+
+  DispatchLoadingMaterialList.update(req.body, {
+    where: req.params
+  })
+  .then(num => {
+    if (num == 1) {
+      res.send({
+        message: "DispatchLoadingMaterialList was updated successfully."
+      });
+    } else {
+      res.send({
+        message: `Cannot update DispatchLoadingMaterialList with id=${id}. Maybe DispatchLoadingMaterialList was not found or req.body is empty!`
+      });
+    }
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error updating DispatchPickingMaterialList with id=" + id
+    });
+  });
+};

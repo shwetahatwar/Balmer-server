@@ -40,31 +40,33 @@ exports.create = (req, res) => {
 };
 
 exports.sign_in = (req, res) => {
-    User.scope('withPassword').findOne({
-      where: {
-        username: req.body.username
-      }
-    }).then((user) => {
-      if(user.status == "1"){
-        return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
-      }
+  User.scope('withPassword').findOne({
+    where: {
+      username: req.body.username
+    }
+  }).then((user) => {
+    console.log("Line 48", user.status);
+    if(user.status == false){
+      console.log("Line 50", user.status);
+      return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
+    }
 
-      if (!user || !user.comparePassword(req.body.password)) {
-        return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
-      }
-      console.log("Line 50");
-      return res.json(
-        { token: jwt.sign({ username: user.username }, 'THISISLONGSTRINGKEY'),
-        username: user.username
-      })
+    if (!user || !user.comparePassword(req.body.password)) {
+      return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
+    }
+    console.log("Line 50");
+    return res.json(
+      { token: jwt.sign({ username: user.username }, 'THISISLONGSTRINGKEY'),
+      username: user.username
     })
-    .catch((err) => {
-      console.log('err', err);
-      if (err) {
-        return res.status(401).json({ message: 'Error while authenticating.' });
-      }
-    });
-  };
+  })
+  .catch((err) => {
+    console.log('err', err);
+    if (err) {
+      return res.status(401).json({ message: 'Error while authenticating.' });
+    }
+  });
+};
 
 // Retrieve all Users from the database.
 exports.findAll = (req, res) => {

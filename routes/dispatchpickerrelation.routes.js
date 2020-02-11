@@ -6,5 +6,7 @@ var users = require('../controllers/user.controller');
 router.post("/", users.loginRequired,dispatchpickerrelations.create);
 router.get("/", users.loginRequired,dispatchpickerrelations.getAll);
 router.get("/:id", users.loginRequired,dispatchpickerrelations.getById);
+router.get("/dispatchslips/:dispatchId/users", users.loginRequired,dispatchpickerrelations.getUsersbyDispatchSlip);
+router.get("/users/:userId/dispatchslips", users.loginRequired,dispatchpickerrelations.getUsersbyDispatchSlip);
 
 module.exports = router;

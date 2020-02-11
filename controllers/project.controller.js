@@ -163,3 +163,59 @@ exports.deleteAll = (req, res) => {
     });
   });
 };
+
+// Retrieve all Project from the database.
+exports.findProjectItemsByProject = (req, res) => {
+  
+  ProjectAuditItems.findAll({ where: req.params })
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving Projects."
+    });
+  });
+};
+
+// Retrieve all Project from the database.
+exports.findSingleProjectItemByProject = (req, res) => {
+  
+  ProjectAuditItems.findAll({ where: req.params })
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving ProjectAuditItems."
+    });
+  });
+};
+
+// Update a Project by the id in the request
+exports.updateSingleProjectItemByProject = (req, res) => {
+  // const id = req.params.id;
+  console.log("Line 200", req.params);
+  ProjectAuditItems.update(req.body, {
+    where: req.params 
+  })
+  .then(num => {
+    console.log(num);
+    if (num == 1) {
+      res.send({
+        message: "ProjectAuditItems was updated successfully."
+      });
+    } else {
+      res.send({
+        message: `Cannot update ProjectAuditItems with id=${id}. Maybe ProjectAuditItems was not found or req.body is empty!`
+      });
+    }
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error updating ProjectAuditItems with id=" + id
+    });
+  });
+};

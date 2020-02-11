@@ -1,9 +1,10 @@
 const db = require("../models");
 const DispatchLoaderRelation = db.dispatchloaderrelations;
 const Op = db.Sequelize.Op;
+const User = db.users;
 
 // Create and Save a new MaterialInward
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   console.log(req.body);
   // Validate request
   if (!req.body.dispatchId) {
@@ -13,25 +14,40 @@ exports.create = (req, res) => {
     return;
   }
 
+  var userId;
+  await User.findAll({ 
+    where: {username:req.body.userId} 
+  })
+  .then(data => {
+    console.log("Line 19",data);
+    userId = data[0]["dataValues"]["id"];
+  })
+  .catch(err => {
+    // res.status(500).send({
+    //   message:
+    //     "err.message || "Some error occurred while retrieving users.""
+    // });
+    console.log(err);
+  });
   // Create a MaterialInward
   const dispatchloaderrelation = {
     dispatchId: req.body.dispatchId,
-    userId:req.body.userId,
+    userId:userId,
     createdBy:req.user.id,
     updatedBy:req.user.id
   };
 
   // Save MaterialInward in the database
   DispatchLoaderRelation.create(dispatchloaderrelation)
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the MaterialInward."
-      });
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while creating the MaterialInward."
     });
+  });
 };
 
 exports.getAll = (req,res) =>{
@@ -83,6 +99,36 @@ exports.update = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message: "Error updating DispatchLoaderRelation with id=" + req.params
+      });
+    });
+};
+
+exports.getUsersbyDispatchSlip = (req,res) =>{
+  DispatchLoaderRelation.findAll({
+    where:req.params
+  })
+  .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving materialinwards."
+      });
+    });
+};
+
+exports.getDispatchSlipbyUser = (req,res) =>{
+  DispatchLoaderRelation.findAll({
+    where:req.params
+  })
+  .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving materialinwards."
       });
     });
 };
