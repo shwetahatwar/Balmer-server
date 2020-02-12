@@ -2,6 +2,8 @@ var XLSX = require('xlsx'),
      xls_utils = XLSX.utils;
 const db = require("../models");
 const Material = db.materials;
+const MaterialType = db.materialtypes;
+const PackagingType = db.packagingtypes;
 
 exports.uploadMaterialMaster = async (req,res) =>{
   var filepath10 = 'D:\\All Project\\Balmer Lawrie\\Test Server\\documents\\templates\\bulk-upload\\MATERIAL_MASTER.xlsx';
@@ -11,11 +13,43 @@ exports.uploadMaterialMaster = async (req,res) =>{
   var json10 = [];
   try{
     for(var i = 1, l = num_rows10-1; i <= l; i++){
-
+    // for(var i = 1, l = 1; i <= l; i++){
       var materialTypeName = xls_utils.encode_cell({c:1, r:i});
       var materialTypeValue = sheet10[materialTypeName];
       var materialTypeResult = materialTypeValue['v'];
       console.log(materialTypeName + " \t" + materialTypeResult);
+
+      var materialTypeId;
+      await MaterialType.findAll({
+        where: {name: materialTypeResult}
+      })
+      .then(data => {
+        materialTypeId = data[0]["dataValues"]["id"];
+        // console.log(data[0]["dataValues"]["id"]);
+        // res.send(data);
+        console.log("Line 30", materialTypeId);
+      })
+      .catch(async err=>{
+        const materialtype = {
+          name: materialTypeResult,
+          status:true,
+          createdBy:1,
+          updatedBy:1
+        };
+
+        // Save MaterialInward in the database
+        await MaterialType.create(materialtype)
+          .then(data => {
+            // res.send(data);
+            materialTypeId = data.id
+          })
+          .catch(err => {
+            // res.status(500).send({
+            //   message:
+            //     err.message || "Some error occurred while creating the MaterialInward."
+            // });
+          });
+      });
 
       var materialCodeName = xls_utils.encode_cell({c:2, r:i});
       var materialCodeValue = sheet10[materialCodeName];
@@ -36,6 +70,38 @@ exports.uploadMaterialMaster = async (req,res) =>{
       var packingTypeValue = sheet10[packingTypeName];
       var packingTypeResult = packingTypeValue['v'];
       console.log(packingTypeName + " \t" + packingTypeResult);
+
+      var packagingTypeId;
+      await PackagingType.findAll({
+        where: {name: packingTypeResult}
+      })
+      .then(data => {
+        packagingTypeId = data[0]["dataValues"]["id"];
+        // console.log(data[0]["dataValues"]["id"]);
+        // res.send(data);
+        console.log("Line 82", packagingTypeId);
+      })
+      .catch(async err=>{
+        const packagingType = {
+          name: packingTypeResult,
+          status:true,
+          createdBy:1,
+          updatedBy:1
+        };
+
+        // Save MaterialInward in the database
+        await PackagingType.create(packagingType)
+          .then(data => {
+            // packagingTypeId.send(data);
+            packagingTypeId = data.id
+          })
+          .catch(err => {
+            // res.status(500).send({
+            //   message:
+            //     err.message || "Some error occurred while creating the MaterialInward."
+            // });
+          });
+      });
 
       var packSizeName = xls_utils.encode_cell({c:6, r:i});
       var packSizeValue = sheet10[packSizeName];
@@ -63,11 +129,11 @@ exports.uploadMaterialMaster = async (req,res) =>{
       console.log(uomName + " \t" + uomResult);
       
       const material = {
-        materialType: materialTypeResult,
+        materialType: materialTypeId,
         materialCode: materialCodeResult,
         materialDescription: materialDescriptionResult,
         genericName: genericNameResult,
-        packingType: packingTypeResult,
+        packingType: packagingTypeId,
         packSize: packSizeResult,
         netWeight: netWeightResult,
         grossWeight: grossWeightResult,

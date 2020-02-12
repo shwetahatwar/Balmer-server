@@ -28,6 +28,15 @@ exports.create = async (req, res) => {
     console.log("Line 26", materialData);
   });
   
+  await MaterialInward.findAll({
+    where: { materialCode: materialCode }
+  })
+  .then(data => {
+    materialData = data[0]["dataValues"]["id"];
+    // console.log(data[0]["dataValues"]["id"]);
+    // res.send(data);
+    console.log("Line 26", materialData);
+  });
 
   var serialNumberId = Date.now() + "#" + req.body.materialCode + "#" + req.body.batchNumber;
   //Create a MaterialInward

@@ -2,7 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Material = sequelize.define("material", {
     materialType: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     materialCode: {
@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     packingType: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     packSize: {
@@ -54,6 +54,48 @@ module.exports = (sequelize, DataTypes) => {
       allowNull:true
     }
     
+  }),
+
+  MaterialType = sequelize.define("materialtype", {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    status:{
+      type:DataTypes.BOOLEAN,
+      allowNull:false
+    },
+    createdBy:{
+      type:DataTypes.INTEGER,
+      allowNull:true
+    },
+    updatedBy:{
+      type:DataTypes.INTEGER,
+      allowNull:true
+    }
+    
+  }),
+  
+  PackagingType = sequelize.define("packagingtype", {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    status:{
+      type:DataTypes.BOOLEAN,
+      allowNull:false
+    },
+    createdBy:{
+      type:DataTypes.INTEGER,
+      allowNull:true
+    },
+    updatedBy:{
+      type:DataTypes.INTEGER,
+      allowNull:true
+    }
+    
   });
+  Material.belongsTo(MaterialType, {foreignKey: 'materialType',onDelete: 'CASCADE'});
+  Material.belongsTo(PackagingType, {foreignKey: 'packingType',onDelete: 'CASCADE'})
   return Material;
 };

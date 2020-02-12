@@ -1,6 +1,8 @@
 const db = require("../models");
 const Material = db.materials;
 const Op = db.Sequelize.Op;
+const MaterialType = db.materialtypes;
+const PackagingType = db.packagingtypes;
 
 // Create and Save a new material
 exports.create = (req, res) => {
@@ -48,7 +50,15 @@ exports.findAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
   console.log();
-  Material.findAll({ where: req.query })
+  Material.findAll({ 
+    where: req.query,
+    include: [{
+      model: MaterialType
+    },
+    {
+      model:PackagingType
+    }] 
+  })
   .then(data => {
     res.send(data);
   })
