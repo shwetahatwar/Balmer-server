@@ -18,11 +18,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull:false
     },
     createdBy:{
-      type:DataTypes.INTEGER,
+      type:DataTypes.STRING,
       allowNull:true
     },
     updatedBy:{
-      type:DataTypes.INTEGER,
+      type:DataTypes.STRING,
       allowNull:true
     }
   }),
@@ -69,11 +69,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull:false
     },
     createdBy:{
-      type:DataTypes.INTEGER,
+      type:DataTypes.STRING,
       allowNull:true
     },
     updatedBy:{
-      type:DataTypes.INTEGER,
+      type:DataTypes.STRING,
       allowNull:true
     }
     
@@ -93,11 +93,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull:false
     },
     createdBy:{
-      type:DataTypes.INTEGER,
+      type:DataTypes.STRING,
       allowNull:true
     },
     updatedBy:{
-      type:DataTypes.INTEGER,
+      type:DataTypes.STRING,
       allowNull:true
     }
     

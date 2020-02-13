@@ -37,8 +37,8 @@ exports.uploadMaterialMaster = async (req,res) =>{
         const materialtype = {
           name: materialTypeResult,
           status:true,
-          createdBy:1,
-          updatedBy:1
+          createdBy:"nikhil",
+          updatedBy:"nikhil"
         };
 
         // Save MaterialInward in the database
@@ -89,8 +89,8 @@ exports.uploadMaterialMaster = async (req,res) =>{
         const packagingType = {
           name: packingTypeResult,
           status:true,
-          createdBy:1,
-          updatedBy:1
+          createdBy:"nikhil",
+          updatedBy:"nikhil"
         };
 
         // Save MaterialInward in the database
@@ -144,8 +144,8 @@ exports.uploadMaterialMaster = async (req,res) =>{
         tareWeight: tareWeightResult,
         UOM: uomResult,
         status: true,
-        createdBy: req.user.username,
-        updatedBy: req.user.username
+        createdBy: "nikhil",
+        updatedBy: "nikhil"
       };
 
       Material.create(material)
@@ -170,8 +170,8 @@ exports.uploadUserMaster = async (req,res) =>{
   const role = {
       name: "Admin",
       status:true,
-      createdBy:1,
-      updatedBy:1
+      createdBy:"nikhil",
+      updatedBy:"nikhil"
     };
 
     var roleData;
@@ -186,8 +186,8 @@ exports.uploadUserMaster = async (req,res) =>{
         roleId: roleData,
         employeeId:1004,
         designation:"Developer",
-        createdBy:1,
-        updatedBy:1
+        createdBy:"nikhil",
+        updatedBy:"nikhil"
       };
 
       // Save User in the database

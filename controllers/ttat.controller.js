@@ -29,12 +29,14 @@ exports.create = (req, res) => {
     updatedBy:req.user.username
   };
 
+
   // Save ttat in the database
   Ttat.create(ttat)
     .then(data => {
       res.send(data);
     })
     .catch(err => {
+      console.log("Line 39",err);
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the ttat."
