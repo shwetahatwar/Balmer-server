@@ -3,7 +3,8 @@ module.exports = (sequelize, DataTypes) => {
   const PackagingType = sequelize.define("packagingtype", {
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     status:{
       type:DataTypes.BOOLEAN,

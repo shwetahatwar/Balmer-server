@@ -14,11 +14,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     batchNumber:{
       type:DataTypes.STRING,
-      allowNull:false
+      allowNull:false,
     },
     serialNumber:{
       type:DataTypes.STRING,
-      allowNull:false
+      allowNull:false,
+      unique: true
     },
     isScrapped:{
       type:DataTypes.BOOLEAN,
@@ -54,7 +55,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     materialCode: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     materialDescription: {
       type: DataTypes.STRING,

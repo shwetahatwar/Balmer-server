@@ -3,7 +3,8 @@ module.exports = (sequelize, DataTypes) => {
   const MaterialType = sequelize.define("materialtype", {
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     status:{
       type:DataTypes.BOOLEAN,

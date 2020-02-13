@@ -3,7 +3,8 @@ module.exports = (sequelize, DataTypes) => {
   const Depo = sequelize.define("depo", {
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     location:{
       type: DataTypes.STRING,

@@ -45,7 +45,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     serialNumber:{
       type:DataTypes.STRING,
-      allowNull:false
+      allowNull:false,
+      unique: true
     },
     isScrapped:{
       type:DataTypes.BOOLEAN,

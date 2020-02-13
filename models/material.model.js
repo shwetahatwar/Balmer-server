@@ -7,7 +7,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     materialCode: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     materialDescription: {
       type: DataTypes.STRING,
@@ -59,7 +60,8 @@ module.exports = (sequelize, DataTypes) => {
   MaterialType = sequelize.define("materialtype", {
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     status:{
       type:DataTypes.BOOLEAN,
@@ -79,7 +81,8 @@ module.exports = (sequelize, DataTypes) => {
   PackagingType = sequelize.define("packagingtype", {
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     status:{
       type:DataTypes.BOOLEAN,

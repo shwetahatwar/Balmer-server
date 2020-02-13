@@ -31,7 +31,8 @@ module.exports = (sequelize, DataTypes) => {
   DispatchSlip = sequelize.define("dispatchslip", {
     dispatchSlipNumber: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     truckId:{
       type:DataTypes.INTEGER,

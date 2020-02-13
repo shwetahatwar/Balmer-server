@@ -57,7 +57,7 @@ exports.findAll = (req, res) => {
     },
     {
       model:PackagingType
-    }] 
+    }]
   })
   .then(data => {
     res.send(data);

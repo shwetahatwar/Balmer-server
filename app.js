@@ -7,6 +7,7 @@ var winston = require('./config/winston');
 var bodyParser = require('body-parser');
 var jwt = require("jsonwebtoken");
 const cors = require("cors");
+var encodeUrl = require('encodeurl')
 
 var materialinwardRouter = require('./routes/materialinward.routes');
 var usersRouter = require('./routes/user.routes');
@@ -37,11 +38,11 @@ const app = express();
 
 // app.use(cors(corsOptions));
 app.use(function (req, res, next) {
-    //Enabling CORS
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-    next();
+  //Enabling CORS
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+  next();
 });
 
 // parse requests of content-type - application/json
@@ -50,8 +51,10 @@ app.use(bodyParser.json());
 //logger
 app.use(morgan('combined', { stream: winston.stream }));
 
+
+
 // parse requests of content-type - application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(function(req, res, next) {
   if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {

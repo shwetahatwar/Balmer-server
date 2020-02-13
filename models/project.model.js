@@ -3,18 +3,19 @@ module.exports = (sequelize, DataTypes) => {
   const Project = sequelize.define("project", {
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     auditors:{
       type: DataTypes.STRING,
       allowNull: false
     },
     start:{
-      type:DataTypes.STRING,
+      type:DataTypes.DATE,
       allowNull:true
     },
     end:{
-      type:DataTypes.STRING,
+      type:DataTypes.DATE,
       allowNull:true
     },
     status:{

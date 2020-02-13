@@ -3,7 +3,8 @@ module.exports = (sequelize, DataTypes) => {
   const DispatchSlip = sequelize.define("dispatchslip", {
     dispatchSlipNumber: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     truckId:{
       type:DataTypes.INTEGER,
@@ -37,11 +38,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     inTime: {
-      type: DataTypes.STRING,
+      type: DataTypes.DATE,
       allowNull: false
     },
     outTime: {
-      type: DataTypes.STRING,
+      type: DataTypes.DATE,
       allowNull: false
     },
     driver: {
@@ -49,23 +50,23 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     loadStartTime: {
-      type: DataTypes.STRING,
+      type: DataTypes.DATE,
       allowNull: false
     },
     loadEndTime: {
-      type: DataTypes.STRING,
+      type: DataTypes.DATE,
       allowNull: false
     },
     loadingTime: {
-      type: DataTypes.STRING,
+      type: DataTypes.DATE,
       allowNull: false
     },
     inOutTime: {
-      type: DataTypes.STRING,
+      type: DataTypes.DATE,
       allowNull: false
     },
     idleTime:{
-      type:DataTypes.STRING,
+      type:DataTypes.DATE,
       allowNull:false
     },
     createdBy:{
@@ -82,7 +83,8 @@ module.exports = (sequelize, DataTypes) => {
   Depot = sequelize.define("depot", {
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     location:{
       type: DataTypes.STRING,
