@@ -23,8 +23,8 @@ exports.create = (req, res) => {
     materialCode:req.body.materialCode,
     serialNumber:req.body.serialNumber,
     status:true,
-    createdBy:req.user.id,
-    updatedBy:req.user.id
+    createdBy:req.user.username,
+    updatedBy:req.user.username
   };
 
   // Save ProjectAuditItems in the database

@@ -66,6 +66,7 @@ app.use(function(req, res, next) {
         }
       }).then(data=>{
         // console.log("Line 65",data[0]["dataValues"]);
+        if(data[0] != null || data[0] != undefined)
         req.user = data[0]["dataValues"]
       });
       next();

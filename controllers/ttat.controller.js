@@ -25,8 +25,8 @@ exports.create = (req, res) => {
     loadingTime: req.body.loadingTime,
     inOutTime: req.body.inOutTime,
     idleTime: req.body.idleTime,
-    createdBy:req.user.id,
-    updatedBy:req.user.id
+    createdBy:req.user.username,
+    updatedBy:req.user.username
   };
 
   // Save ttat in the database

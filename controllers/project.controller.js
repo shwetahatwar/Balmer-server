@@ -21,8 +21,8 @@ exports.create = (req, res) => {
       start: req.body.start,
       end: req.body.end,
       status:true,
-      createdBy:req.user.id,
-      updatedBy:req.user.id
+      createdBy:req.user.username,
+      updatedBy:req.user.username
   };
   // Save material in the database
   Project.create(project)
@@ -47,8 +47,8 @@ exports.create = (req, res) => {
           batchNumber:batchNumber,
           serialNumber:serialNumber,
           status:true,
-          createdBy:req.user.id,
-          updatedBy:req.user.id
+          createdBy:req.user.username,
+          updatedBy:req.user.username
         });
       }
     })

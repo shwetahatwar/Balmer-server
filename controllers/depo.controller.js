@@ -18,8 +18,8 @@ exports.create = (req, res) => {
     name: req.body.name,
     location:req.body.location,
     status:true,
-    createdBy:req.body.createdBy,
-    updatedBy:req.body.updatedBy
+    createdBy:req.user.username,
+    updatedBy:req.user.username
   };
 
   // Save MaterialInward in the database

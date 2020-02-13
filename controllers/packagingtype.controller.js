@@ -17,8 +17,8 @@ exports.create = (req, res) => {
   const packagingtype = {
     name: req.body.name,
     status:true,
-    createdBy:req.user.id,
-    updatedBy:req.user.id
+    createdBy:req.user.username,
+    updatedBy:req.user.username
   };
 
   // Save MaterialInward in the database

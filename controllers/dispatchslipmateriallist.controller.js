@@ -23,8 +23,8 @@ exports.create = (req, res) => {
     batchNumber: req.body.batchNumber,
     numberOfPacks: req.body.numberOfPacks,
     materialCode:req.body.materialCode,
-    createdBy:req.user.id,
-    updatedBy:req.user.id
+    createdBy:req.user.username,
+    updatedBy:req.user.username
   };
 
   // Save DispatchSlipMateriallist in the database

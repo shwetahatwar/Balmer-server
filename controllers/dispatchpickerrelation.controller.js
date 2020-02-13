@@ -34,8 +34,8 @@ exports.create = async (req, res) => {
   const dispatchpickerrelation = {
     dispatchId: req.body.dispatchId,
     userId:userId,
-    createdBy:req.user.id,
-    updatedBy:req.user.id
+    createdBy:req.user.username,
+    updatedBy:req.user.username
   };
 
   // Save MaterialInward in the database

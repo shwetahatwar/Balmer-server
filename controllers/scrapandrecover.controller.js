@@ -20,8 +20,8 @@ exports.create = (req, res) => {
     materialInwardId: req.body.id,
     comments:req.body.comments,
     transactionType:req.body.transactionType,
-    createdBy:req.user.id,
-    updatedBy:req.user.id
+    createdBy:req.user.username,
+    updatedBy:req.user.username
   };
 
   // Save MaterialInward in the database
@@ -34,12 +34,12 @@ exports.create = (req, res) => {
         console.log("Line 34",materialInwardData);
         InventoryTransaction.create({
           transactionTimestamp: Date.now(),
-          performedBy:req.user.id,
+          performedBy:req.user.username,
           transactionType:req.body.transactionType,
           materialInwardId:req.body.id,
           batchNumber: req.body.batchNumber,
-          createdBy:req.user.id,
-          updatedBy:req.user.id
+          createdBy:req.user.username,
+          updatedBy:req.user.username
         })
         .then(data => {
           console.log(data);

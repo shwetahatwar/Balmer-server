@@ -22,8 +22,8 @@ exports.create = (req, res) => {
     role: req.body.role,
     employeeId:req.body.employeeId,
     designation:req.body.designation,
-    createdBy:req.user.id,
-    updatedBy:req.user.id
+    createdBy:req.user.username,
+    updatedBy:req.user.username
   };
 
   // Save User in the database

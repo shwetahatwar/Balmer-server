@@ -16,8 +16,8 @@ exports.create = (req, res) => {
   const role = {
     name: req.body.name,
     status:true,
-    createdBy:req.user.id,
-    updatedBy:req.user.id
+    createdBy:req.user.username,
+    updatedBy:req.user.username
   };
 
   

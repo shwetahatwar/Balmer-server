@@ -28,8 +28,39 @@ exports.create = async (req, res) => {
     console.log("Line 26", materialData);
   });
   
+  var serialNumberId;
+  await MaterialInward.findAll({
+    where: { 
+      materialCode: req.body.materialCode,
+      batchNumber: req.body.batchNumber
+    },
+    order: [
+      ['id', 'DESC'],
+    ],
+  })
+  .then(data => {
+    console.log("Line 42", data);
+    if(data[0] != null || data[0] != undefined){
+      serialNumberId = data[0]["dataValues"]["serialNumber"];
+      serialNumberId = serialNumberId.substring(serialNumberId.length - 6, serialNumberId.length);
+      serialNumberId = (parseInt(serialNumberId) + 1).toString();
+      var str = '' + serialNumberId;
+      while (str.length < 6) {
+        str = '0' + str;
+      }
+      serialNumberId = req.body.materialCode + "#" + req.body.batchNumber + "#" + str;
+      console.log("Line 51 Serial Number", str);
+    }
+    else{
+      serialNumberId = req.body.materialCode + "#" + req.body.batchNumber + "#" + "000001";
+    }
+  })
+  .catch(err=>{
+    console.log("Line 54", err);
+    serialNumberId = req.body.materialCode + "#" + req.body.batchNumber + "#" + "000001";
+  });
 
-  var serialNumberId = Date.now() + "#" + req.body.materialCode + "#" + req.body.batchNumber;
+  // var serialNumberId = Date.now() + "#" + req.body.materialCode + "#" + req.body.batchNumber;
   //Create a MaterialInward
   const materialinward = {
     materialId: materialData,
@@ -40,24 +71,24 @@ exports.create = async (req, res) => {
     isInward:true,
     dispatchSlipId:null,
     status:true,
-    createdBy:req.user.id,
-    updatedBy:req.user.id
+    createdBy:req.user.username,
+    updatedBy:req.user.username
   };
-  console.log("Line 45",materialinward);
+  console.log("Line 67",materialinward);
   // Save MaterialInward in the database
   await MaterialInward.create(materialinward)
-    .then(data => {
-      InventoryTransaction.create({
+    .then(async data => {
+      await InventoryTransaction.create({
         transactionTimestamp: Date.now(),
-        performedBy:req.user.id,
+        performedBy:req.user.username,
         transactionType:"Inward",
         materialInwardId:data["id"],
         batchNumber: req.body.batchNumber,
-        createdBy:req.user.id,
-        updatedBy:req.user.id
+        createdBy:req.user.username,
+        updatedBy:req.user.username
       })
       .then(data => {
-        console.log(data);
+        // console.log(data);
       })
       .catch(err => {
         console.log(err);
@@ -74,10 +105,7 @@ exports.create = async (req, res) => {
 
 // Retrieve all MaterialInwards from the database.
 exports.findAll = (req, res) => {
-  // console.log(req)
-  const title = req.params.title;
-  var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
-
+  console.log("Line 108",req.query);
   MaterialInward.findAll({ 
     where: req.query,
     include: [{model: Material}] 
@@ -224,8 +252,8 @@ exports.updateScrapAndRecover = (req, res) => {
           materialInwardId: req.body.id,
           comments:req.body.comments,
           transactionType:req.body.transactionType,
-          createdBy:req.user.id,
-          updatedBy:req.user.id
+          createdBy:req.user.username,
+          updatedBy:req.user.username
         };
 
         // Save MaterialInward in the database

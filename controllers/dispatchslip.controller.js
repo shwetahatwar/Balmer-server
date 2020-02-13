@@ -47,8 +47,8 @@ exports.create = async (req, res) => {
       truckId: truckData,
       depoId: depoData,
       status:true,
-      createdBy:req.user.id,
-      updatedBy:req.user.id
+      createdBy:req.user.username,
+      updatedBy:req.user.username
     },{transaction: t})
     .then(async (dispatchSlip)=>{
       var counter=0;
@@ -103,8 +103,8 @@ exports.create = async (req, res) => {
                     batchNumber: dups[i],
                     numberOfPacks:counter,
                     materialCode:req.body.material[i]["materialCode"],
-                    createdBy:req.user.id,
-                    updatedBy:req.user.id
+                    createdBy:req.user.username,
+                    updatedBy:req.user.username
                   }
                   DispatchSlipMaterialList.create(dispatchSlipMaterialListData)
                   .then(dispatchSlipMaterialList=>{
@@ -128,8 +128,8 @@ exports.create = async (req, res) => {
                     batchNumber: dups[i],
                     numberOfPacks:counter,
                     materialCode:req.body.material[i]["materialCode"],
-                    createdBy:req.user.id,
-                    updatedBy:req.user.id
+                    createdBy:req.user.username,
+                    updatedBy:req.user.username
                   }
                   DispatchSlipMaterialList.create(dispatchSlipMaterialListData)
                   .then(dispatchSlipMaterialList=>{
@@ -301,8 +301,8 @@ exports.postDispatchSlipMaterialLists = async (req, res) => {
     const dispatchpickingmateriallist = {
       dispatchId: req.params.dispatchId,
       userId:req.body.userId,
-      createdBy:req.user.id,
-      updatedBy:req.user.id,
+      createdBy:req.user.username,
+      updatedBy:req.user.username,
       materialCode:req.body.material[i].materialCode,
       batchNumber:req.body.material[i].batchNumber,
       serialNumber:req.body.material[i].serialNumber
@@ -400,9 +400,9 @@ exports.postDispatchSlipPickingMaterialLists = async (req, res) => {
     // Create a MaterialInward
     const dispatchpickingmateriallist = {
       dispatchId: req.body.dispatchId,
-      userId:req.user.id,
-      createdBy:req.user.id,
-      updatedBy:req.user.id,
+      userId:req.user.username,
+      createdBy:req.user.username,
+      updatedBy:req.user.username,
       materialCode:req.body.material[i].materialCode,
       batchNumber:req.body.material[i].batchNumber,
       serialNumber:req.body.material[i].serialNumber
@@ -501,8 +501,8 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
     const dispatchloadingmateriallist = {
       dispatchId: req.body.dispatchId,
       userId:req.body.userId,
-      createdBy:req.user.id,
-      updatedBy:req.user.id,
+      createdBy:req.user.username,
+      updatedBy:req.user.username,
       materialCode:req.body.material[i].materialCode,
       batchNumber:req.body.material[i].batchNumber,
       serialNumber:req.body.material[i].serialNumber

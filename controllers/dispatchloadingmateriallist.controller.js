@@ -17,8 +17,8 @@ exports.create = (req, res) => {
   const dispatchloadingmateriallist = {
     dispatchId: req.body.dispatchId,
     userId:req.body.userId,
-    createdBy:req.user.id,
-    updatedBy:req.user.id,
+    createdBy:req.user.username,
+    updatedBy:req.user.username,
     materialCode:req.body.materialCode,
     batchNumber:req.body.batchNumber,
     serialNumber:req.body.serialNumber
