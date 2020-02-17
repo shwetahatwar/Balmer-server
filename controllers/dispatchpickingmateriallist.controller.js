@@ -19,29 +19,33 @@ exports.create = (req, res) => {
   console.log(req.body.material.length);
   for(var i=0;i<req.body.material.length;i++){
     console.log(req.body.material[i]);
-    // Create a MaterialInward
+    // Create a DispatchPickingMaterialList
     const dispatchpickingmateriallist = {
       dispatchId: req.body.dispatchId,
       userId:req.body.userId,
       createdBy:req.user.username,
       updatedBy:req.user.username,
-      materialCode:req.body.materialCode,
-      batchNumber:req.body.batchNumber,
-      serialNumber:req.body.serialNumber
+      materialCode:req.body.material[i].materialCode,
+      batchNumber:req.body.material[i].batchNumber,
+      serialNumber:req.body.material[i].serialNumber
     };
 
-    // Save MaterialInward in the database
+    // Save DispatchPickingMaterialList in the database
     DispatchPickingMaterialList.create(dispatchpickingmateriallist)
     .then(data => {
-      res.send(data);
+      // res.send(data);
     })
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the MaterialInward."
+          err.message || "Some error occurred while creating the DispatchPickingMaterialList."
       });
     });
   }
+  res.status(500).send({
+    message:
+      "DispatchPickingMaterialList updated."
+  });
   
 };
 
@@ -55,7 +59,7 @@ exports.getAll = (req,res) =>{
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving materialinwards."
+          err.message || "Some error occurred while retrieving DispatchPickingMaterialList."
       });
     });
 };
@@ -69,94 +73,11 @@ exports.getById = (req,res) => {
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving MaterialInward with id=" + id
+        message: "Error retrieving DispatchPickingMaterialList with id=" + id
       });
     });
 }
 
 exports.getAllorCreateNew = async (req,res) =>{
-  // await DispatchPickingMaterialList.findAll({
-  //   where: { 
-  //     dispatchId: req.body.dispatchId,
-  //     userId: req.body.userId
-  //   }
-  // })
-  // .then(async data => {
-      
-  //     if(data[0] != null){
-  //       console.log("Get Data");
-  //       res.send(data);
-  //     }
-  //     else{
-  //       console.log("No Data");
-  //       await DispatchSlipMaterialList.findAll({
-  //         where: {
-  //           dispatchSlipId: req.body.dispatchId
-  //         }
-  //       })
-  //       .then(async data1=>{
-  //         console.log(data1[0]["numberOfPacks"]);
-  //         for(var i=0;i<data1.length;i++){
-  //           await MaterialInward.findAll({
-  //             where:{
-  //               batchNumber:data1[i]["batchNumber"],
-  //               materialCode:data1[i]["materialCode"]
-  //             }
-  //           })
-  //           .then(async data2=>{
-  //             console.log("Line 101",data2.length);
-  //             for(var k=0;k<data2.length;k++){
-  //               if(data1[i]["numberOfPacks"] > k){
-  //                 const dispatchpickingmateriallist = {
-  //                   dispatchId: req.body.dispatchId,
-  //                   userId:req.body.userId,
-  //                   createdBy:req.body.userId,
-  //                   updatedBy:req.body.userId,
-  //                   materialCode:data2[k]["materialCode"],
-  //                   batchNumber:data2[k]["batchNumber"],
-  //                   serialNumber:data2[k]["serialNumber"]
-  //                 };
-
-  //                 // Save MaterialInward in the database
-  //                 await DispatchPickingMaterialList.create(dispatchpickingmateriallist)
-  //                 .then(data3 => {
-  //                   // res.send(data3);
-  //                 })
-  //                 .catch(err => {
-  //                   // res.status(500).send({
-  //                   //   message:
-  //                   //     err.message || "Some error occurred while creating the MaterialInward."
-  //                   // });
-  //                 });
-  //               }
-  //             }
-  //             // res.send(data2);  
-  //           })
-  //           .catch(err => {
-  //             res.send(err);
-  //           });
-  //         }
-  //         // res.send(data1);
-  //       })
-  //       .catch(err=>{
-  //         console.log(err);
-  //         res.send(err);
-  //       })
-  //       await DispatchPickingMaterialList.findAll({
-  //         where: {
-  //           dispatchId: req.body.dispatchId
-  //         }
-  //       })
-  //       .then(resultData =>{
-  //         res.send(resultData);
-  //       })
-  //       // res.send("No Data");
-  //     }
-  //   })
-  //   .catch(err => {
-  //     res.status(500).send({
-  //       message:
-  //         err.message || "Some error occurred while retrieving materialinwards."
-  //     });
-  //   });
+  
 };

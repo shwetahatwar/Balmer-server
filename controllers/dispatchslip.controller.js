@@ -388,21 +388,14 @@ exports.getDispatchSlipPickingMaterialLists = (req, res) => {
 
 exports.postDispatchSlipPickingMaterialLists = async (req, res) => {
   console.log(req.body);
-  // Validate request
-  // if (!req.body.dispatchId) {
-  //   res.status(400).send({
-  //     message: "Content can not be empty!"
-  //   });
-  //   return;
-  // }
 
   console.log(req.body.material.length);
   for(var i=0;i<req.body.material.length;i++){
     console.log(req.body.material[i]);
     // Create a MaterialInward
     const dispatchpickingmateriallist = {
-      dispatchId: req.body.dispatchId,
-      userId:req.user.username,
+      dispatchId: req.params.dispatchId,
+      userId:1,
       createdBy:req.user.username,
       updatedBy:req.user.username,
       materialCode:req.body.material[i].materialCode,
@@ -416,10 +409,10 @@ exports.postDispatchSlipPickingMaterialLists = async (req, res) => {
       // res.send(data);
     })
     .catch(err => {
-      // res.status(500).send({
-      //   message:
-      //     err.message || "Some error occurred while creating the MaterialInward."
-      // });
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating the MaterialInward."
+      });
     });
   }
   res.status(200).send({
@@ -502,7 +495,7 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
     // Create a Material picking
     const dispatchloadingmateriallist = {
       dispatchId: req.body.dispatchId,
-      userId:req.body.userId,
+      userId:1,
       createdBy:req.user.username,
       updatedBy:req.user.username,
       materialCode:req.body.material[i].materialCode,
@@ -516,10 +509,10 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
       // res.send(data);
     })
     .catch(err => {
-      // res.status(500).send({
-      //   message:
-      //     err.message || "Some error occurred while creating the MaterialInward."
-      // });
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating the MaterialInward."
+      });
     });
   }
   res.status(200).send({
