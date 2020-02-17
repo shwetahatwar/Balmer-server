@@ -7,6 +7,6 @@ router.post("/", users.loginRequired,dispatchpickerrelations.create);
 router.get("/", users.loginRequired,dispatchpickerrelations.getAll);
 router.get("/:id", users.loginRequired,dispatchpickerrelations.getById);
 router.get("/dispatchslips/:dispatchId/users", users.loginRequired,dispatchpickerrelations.getUsersbyDispatchSlip);
-router.get("/users/:userId/dispatchslips", users.loginRequired,dispatchpickerrelations.getUsersbyDispatchSlip);
+router.get("/users/:userId/dispatchslips", users.loginRequired,dispatchpickerrelations.getDispatchSlipbyUser);
 
 module.exports = router;

@@ -8,10 +8,10 @@ router.get("/", users.loginRequired,dispatchslips.findAll);
 router.get("/:id", users.loginRequired,dispatchslips.findOne);
 router.put("/:id", users.loginRequired,dispatchslips.update);
 
-router.get("/:dispatchId/dispatchslipmaterials", users.loginRequired,dispatchslips.getDispatchSlipMaterialLists);
-router.post("/:dispatchId/dispatchslipmaterials", users.loginRequired,dispatchslips.postDispatchSlipMaterialLists);
-router.get("/:dispatchId/dispatchslipmaterials/:id", users.loginRequired,dispatchslips.getDispatchSlipMaterialList);
-router.put("/:dispatchId/dispatchslipmaterials/:id", users.loginRequired,dispatchslips.putDispatchSlipMaterialList);
+router.get("/:dispatchSlipId/dispatchslipmaterials", users.loginRequired,dispatchslips.getDispatchSlipMaterialLists);
+router.post("/:dispatchSlipId/dispatchslipmaterials", users.loginRequired,dispatchslips.postDispatchSlipMaterialLists);
+router.get("/:dispatchSlipId/dispatchslipmaterials/:id", users.loginRequired,dispatchslips.getDispatchSlipMaterialList);
+router.put("/:dispatchSlipId/dispatchslipmaterials/:id", users.loginRequired,dispatchslips.putDispatchSlipMaterialList);
 
 router.get("/:dispatchId/dispatchslippickedmaterials", users.loginRequired,dispatchslips.getDispatchSlipPickingMaterialLists);
 router.post("/:dispatchId/dispatchslippickedmaterials", users.loginRequired,dispatchslips.postDispatchSlipPickingMaterialLists);

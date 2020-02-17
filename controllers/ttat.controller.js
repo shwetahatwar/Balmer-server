@@ -53,17 +53,17 @@ exports.update = (req, res) => {
     .then(num => {
       if (num == 1) {
         res.send({
-          message: "Role was updated successfully."
+          message: "Ttat was updated successfully."
         });
       } else {
         res.send({
-          message: `Cannot update Role with id=${id}. Maybe Role was not found or req.body is empty!`
+          message: `Cannot update Ttat with id=${id}. Maybe Ttat was not found or req.body is empty!`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error updating Role with id=" + id
+        message: "Error updating Ttat with id=" + id
       });
     });
 };

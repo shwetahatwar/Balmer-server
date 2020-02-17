@@ -1,5 +1,6 @@
 const db = require("../models");
 const DispatchLoaderRelation = db.dispatchloaderrelations;
+const DispatchSlip = db.dispatchslips;
 const Op = db.Sequelize.Op;
 const User = db.users;
 
@@ -104,11 +105,34 @@ exports.update = (req, res) => {
 };
 
 exports.getUsersbyDispatchSlip = (req,res) =>{
+  var userListArray=[];
   DispatchLoaderRelation.findAll({
-    where:req.params
+    where:req.params,
+    include: [{
+      model: Ttat
+    }]
   })
-  .then(data => {
-      res.send(data);
+  .then(async data => {
+      // res.send(data);
+      for(var i = 0; i< data.length;i++){
+        console.log("value for i: ",data[i]["dataValues"]["userId"]);
+        await User.findAll({
+          where:{
+            id:data[i]["dataValues"]["userId"]
+          }
+        })
+        .then(userData=>{
+          userListArray.push(userData[0]["dataValues"]);
+          console.log("Line 139",userListArray);
+        })
+        .catch(err => {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while retrieving materialinwards."
+          });
+        })
+      }
+      res.send(userListArray);
     })
     .catch(err => {
       res.status(500).send({
@@ -119,11 +143,38 @@ exports.getUsersbyDispatchSlip = (req,res) =>{
 };
 
 exports.getDispatchSlipbyUser = (req,res) =>{
+  var dispatchListArray=[];
   DispatchLoaderRelation.findAll({
     where:req.params
   })
-  .then(data => {
-      res.send(data);
+  .then(async data => {
+      // res.send(data);
+      console.log("Data: ",data.length);
+      for(var i = 0; i< data.length;i++){
+        console.log("value for i: ",data[i]["dataValues"]["dispatchId"]);
+        await DispatchSlip.findAll({
+          where :{
+            id:data[i]["dataValues"]["dispatchId"]
+          },
+          include: [{
+            model: Ttat
+          },
+          {
+            model: Depot
+          }] 
+        })
+        .then(dispatchSlipData => {
+          dispatchListArray.push(dispatchSlipData[0]["dataValues"]);
+          console.log("Line 139",dispatchListArray);
+        })
+        .catch(err=>{
+          res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving materialinwards."
+          });
+        })
+      }
+      res.send(dispatchListArray);
     })
     .catch(err => {
       res.status(500).send({

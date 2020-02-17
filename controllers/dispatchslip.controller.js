@@ -52,6 +52,7 @@ exports.create = async (req, res) => {
     },{transaction: t})
     .then(async (dispatchSlip)=>{
       var counter=0;
+      console.log("Line 55", req.body.material.length);
       for(var i=0;i<req.body.material.length;i++)
       {
         var checkMaterialQty;
@@ -90,7 +91,7 @@ exports.create = async (req, res) => {
                 var batchQuantity = await MaterialInward.count({
                   where:{
                     'materialCode':req.body.material[i].materialCode,
-                    'batchNumber':dups[i]
+                    'batchNumber':dups[s]
                   }
                 });
                 console.log("Line 93 batchQuantity :",batchQuantity);
@@ -100,7 +101,7 @@ exports.create = async (req, res) => {
                   console.log("Line 96",req.body.material[i]["createdBy"]);
                   const dispatchSlipMaterialListData = {
                     dispatchSlipId: dispatchSlip.id,
-                    batchNumber: dups[i],
+                    batchNumber: dups[s],
                     numberOfPacks:counter,
                     materialCode:req.body.material[i]["materialCode"],
                     createdBy:req.user.username,
@@ -269,7 +270,8 @@ exports.deleteAll = (req, res) => {
 
 // Material List
 exports.getDispatchSlipMaterialLists = (req, res) => {
-
+  // console.log("Line 272: ",req.params);
+  
   DispatchSlipMaterialList.findAll({ 
     where: req.params
   })
