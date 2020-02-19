@@ -8,6 +8,74 @@ const User = db.users;
 const Role = db.roles;
 
 exports.uploadMaterialMaster = async (req,res) =>{
+
+  //Add Roles
+  var filepath1 = './documents/templates/bulk-upload/Roles.xlsx';
+  console.log(filepath1);
+  var workbook1 = XLSX.readFile(filepath1);
+  var sheet1 = workbook1.Sheets[workbook1.SheetNames[0]];
+  var num_rows1 = xls_utils.decode_range(sheet1['!ref']).e.r;
+  var json1 = [];
+  try{
+    for(var i = 1, l = num_rows1-1; i <= l; i++){
+
+      var roleName = xls_utils.encode_cell({c:0, r:i});
+
+      var roleNameValue = sheet1[roleName];
+      console.log("Line 21",roleNameValue);
+      var roleResult = roleNameValue['v'];
+
+      const role = {
+        name: roleResult,
+        status:true,
+        createdBy:"nikhil",
+        updatedBy:"nikhil"
+      };
+
+      await Role.create(role)
+      .then(data => {
+        console.log("Line 34", data)
+        // res.send(data);
+      })
+      .catch(err => {
+        console.log("Line 37", err);
+        // res.status(500).send({
+        //   message:
+        //     err.message || "Some error occurred while creating the role."
+        // });
+      });
+    }
+  }
+  catch{
+    console.log("In Error");
+  }
+
+  //Create User
+  const user = {
+    username: "nikhil",
+    password: "briot",
+    status: "1",
+    roleId: 1,
+    employeeId:1004,
+    designation:"Developer",
+    createdBy:"nikhil",
+    updatedBy:"nikhil"
+  };
+
+  // Save User in the database
+  await User.create(user)
+  .then(data => {
+    // res.send(data);
+  })
+  .catch(err => {
+    // res.status(500).send({
+    //   message:
+    //     err.message || "Some error occurred while creating the User."
+    // });
+  });
+
+
+  //Create Material Types
   // var filepath10 = 'D:\\All Project\\Balmer Lawrie\\Test Server\\documents\\templates\\bulk-upload\\MATERIAL_MASTER.xlsx';
   var filepath10 = './documents/templates/bulk-upload/MATERIAL_MASTER.xlsx';
   console.log(filepath10);
@@ -17,7 +85,7 @@ exports.uploadMaterialMaster = async (req,res) =>{
   var json10 = [];
   try{
     for(var i = 1, l = num_rows10-1; i <= l; i++){
-    // for(var i = 1, l = 1; i <= l; i++){
+      // for(var i = 1, l = 1; i <= l; i++){
       var materialTypeName = xls_utils.encode_cell({c:1, r:i});
       var materialTypeValue = sheet10[materialTypeName];
       var materialTypeResult = materialTypeValue['v'];
@@ -43,16 +111,16 @@ exports.uploadMaterialMaster = async (req,res) =>{
 
         // Save MaterialInward in the database
         await MaterialType.create(materialtype)
-          .then(data => {
-            console.log("Line 47",data.id);
-            materialTypeId = data.id
-          })
-          .catch(err => {
-            // res.status(500).send({
-            //   message:
-            //     err.message || "Some error occurred while creating the MaterialInward."
-            // });
-          });
+        .then(data => {
+          console.log("Line 47",data.id);
+          materialTypeId = data.id
+        })
+        .catch(err => {
+          // res.status(500).send({
+          //   message:
+          //     err.message || "Some error occurred while creating the MaterialInward."
+          // });
+        });
       });
 
       var materialCodeName = xls_utils.encode_cell({c:2, r:i});
@@ -95,16 +163,16 @@ exports.uploadMaterialMaster = async (req,res) =>{
 
         // Save MaterialInward in the database
         await PackagingType.create(packagingType)
-          .then(data => {
-            // packagingTypeId.send(data);
-            packagingTypeId = data.id
-          })
-          .catch(err => {
-            // res.status(500).send({
-            //   message:
-            //     err.message || "Some error occurred while creating the MaterialInward."
-            // });
-          });
+        .then(data => {
+          // packagingTypeId.send(data);
+          packagingTypeId = data.id
+        })
+        .catch(err => {
+          // res.status(500).send({
+          //   message:
+          //     err.message || "Some error occurred while creating the MaterialInward."
+          // });
+        });
       });
 
       var packSizeName = xls_utils.encode_cell({c:6, r:i});
@@ -148,7 +216,7 @@ exports.uploadMaterialMaster = async (req,res) =>{
         updatedBy: "nikhil"
       };
 
-      Material.create(material)
+      await Material.create(material)
       .then(data => {
         console.log(data);
       })
@@ -157,9 +225,9 @@ exports.uploadMaterialMaster = async (req,res) =>{
       });
     }
     res.status(200).send({
-        message:
-          "Uploaded Sucessfully"
-      });
+      message:
+        "Uploaded Sucessfully"
+    });
   }
   catch{
 
@@ -209,5 +277,9 @@ exports.uploadUserMaster = async (req,res) =>{
           err.message || "Some error occurred while creating the role."
       });
     });
+
+}
+
+exports.uploadUserMaster = async (req,res) =>{
 
 }

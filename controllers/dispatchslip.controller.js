@@ -47,6 +47,7 @@ exports.create = async (req, res) => {
       truckId: truckData,
       depoId: depoData,
       status:true,
+      dispatchSlipStatus:"Active",
       createdBy:req.user.username,
       updatedBy:req.user.username
     },{transaction: t})
@@ -98,7 +99,7 @@ exports.create = async (req, res) => {
                 console.log("Line 94 counter :",counter);
                 if(batchQuantity >= counter){
                   console.log("Line 95",req.body.material[i]["materialCode"]);
-                  console.log("Line 96",req.body.material[i]["createdBy"]);
+                  // console.log("Line 96",req.body.material[i]["createdBy"]);
                   const dispatchSlipMaterialListData = {
                     dispatchSlipId: dispatchSlip.id,
                     batchNumber: dups[s],
@@ -173,7 +174,7 @@ exports.findAll = (req, res) => {
     },
     {
       model: Depot
-    }] 
+    }]
   })
   .then(data => {
     res.send(data);
@@ -407,6 +408,7 @@ exports.postDispatchSlipPickingMaterialLists = async (req, res) => {
     await DispatchPickingMaterialList.create(dispatchpickingmateriallist)
     .then(data => {
       // res.send(data);
+      DispatchSlip.update()
     })
     .catch(err => {
       res.status(500).send({

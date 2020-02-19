@@ -24,6 +24,10 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.BOOLEAN,
       allowNull:false
     },
+    projectStatus:{
+      type:DataTypes.STRING,
+      allowNull:false
+    },
     createdBy:{
       type:DataTypes.STRING,
       allowNull:true

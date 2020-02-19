@@ -18,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.BOOLEAN,
       allowNull:false
     },
+    dispatchSlipStatus:{
+      type:DataTypes.STRING,
+      allowNull:false
+    },
     createdBy:{
       type:DataTypes.STRING,
       allowNull:true

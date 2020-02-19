@@ -17,9 +17,9 @@ exports.create = (req, res) => {
   var projectId;
   const project = {
       name: req.body.name,
-      auditors: req.body.auditors,
-      start: req.body.start,
-      end: req.body.end,
+      auditors: req.user.username,
+      start: 0,
+      end: 0,
       status:true,
       createdBy:req.user.username,
       updatedBy:req.user.username
@@ -100,7 +100,7 @@ exports.findOne = (req, res) => {
 // Update a Project by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
-
+  console.log(id);
   Project.update(req.body, {
     where: { id: id }
   })
