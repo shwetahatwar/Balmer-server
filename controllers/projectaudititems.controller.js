@@ -146,3 +146,95 @@ exports.deleteAll = (req, res) => {
       });
     });
 };
+
+exports.countByProject = async (req, res) => {
+  // async function newFunction{
+    var countTable=[];
+    const id = req.params.id;
+    var totalCount = 0;
+    var foundCount = 0;
+    var manuallyrecovered = 0;
+    await ProjectAuditItems.count({
+      where:{
+        'projectId':id,
+      }
+    })
+    .then(data => {
+      console.log(data);
+      // res.status(200);
+      // // res.send(data);
+      // res.status(200).send({
+      //   count:data
+      // });
+      let singleData = {
+        'total':data
+      };
+      countTable.push(singleData);
+    })
+    await ProjectAuditItems.count({
+      where:{
+        'projectId':id,
+        'status':'found'
+      }
+    })
+    .then(data => {
+      console.log(data);
+      // res.status(200);
+      // // res.send(data);
+      // res.status(200).send({
+      //   count:data
+      // });
+      let singleData = {
+        'found':data
+      };
+      countTable.push(singleData);
+    })
+    await ProjectAuditItems.count({
+      where:{
+        'projectId':id,
+        'status':'scrap'
+      }
+    })
+    .then(data => {
+      console.log(data);
+      // res.status(200);
+      // // res.send(data);
+      // res.status(200).send({
+      //   count:data
+      // });
+      let singleData = {
+        'scrap':data
+      };
+      countTable.push(singleData);
+    })
+    await ProjectAuditItems.count({
+      where:{
+        'projectId':id,
+        'status':'manually approved'
+      }
+    })
+    .then(data => {
+      console.log(data);
+      // res.status(200);
+      // // res.send(data);
+      // res.status(200).send({
+      //   count:data
+      // });
+      let singleData = {
+        'manual':data
+      };
+      countTable.push(singleData);
+      res.status(200).send({
+        countTable
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500);
+      res.send(err);
+      // res.status(500).send({
+      //   message: "Error retrieving ProjectAuditItems with Project id=" + id
+      // });
+    });
+  // }
+};

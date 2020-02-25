@@ -7,6 +7,7 @@ const PackagingType = db.packagingtypes;
 const User = db.users;
 const Role = db.roles;
 
+
 exports.uploadMaterialMaster = async (req,res) =>{
 
   //Add Roles
@@ -33,6 +34,48 @@ exports.uploadMaterialMaster = async (req,res) =>{
       };
 
       await Role.create(role)
+      .then(data => {
+        console.log("Line 34", data)
+        // res.send(data);
+      })
+      .catch(err => {
+        console.log("Line 37", err);
+        // res.status(500).send({
+        //   message:
+        //     err.message || "Some error occurred while creating the role."
+        // });
+      });
+    }
+  }
+  catch{
+    console.log("In Error");
+  }
+
+
+  //Add Packaging Type
+  var filepath2 = './documents/templates/bulk-upload/PackagingType.xlsx';
+  console.log(filepath2);
+  var workbook2 = XLSX.readFile(filepath2);
+  var sheet2 = workbook2.Sheets[workbook2.SheetNames[0]];
+  var num_rows2 = xls_utils.decode_range(sheet2['!ref']).e.r;
+  var json2 = [];
+  try{
+    for(var i = 1, l = num_rows2-1; i <= l; i++){
+
+      var packagingType = xls_utils.encode_cell({c:0, r:i});
+
+      var packagingTypeValue = sheet2[packagingType];
+      console.log("Line 21",packagingTypeValue);
+      var packagingTypeResult = packagingTypeValue['v'];
+
+      const packagingTypes = {
+        name: packagingType,
+        status:true,
+        createdBy:"nikhil",
+        updatedBy:"nikhil"
+      };
+
+      await PackagingType.create(packagingTypes)
       .then(data => {
         console.log("Line 34", data)
         // res.send(data);

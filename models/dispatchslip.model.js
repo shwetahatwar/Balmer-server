@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     outTime: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
     },
     driver: {
       type: DataTypes.STRING,
@@ -55,23 +55,23 @@ module.exports = (sequelize, DataTypes) => {
     },
     loadStartTime: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
     },
     loadEndTime: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
     },
     loadingTime: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
     },
     inOutTime: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
     },
     idleTime:{
       type:DataTypes.DATE,
-      allowNull:false
+      allowNull:true
     },
     createdBy:{
       type:DataTypes.STRING,

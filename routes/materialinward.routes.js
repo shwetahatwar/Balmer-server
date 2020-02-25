@@ -14,4 +14,6 @@ router.get("/get/findAllByMaterialCode", users.loginRequired,materialinwards.fin
 router.get("/get/findAllByMaterialCodeandBatchCode", users.loginRequired,materialinwards.findAllByMaterialCodeandBatchCode);
 router.get("/get/findAllByBarcode", users.loginRequired,materialinwards.findAllByBarcode);
 
+router.get("/get/getCount", users.loginRequired,materialinwards.findCount);
+
 module.exports = router;

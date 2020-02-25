@@ -372,3 +372,56 @@ exports.findAllByBarcode = (req, res) => {
     });
   });
 };
+
+exports.findCount = (req, res) => {
+  MaterialInward.findAll({ 
+    where: req.query,
+    include: [{
+      model: Material
+    }],
+  })
+  .then(data => {
+    
+    var stockValues = 0;
+    var scrapValue = 0;
+    var bucketStockValue=0;
+    var drumStockValue=0;
+    var cartonStockValue=0;
+    var carboyStockValue=0;
+    for(var i=0; i < data.length; i++){
+      if(data[i]["isScrapped"] == false){
+        stockValues++
+        if(data[i]["material"]["packingType"] == 1){
+          bucketStockValue++;
+        }
+        else if(data[i]["material"]["packingType"] == 2){
+          drumStockValue++;
+        }
+        else if(data[i]["material"]["packingType"] == 3){
+          cartonStockValue++;
+        }
+        else if(data[i]["material"]["packingType"] == 4){
+          carboyStockValue++;
+        }
+      }
+      else{
+        scrapValue++;
+      }
+    }
+    var totalStock = {
+      scrapCount: scrapValue,
+      stockCount: stockValues,
+      bucketStockValue:bucketStockValue,
+      drumStockValue:drumStockValue,
+      cartonStockValue:cartonStockValue,
+      carboyStockValue:carboyStockValue
+    }
+    res.send(totalStock);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving materialinwards."
+    });
+  });
+};

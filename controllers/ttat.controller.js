@@ -143,3 +143,40 @@ exports.truckOut = (req, res) => {
       });
     });
 };
+
+exports.getTtatDashboard = async (req, res) => {
+  var d = new Date();
+  console.log("Line 576",d);
+  var newDay = d.getDate();
+  if(newDay.toString().length == 1)
+    newDay = "0" + newDay;
+  var newMonth = d.getMonth();
+  newMonth = newMonth +1;
+  if(newMonth.toString().length == 1)
+    newMonth = "0" + newMonth;
+  var newYear = d.getFullYear();
+  var newDateTimeNow = newYear + "-" + newMonth + "-" + newDay;
+
+  var query = "SELECT * FROM balmerlawrie.ttats where createdAt like '%" + newDateTimeNow + "%';";
+  await db.sequelize.query(query, { type: db.sequelize.QueryTypes.SELECT})
+  .then(function(ttat) {
+    console.log(ttat);
+    var inTruck = 0;
+    var outTruck = 0;
+    var total = ttat.length;
+    for(var i = 0; i < ttat.length; i++){
+      if(ttat[i]["outTime"] == "1970-01-01 00:00:00"){
+        outTruck++;
+      }
+      else{
+        inTruck++;
+      }
+    }
+    var ttatCount = {
+      inTruck: inTruck,
+      outTruck: outTruck,
+      total:total
+    }
+    res.send(ttatCount);
+  });
+};

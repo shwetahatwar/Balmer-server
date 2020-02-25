@@ -9,4 +9,6 @@ router.get("/:id", users.loginRequired,ttats.findOne);
 router.put("/put/truckOut", users.loginRequired,ttats.truckOut);
 router.put("/:id", users.loginRequired,ttats.update);
 
+router.get("/dashboard/count", users.loginRequired,ttats.getTtatDashboard);
+
 module.exports = router;

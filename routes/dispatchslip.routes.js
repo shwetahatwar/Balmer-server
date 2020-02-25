@@ -23,4 +23,6 @@ router.post("/:dispatchId/dispatchsliploadermaterials", users.loginRequired,disp
 router.get("/:dispatchId/dispatchsliploadermaterials/:id", users.loginRequired,dispatchslips.getDispatchSlipLoadingMaterialList);
 router.put("/:dispatchId/dispatchsliploadermaterials/:id", users.loginRequired,dispatchslips.putDispatchSlipLoadingMaterialList);
 
+router.get("/dashboard/count", users.loginRequired,dispatchslips.getDispatchSlipCountDashboard);
+
 module.exports = router;

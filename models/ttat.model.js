@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     inTime: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
     },
     outTime: {
       type: DataTypes.DATE,
