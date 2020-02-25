@@ -21,6 +21,7 @@ exports.create = (req, res) => {
       start: 0,
       end: 0,
       status:true,
+      projectStatus:"Not Started",
       createdBy:req.user.username,
       updatedBy:req.user.username
   };
@@ -36,6 +37,7 @@ exports.create = (req, res) => {
       }
     })
     .then(async materialInwardData => {
+      console.log("Line 40",materialInwardData);
       for(var i=0;i < materialInwardData.length;i++){
         console.log("Line 38",materialInwardData[i]["dataValues"]["materialCode"]);
         var materialCode = materialInwardData[i]["dataValues"]["materialCode"];
@@ -47,6 +49,7 @@ exports.create = (req, res) => {
           batchNumber:batchNumber,
           serialNumber:serialNumber,
           status:true,
+          itemStatus:null,
           createdBy:req.user.username,
           updatedBy:req.user.username
         });
@@ -67,11 +70,26 @@ exports.create = (req, res) => {
 
 // Retrieve all Project from the database.
 exports.findAll = (req, res) => {
-  const title = req.query.title;
-  var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
-
-  Project.findAll({ where: req.query })
+  var queryString = req.query;
+  var offset = 0;
+  var limit = 50;
+  console.log("Line 51", req.query);
+  if(req.query.offset != null || req.query.offset != undefined){
+    offset = parseInt(req.query.offset)
+  }
+  if(req.query.offset != null || req.query.offset != undefined){
+    limit = parseInt(req.query.limit)
+  }
+  delete queryString['offset'];
+  delete queryString['limit'];
+  
+  Project.findAll({ 
+    where: queryString,
+    offset:offset,
+    limit:limit
+   })
   .then(data => {
+    console.log(data);
     res.send(data);
   })
   .catch(err => {

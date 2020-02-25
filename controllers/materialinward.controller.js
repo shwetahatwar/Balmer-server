@@ -15,69 +15,72 @@ exports.create = async (req, res) => {
     });
     return;
   }
+  var dataArray = [];
 
-  const materialCode = req.body.materialCode;
-  var materialData;
-  await Material.findAll({
-    where: {materialCode: materialCode}
-  })
-  .then(data => {
-    materialData = data[0]["dataValues"]["id"];
-    // console.log(data[0]["dataValues"]["id"]);
-    // res.send(data);
-    console.log("Line 26", materialData);
-  });
-  
-  var serialNumberId;
-  await MaterialInward.findAll({
-    where: { 
-      materialCode: req.body.materialCode,
-      batchNumber: req.body.batchNumber
-    },
-    order: [
+  for(var i=0; i < req.body.totalPack; i++){
+    const materialCode = req.body.materialCode;
+    var materialData;
+    await Material.findAll({
+      where: {materialCode: materialCode}
+    })
+    .then(data => {
+      materialData = data[0]["dataValues"]["id"];
+      // console.log(data[0]["dataValues"]["id"]);
+      // res.send(data);
+      console.log("Line 26", materialData);
+    });
+    
+    var serialNumberId;
+    await MaterialInward.findAll({
+      where: { 
+        materialCode: req.body.materialCode,
+        batchNumber: req.body.batchNumber
+      },
+      order: [
       ['id', 'DESC'],
-    ],
-  })
-  .then(data => {
-    console.log("Line 42", data);
-    if(data[0] != null || data[0] != undefined){
-      serialNumberId = data[0]["dataValues"]["serialNumber"];
-      serialNumberId = serialNumberId.substring(serialNumberId.length - 6, serialNumberId.length);
-      serialNumberId = (parseInt(serialNumberId) + 1).toString();
-      var str = '' + serialNumberId;
-      while (str.length < 6) {
-        str = '0' + str;
+      ],
+    })
+    .then(data => {
+      console.log("Line 42", data);
+      if(data[0] != null || data[0] != undefined){
+        serialNumberId = data[0]["dataValues"]["serialNumber"];
+        serialNumberId = serialNumberId.substring(serialNumberId.length - 6, serialNumberId.length);
+        serialNumberId = (parseInt(serialNumberId) + 1).toString();
+        var str = '' + serialNumberId;
+        while (str.length < 6) {
+          str = '0' + str;
+        }
+        serialNumberId = req.body.materialCode + "#" + req.body.batchNumber + "#" + str;
+        console.log("Line 51 Serial Number", str);
       }
-      serialNumberId = req.body.materialCode + "#" + req.body.batchNumber + "#" + str;
-      console.log("Line 51 Serial Number", str);
-    }
-    else{
+      else{
+        serialNumberId = req.body.materialCode + "#" + req.body.batchNumber + "#" + "000001";
+      }
+    })
+    .catch(err=>{
+      console.log("Line 54", err);
       serialNumberId = req.body.materialCode + "#" + req.body.batchNumber + "#" + "000001";
-    }
-  })
-  .catch(err=>{
-    console.log("Line 54", err);
-    serialNumberId = req.body.materialCode + "#" + req.body.batchNumber + "#" + "000001";
-  });
+    });
 
-  // var serialNumberId = Date.now() + "#" + req.body.materialCode + "#" + req.body.batchNumber;
-  //Create a MaterialInward
-  const materialinward = {
-    materialId: materialData,
-    materialCode: req.body.materialCode,
-    batchNumber: req.body.batchNumber,
-    serialNumber: serialNumberId,
-    isScrapped: false,
-    isInward:true,
-    dispatchSlipId:null,
-    status:true,
-    createdBy:req.user.username,
-    updatedBy:req.user.username
-  };
-  console.log("Line 67",materialinward);
-  // Save MaterialInward in the database
-  await MaterialInward.create(materialinward)
+    // var serialNumberId = Date.now() + "#" + req.body.materialCode + "#" + req.body.batchNumber;
+    //Create a MaterialInward
+    const materialinward = {
+      materialId: materialData,
+      materialCode: req.body.materialCode,
+      batchNumber: req.body.batchNumber,
+      serialNumber: serialNumberId,
+      isScrapped: false,
+      isInward:true,
+      dispatchSlipId:null,
+      status:true,
+      createdBy:req.user.username,
+      updatedBy:req.user.username
+    };
+    console.log("Line 67",materialinward);
+    // Save MaterialInward in the database
+    await MaterialInward.create(materialinward)
     .then(async data => {
+      dataArray.push(data);
       await InventoryTransaction.create({
         transactionTimestamp: Date.now(),
         performedBy:req.user.username,
@@ -88,37 +91,55 @@ exports.create = async (req, res) => {
         updatedBy:req.user.username
       })
       .then(data => {
-        // console.log(data);
-      })
+          // console.log(data);
+        })
       .catch(err => {
         console.log(err);
       });
-      res.send(data);
+      // res.send(data);
     })
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the MaterialInward."
+        err.message || "Some error occurred while creating the MaterialInward."
       });
     });
+  }
+  res.send(dataArray);
 };
 
 // Retrieve all MaterialInwards from the database.
 exports.findAll = (req, res) => {
-  console.log("Line 108",req.query);
+  var queryString = req.query;
+  var offset = 0;
+  var limit = 50;
+  console.log("Line 51", req.query);
+  if(req.query.offset != null || req.query.offset != undefined){
+    offset = parseInt(req.query.offset)
+  }
+  if(req.query.offset != null || req.query.offset != undefined){
+    limit = parseInt(req.query.limit)
+  }
+  delete queryString['offset'];
+  delete queryString['limit'];
+  
   MaterialInward.findAll({ 
-    where: req.query,
-    include: [{model: Material}] 
+    where: queryString,
+    include: [{
+      model: Material
+    }],
+    offset:offset,
+    limit:limit
   })
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving materialinwards."
-      });
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving materialinwards."
     });
+  });
 };
 
 // Find a single MaterialInward with an id
@@ -126,14 +147,14 @@ exports.findOne = (req, res) => {
   const id = req.params.id;
 
   MaterialInward.findByPk(id)
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error retrieving MaterialInward with id=" + id
-      });
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error retrieving MaterialInward with id=" + id
     });
+  });
 };
 
 // Update a MaterialInward by the id in the request
@@ -143,22 +164,22 @@ exports.update = (req, res) => {
   MaterialInward.update(req.body, {
     where: req.params
   })
-    .then(num => {
-      if (num == 1) {
-        res.send({
-          message: "MaterialInward was updated successfully."
-        });
-      } else {
-        res.send({
-          message: `Cannot update MaterialInward with id=${id}. Maybe MaterialInward was not found or req.body is empty!`
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error updating MaterialInward with id=" + id
+  .then(num => {
+    if (num == 1) {
+      res.send({
+        message: "MaterialInward was updated successfully."
       });
+    } else {
+      res.send({
+        message: `Cannot update MaterialInward with id=${id}. Maybe MaterialInward was not found or req.body is empty!`
+      });
+    }
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error updating MaterialInward with id=" + id
     });
+  });
 };
 
 exports.updateWithBarcode = (req, res) => {
@@ -167,22 +188,22 @@ exports.updateWithBarcode = (req, res) => {
   MaterialInward.update(req.body, {
     where: req.body
   })
-    .then(num => {
-      if (num == 1) {
-        res.send({
-          message: "MaterialInward was updated successfully."
-        });
-      } else {
-        res.send({
-          message: `Cannot update MaterialInward with barcodeSerial=${serialNumber}. Maybe MaterialInward was not found or req.body is empty!`
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error updating MaterialInward with barcodeSerial=" + serialNumber
+  .then(num => {
+    if (num == 1) {
+      res.send({
+        message: "MaterialInward was updated successfully."
       });
+    } else {
+      res.send({
+        message: `Cannot update MaterialInward with barcodeSerial=${serialNumber}. Maybe MaterialInward was not found or req.body is empty!`
+      });
+    }
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error updating MaterialInward with barcodeSerial=" + serialNumber
     });
+  });
 };
 
 // Delete a MaterialInward with the specified id in the request
@@ -192,22 +213,22 @@ exports.delete = (req, res) => {
   MaterialInward.destroy({
     where: { id: id }
   })
-    .then(num => {
-      if (num == 1) {
-        res.send({
-          message: "MaterialInward was deleted successfully!"
-        });
-      } else {
-        res.send({
-          message: `Cannot delete MaterialInward with id=${id}. Maybe MaterialInward was not found!`
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Could not delete MaterialInward with id=" + id
+  .then(num => {
+    if (num == 1) {
+      res.send({
+        message: "MaterialInward was deleted successfully!"
       });
+    } else {
+      res.send({
+        message: `Cannot delete MaterialInward with id=${id}. Maybe MaterialInward was not found!`
+      });
+    }
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Could not delete MaterialInward with id=" + id
     });
+  });
 };
 
 // Delete all MaterialInwards from the database.
@@ -216,15 +237,15 @@ exports.deleteAll = (req, res) => {
     where: {},
     truncate: false
   })
-    .then(nums => {
-      res.send({ message: `${nums} MaterialInwards were deleted successfully!` });
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while removing all materialinwards."
-      });
+  .then(nums => {
+    res.send({ message: `${nums} MaterialInwards were deleted successfully!` });
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while removing all materialinwards."
     });
+  });
 };
 
 // Find all published MaterialInwards
@@ -246,27 +267,27 @@ exports.updateScrapAndRecover = (req, res) => {
   MaterialInward.update(req.body, {
     where: { id: req.body.id }
   })
-    .then(num => {
-      if (num == 1) {
-        const scrapandrecover = {
-          materialInwardId: req.body.id,
-          comments:req.body.comments,
-          transactionType:req.body.transactionType,
-          createdBy:req.user.username,
-          updatedBy:req.user.username
-        };
+  .then(num => {
+    if (num == 1) {
+      const scrapandrecover = {
+        materialInwardId: req.body.id,
+        comments:req.body.comments,
+        transactionType:req.body.transactionType,
+        createdBy:req.user.username,
+        updatedBy:req.user.username
+      };
 
         // Save MaterialInward in the database
         ScrapandRecover.create(scrapandrecover)
-          .then(data => {
-            res.send(data);
-          })
-          .catch(err => {
-            res.status(500).send({
-              message:
-                err.message || "Some error occurred while creating the MaterialInward."
-            });
+        .then(data => {
+          res.send(data);
+        })
+        .catch(err => {
+          res.status(500).send({
+            message:
+            err.message || "Some error occurred while creating the MaterialInward."
           });
+        });
         // res.send({
         //   message: "MaterialInward was updated successfully."
         // });
@@ -276,11 +297,11 @@ exports.updateScrapAndRecover = (req, res) => {
         });
       }
     })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error updating MaterialInward with id=" + id
-      });
+  .catch(err => {
+    res.status(500).send({
+      message: "Error updating MaterialInward with id=" + id
     });
+  });
 }; 
 
 exports.findAllByBatchCode = (req, res) => {
@@ -295,7 +316,7 @@ exports.findAllByBatchCode = (req, res) => {
   .catch(err => {
     res.status(500).send({
       message:
-        err.message || "Some error occurred while retrieving materialinwards."
+      err.message || "Some error occurred while retrieving materialinwards."
     });
   });
 };
@@ -312,7 +333,7 @@ exports.findAllByMaterialCode = (req, res) => {
   .catch(err => {
     res.status(500).send({
       message:
-        err.message || "Some error occurred while retrieving materialinwards."
+      err.message || "Some error occurred while retrieving materialinwards."
     });
   });
 };
@@ -330,7 +351,7 @@ exports.findAllByMaterialCodeandBatchCode = (req, res) => {
   .catch(err => {
     res.status(500).send({
       message:
-        err.message || "Some error occurred while retrieving materialinwards."
+      err.message || "Some error occurred while retrieving materialinwards."
     });
   });
 };
@@ -347,7 +368,7 @@ exports.findAllByBarcode = (req, res) => {
   .catch(err => {
     res.status(500).send({
       message:
-        err.message || "Some error occurred while retrieving materialinwards."
+      err.message || "Some error occurred while retrieving materialinwards."
     });
   });
 };

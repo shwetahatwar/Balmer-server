@@ -41,140 +41,268 @@ exports.create = async (req, res) => {
     console.log("Line 39", depoData);
   });
 
-  DispatchSlip.sequelize.transaction(async t => {
-    return DispatchSlip.create({
-      dispatchSlipNumber: req.body.dispatchSlipNumber,
-      truckId: truckData,
-      depoId: depoData,
-      status:true,
-      dispatchSlipStatus:"Active",
-      createdBy:req.user.username,
-      updatedBy:req.user.username
-    },{transaction: t})
-    .then(async (dispatchSlip)=>{
-      var counter=0;
-      console.log("Line 55", req.body.material.length);
-      for(var i=0;i<req.body.material.length;i++)
-      {
-        var checkMaterialQty;
-        checkMaterialQty = await MaterialInward.count({
-          where:{
+  var dispatchSlipId;
+  const dispatchSlipInput = {
+    dispatchSlipNumber: req.body.dispatchSlipNumber,
+    truckId: truckData,
+    depoId: depoData,
+    status:true,
+    dispatchSlipStatus:"Active",
+    createdBy:req.user.username,
+    updatedBy:req.user.username
+  };
+  await DispatchSlip.create(dispatchSlipInput)
+  .then(data => {
+    dispatchSlipId = data["dataValues"]["id"]
+  })
+  .catch(err => {
+
+  });
+  for(var i=0;i<req.body.material.length;i++){
+    var checkMaterialQty;
+    checkMaterialQty = await MaterialInward.count({
+      where:{
+        'materialCode':req.body.material[i].materialCode
+      }
+    })
+    .then(async data=>{
+      checkMaterialQty = data;
+      console.log("Line 62", checkMaterialQty);
+      console.log("Line 63", req.body.material[i].numberOfPacks);
+      if(checkMaterialQty >= req.body.material[i].numberOfPacks){
+        var getBatchCode = await MaterialInward.findAll({
+          where: {
             'materialCode':req.body.material[i].materialCode
+          },
+          order: [
+          ['createdAt', 'ASC'],
+          ]
+        });
+        counter = req.body.material[i]["numberOfPacks"];
+        var dups = [];
+        var arr = getBatchCode.filter(function(el) {
+          // If it is not a duplicate, return true
+          if (dups.indexOf(el["batchNumber"]) == -1) {
+            dups.push(el["batchNumber"]);
+            return true;
           }
-        })
-        .then(async data=>{
-          checkMaterialQty = data;
-          console.log("Line 62", checkMaterialQty);
-          console.log("Line 63", req.body.material[i].numberOfPacks);
-          if(checkMaterialQty >= req.body.material[i].numberOfPacks){
-            var getBatchCode = await MaterialInward.findAll({
-              where: {
-                'materialCode':req.body.material[i].materialCode
-              },
-              order: [
-              ['createdAt', 'ASC'],
-              ]
-            });
-            counter = req.body.material[i]["numberOfPacks"];
-            var dups = [];
-            var arr = getBatchCode.filter(function(el) {
-              // If it is not a duplicate, return true
-              if (dups.indexOf(el["batchNumber"]) == -1) {
-                dups.push(el["batchNumber"]);
-                return true;
+          return false;
+        });
+        for(var s=0;s<dups.length;s++){
+          console.log("Quantity:",counter);
+          if(counter != 0 && counter > 0){
+            var batchQuantity = await MaterialInward.count({
+              where:{
+                'materialCode':req.body.material[i].materialCode,
+                'batchNumber':dups[s]
               }
-              return false;
             });
-            console.log("Unique Data :",dups);
-            for(var s=0;s<dups.length;s++){
-              console.log("Quantity:",counter);
-              if(counter != 0 && counter > 0){
-                var batchQuantity = await MaterialInward.count({
-                  where:{
-                    'materialCode':req.body.material[i].materialCode,
-                    'batchNumber':dups[s]
-                  }
-                });
-                console.log("Line 93 batchQuantity :",batchQuantity);
-                console.log("Line 94 counter :",counter);
-                if(batchQuantity >= counter){
-                  console.log("Line 95",req.body.material[i]["materialCode"]);
-                  // console.log("Line 96",req.body.material[i]["createdBy"]);
-                  const dispatchSlipMaterialListData = {
-                    dispatchSlipId: dispatchSlip.id,
-                    batchNumber: dups[s],
-                    numberOfPacks:counter,
-                    materialCode:req.body.material[i]["materialCode"],
-                    createdBy:req.user.username,
-                    updatedBy:req.user.username
-                  }
-                  DispatchSlipMaterialList.create(dispatchSlipMaterialListData)
-                  .then(dispatchSlipMaterialList=>{
-                    console.log("In");
-                    // console.log("Line 107",dispatchSlipMaterialList);
-                  })
-                  .catch(err=>{
-                    console.log("Line 110", err);
-                    t.rollback();
-                  });
-                  counter = counter - batchQuantity;
-                  console.log("Line 116 counter :",counter);
-                  console.log("Out");
-                  break;
-                }
-                else{
-                  console.log("Line 118",req.body.material[i]["batchNumber"]);
-                  // req.body.material[i]["numberOfPacks"] = batchQuantity;
-                  const dispatchSlipMaterialListData = {
-                    dispatchSlipId: dispatchSlip.id,
-                    batchNumber: dups[i],
-                    numberOfPacks:counter,
-                    materialCode:req.body.material[i]["materialCode"],
-                    createdBy:req.user.username,
-                    updatedBy:req.user.username
-                  }
-                  DispatchSlipMaterialList.create(dispatchSlipMaterialListData)
-                  .then(dispatchSlipMaterialList=>{
-                    // console.log(dispatchSlipMaterialList);
-                  })
-                  .catch(err=>{
-                    console.log(err);
-                    t.rollback();
-                  });
-                  counter = counter - batchQuantity;
-                }
+            console.log("Line 93 batchQuantity :",batchQuantity);
+            console.log("Line 94 counter :",counter);
+            if(batchQuantity >= counter){
+              console.log("Line 95",req.body.material[i]["materialCode"]);
+              // console.log("Line 96",req.body.material[i]["createdBy"]);
+              const dispatchSlipMaterialListData = {
+                dispatchSlipId: dispatchSlipId,
+                batchNumber: dups[s],
+                numberOfPacks:counter,
+                materialCode:req.body.material[i]["materialCode"],
+                createdBy:req.user.username,
+                updatedBy:req.user.username
               }
+              DispatchSlipMaterialList.create(dispatchSlipMaterialListData)
+              .then(dispatchSlipMaterialList=>{
+                console.log("In");
+                // console.log("Line 107",dispatchSlipMaterialList);
+              })
+              .catch(err=>{
+                console.log("Line 110", err);
+                t.rollback();
+              });
+              counter = counter - batchQuantity;
+              console.log("Line 116 counter :",counter);
+              console.log("Out");
+              break;
+            }
+            else{
+              console.log("Line 118",req.body.material[i]["batchNumber"]);
+              // req.body.material[i]["numberOfPacks"] = batchQuantity;
+              const dispatchSlipMaterialListData = {
+                dispatchSlipId: dispatchSlipId,
+                batchNumber: dups[i],
+                numberOfPacks:counter,
+                materialCode:req.body.material[i]["materialCode"],
+                createdBy:req.user.username,
+                updatedBy:req.user.username
+              }
+              DispatchSlipMaterialList.create(dispatchSlipMaterialListData)
+              .then(dispatchSlipMaterialList=>{
+                // console.log(dispatchSlipMaterialList);
+              })
+              .catch(err=>{
+                console.log(err);
+                t.rollback();
+              });
+              counter = counter - batchQuantity;
             }
           }
-        })
-        .catch(err=>{
-          console.log(err);
-        });
+        }
       }
-      return dispatchSlip;
-      res.send(dispatchSlip);
     })
     .catch(err=>{
-      t.rollback();
-      res.status(500).send(err);
-    });
-  })
+
+    })
+  }
+
+  // DispatchSlip.sequelize.transaction(async t => {
+  //   return DispatchSlip.create({
+  //     dispatchSlipNumber: req.body.dispatchSlipNumber,
+  //     truckId: truckData,
+  //     depoId: depoData,
+  //     status:true,
+  //     dispatchSlipStatus:"Active",
+  //     createdBy:req.user.username,
+  //     updatedBy:req.user.username
+  //   },{transaction: t})
+  //   .then(async (dispatchSlip)=>{
+  //     var counter=0;
+  //     console.log("Line 56", dispatchSlip);
+  //     console.log("Line 57",dispatchSlip["dataValues"]["id"]);
+  //     // console.log("Line 58",dispatchSlip[0]);
+  //     console.log("Line 55", req.body.material.length);
+  //     for(var i=0;i<req.body.material.length;i++)
+  //     {
+  //       var checkMaterialQty;
+  //       checkMaterialQty = await MaterialInward.count({
+  //         where:{
+  //           'materialCode':req.body.material[i].materialCode
+  //         }
+  //       })
+  //       .then(async data=>{
+  //         checkMaterialQty = data;
+  //         console.log("Line 62", checkMaterialQty);
+  //         console.log("Line 63", req.body.material[i].numberOfPacks);
+  //         if(checkMaterialQty >= req.body.material[i].numberOfPacks){
+  //           var getBatchCode = await MaterialInward.findAll({
+  //             where: {
+  //               'materialCode':req.body.material[i].materialCode
+  //             },
+  //             order: [
+  //             ['createdAt', 'ASC'],
+  //             ]
+  //           });
+  //           counter = req.body.material[i]["numberOfPacks"];
+  //           var dups = [];
+  //           var arr = getBatchCode.filter(function(el) {
+  //             // If it is not a duplicate, return true
+  //             if (dups.indexOf(el["batchNumber"]) == -1) {
+  //               dups.push(el["batchNumber"]);
+  //               return true;
+  //             }
+  //             return false;
+  //           });
+  //           console.log("Unique Data :",dups);
+  //           for(var s=0;s<dups.length;s++){
+  //             console.log("Quantity:",counter);
+  //             if(counter != 0 && counter > 0){
+  //               var batchQuantity = await MaterialInward.count({
+  //                 where:{
+  //                   'materialCode':req.body.material[i].materialCode,
+  //                   'batchNumber':dups[s]
+  //                 }
+  //               });
+  //               console.log("Line 93 batchQuantity :",batchQuantity);
+  //               console.log("Line 94 counter :",counter);
+  //               if(batchQuantity >= counter){
+  //                 console.log("Line 95",req.body.material[i]["materialCode"]);
+  //                 // console.log("Line 96",req.body.material[i]["createdBy"]);
+  //                 const dispatchSlipMaterialListData = {
+  //                   dispatchSlipId: dispatchSlip["dataValues"]["id"],
+  //                   batchNumber: dups[s],
+  //                   numberOfPacks:counter,
+  //                   materialCode:req.body.material[i]["materialCode"],
+  //                   createdBy:req.user.username,
+  //                   updatedBy:req.user.username
+  //                 }
+  //                 DispatchSlipMaterialList.create(dispatchSlipMaterialListData)
+  //                 .then(dispatchSlipMaterialList=>{
+  //                   console.log("In");
+  //                   // console.log("Line 107",dispatchSlipMaterialList);
+  //                 })
+  //                 .catch(err=>{
+  //                   console.log("Line 110", err);
+  //                   t.rollback();
+  //                 });
+  //                 counter = counter - batchQuantity;
+  //                 console.log("Line 116 counter :",counter);
+  //                 console.log("Out");
+  //                 break;
+  //               }
+  //               else{
+  //                 console.log("Line 118",req.body.material[i]["batchNumber"]);
+  //                 // req.body.material[i]["numberOfPacks"] = batchQuantity;
+  //                 const dispatchSlipMaterialListData = {
+  //                   dispatchSlipId: dispatchSlip["dataValues"]["id"],
+  //                   batchNumber: dups[i],
+  //                   numberOfPacks:counter,
+  //                   materialCode:req.body.material[i]["materialCode"],
+  //                   createdBy:req.user.username,
+  //                   updatedBy:req.user.username
+  //                 }
+  //                 DispatchSlipMaterialList.create(dispatchSlipMaterialListData)
+  //                 .then(dispatchSlipMaterialList=>{
+  //                   // console.log(dispatchSlipMaterialList);
+  //                 })
+  //                 .catch(err=>{
+  //                   console.log(err);
+  //                   t.rollback();
+  //                 });
+  //                 counter = counter - batchQuantity;
+  //               }
+  //             }
+  //           }
+  //         }
+  //       })
+  //       .catch(err=>{
+  //         console.log(err);
+  //       });
+  //     }
+  //     return dispatchSlip;
+  //     res.send(dispatchSlip);
+  //   })
+  //   .catch(err=>{
+  //     t.rollback();
+  //     res.status(500).send(err);
+  //   });
+  // })
 };
 
 
 // Retrieve all DispatchSlips from the database.
 exports.findAll = (req, res) => {
-  const title = req.query.title;
-  var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
-
+  var queryString = req.query;
+  var offset = 0;
+  var limit = 50;
+  console.log("Line 51", req.query);
+  if(req.query.offset != null || req.query.offset != undefined){
+    offset = parseInt(req.query.offset)
+  }
+  if(req.query.offset != null || req.query.offset != undefined){
+    limit = parseInt(req.query.limit)
+  }
+  delete queryString['offset'];
+  delete queryString['limit'];
+  
   DispatchSlip.findAll({ 
-    where: req.query,
+    where: queryString,
     include: [{
       model: Ttat
     },
     {
       model: Depot
-    }]
+    }],
+    offset:offset,
+    limit:limit
   })
   .then(data => {
     res.send(data);

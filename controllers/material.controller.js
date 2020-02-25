@@ -47,17 +47,32 @@ exports.create = (req, res) => {
 
 // Retrieve all materials from the database.
 exports.findAll = (req, res) => {
-  const title = req.query.title;
-  var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
-  console.log();
+  var queryString = req.query;
+  var offset = 0;
+  var limit = 50;
+  console.log("Line 51", req.query);
+  if(req.query.offset != null || req.query.offset != undefined){
+    offset = parseInt(req.query.offset)
+  }
+  if(req.query.offset != null || req.query.offset != undefined){
+    limit = parseInt(req.query.limit)
+  }
+  delete queryString['offset'];
+  delete queryString['limit'];
+  
+  console.log(offset);
+  console.log(limit);
   Material.findAll({ 
-    where: req.query,
+    where: queryString,
+    subQuery: false,
     include: [{
       model: MaterialType
     },
     {
       model:PackagingType
-    }]
+    }],
+    offset:offset,
+    limit:limit
   })
   .then(data => {
     res.send(data);
