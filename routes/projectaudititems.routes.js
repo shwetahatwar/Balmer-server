@@ -6,6 +6,7 @@ var users = require('../controllers/user.controller');
 router.post("/", users.loginRequired,projectaudititems.create);
 router.get("/", users.loginRequired,projectaudititems.findAll);
 router.get("/:id", users.loginRequired,projectaudititems.findOne);
+router.put("/:id", users.loginRequired,projectaudititems.update);
 router.get("/getcountbyproject/:id", users.loginRequired,projectaudititems.countByProject);
 
 module.exports = router;

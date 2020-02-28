@@ -49,7 +49,7 @@ exports.create = (req, res) => {
           batchNumber:batchNumber,
           serialNumber:serialNumber,
           status:true,
-          itemStatus:null,
+          itemStatus:"Not Found",
           createdBy:req.user.username,
           updatedBy:req.user.username
         });

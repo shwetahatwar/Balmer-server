@@ -142,9 +142,27 @@ exports.getUsersbyDispatchSlip = (req,res) =>{
 };
 
 exports.getDispatchSlipbyUser = (req,res) =>{
+
+  var d = new Date();
+  console.log("Line 576",d);
+  var newDay = d.getDate();
+  if(newDay.toString().length == 1)
+    newDay = "0" + newDay;
+  var newMonth = d.getMonth();
+  var newYear = d.getFullYear();
+  
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+  newMonth = monthNames[newMonth];
+
+  var newDateTimeNow = newMonth + " " + newDay + " " + newYear;
+
   var dispatchListArray=[];
   DispatchLoaderRelation.findAll({
-    where:req.params
+    where:{
+      userId:req.params.userId
+    }
   })
   .then(async data => {
       // res.send(data);
@@ -163,8 +181,15 @@ exports.getDispatchSlipbyUser = (req,res) =>{
           }] 
         })
         .then(dispatchSlipData => {
-          dispatchListArray.push(dispatchSlipData[0]["dataValues"]);
-          console.log("Line 139",dispatchListArray);
+          var updatedAt = dispatchSlipData[0]["dataValues"]["updatedAt"];
+          if(dispatchSlipData[0]["dataValues"]["dispatchSlipStatus"] == "Active"){
+            dispatchListArray.push(dispatchSlipData[0]["dataValues"]);  
+            console.log("Line 182",dispatchListArray);
+          }
+          else if(dispatchSlipData[0]["dataValues"]["dispatchSlipStatus"] == "Completed" && updatedAt.toString().includes(newDateTimeNow)){
+             dispatchListArray.push(dispatchSlipData[0]["dataValues"]);  
+             console.log("Line 185",dispatchListArray);
+          }
         })
         .catch(err=>{
           res.status(500).send({
@@ -173,6 +198,16 @@ exports.getDispatchSlipbyUser = (req,res) =>{
           });
         })
       }
+
+      dispatchListArray.sort(function(a, b){
+        var nameA=a.dispatchSlipStatus.toLowerCase(), 
+        nameB=b.dispatchSlipStatus.toLowerCase()
+        if (nameA < nameB) //sort string ascending
+            return -1 
+        if (nameA > nameB)
+            return 1
+        return 0 //default return value (no sorting)
+      });
       res.send(dispatchListArray);
     })
     .catch(err => {

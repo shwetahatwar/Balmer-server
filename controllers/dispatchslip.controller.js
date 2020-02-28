@@ -558,13 +558,12 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
   //updated Ttat
   // var newDate = new Date(req.body.loadStartTime);
   // console.log("Line 560", newDate);
-  var loadingTime = req.body.loadEndTime - req.body.loadStartTime;
+  // var loadingTime = req.body.loadEndTime - req.body.loadStartTime;
   // console.log("Line 562", new Date(req.body.loadEndTime));
-  console.log("Line 563", loadingTime);
+  // console.log("Line 563", loadingTime);
   var updatedTtat = {
     loadStartTime: req.body.loadStartTime,
-    loadEndTime: req.body.loadEndTime,
-    loadingTime: loadingTime
+    loadEndTime: Date.now()
   };
   await Ttat.update(updatedTtat, {
     where: {
@@ -578,13 +577,13 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
       // });
     } else {
       res.send({
-        message: `Cannot update DispatchSlip with id=${truckId}. Maybe DispatchSlip was not found or req.body is empty!`
+        message: `Cannot update Ttat with id=${truckId}. Maybe Ttat was not found or req.body is empty!`
       });
     }
   })
   .catch(err => {
     res.status(500).send({
-      message: "Error updating DispatchSlip with id=" + truckId
+      message: "Error updating Ttat with id=" + truckId
     });
   });
 
@@ -658,13 +657,14 @@ exports.getDispatchSlipCountDashboard = async (req, res) => {
     var completed = 0;
     var total = dispatchSlips.length;
     for(var i = 0; i < dispatchSlips.length; i++){
+      console.log("Line 660",dispatchSlips[i]["dispatchSlipStatus"]);
       if(dispatchSlips[i]["dispatchSlipStatus"] == "Active"){
         active++;
       }
       else if(dispatchSlips[i]["dispatchSlipStatus"] == "Pending"){
         pending++;
       }
-      else if(dispatchSlips[i]["dispatchSlipStatus"] == "Complete"){
+      else if(dispatchSlips[i]["dispatchSlipStatus"] == "Completed"){
         completed++;
       }
     }

@@ -70,9 +70,7 @@ exports.findAll = (req, res) => {
     },
     {
       model:PackagingType
-    }],
-    offset:offset,
-    limit:limit
+    }]
   })
   .then(data => {
     res.send(data);

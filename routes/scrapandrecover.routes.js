@@ -8,4 +8,6 @@ router.get("/", users.loginRequired,scrapandrecovers.getAll);
 router.get("/:id", users.loginRequired,scrapandrecovers.getById);
 router.put("/:id", users.loginRequired,scrapandrecovers.update);
 
+router.post("/update/manualUpdate", users.loginRequired,scrapandrecovers.updateByBarcodeSerial);
+
 module.exports = router;

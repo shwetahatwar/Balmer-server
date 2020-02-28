@@ -5,7 +5,7 @@ var jwt = require('jsonwebtoken');
 const Role = db.roles;
 
 // Create and Save a new User
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   console.log(req.body);
   // Validate request
   if (!req.body.username) {
@@ -15,12 +15,26 @@ exports.create = (req, res) => {
     return;
   }
 
+  var roleId;
+  await Role.findAll({
+    where: {
+      name:req.body.role
+    }
+  })
+  .then(data => {
+    roleId = data[0]["dataValues"]["id"];
+    console.log("Line 26",data[0]["dataValues"]["id"]);
+  })
+  .catch(err => {
+    return res.status(401).json({ message: 'Invalid Role' });
+  })
+
   // Create a User
   const user = {
     username: req.body.username,
     password: req.body.password,
     status: "1",
-    role: req.body.role,
+    roleId: roleId,
     employeeId:req.body.employeeId,
     designation:req.body.designation,
     createdBy:req.user.username,
@@ -28,7 +42,7 @@ exports.create = (req, res) => {
   };
 
   // Save User in the database
-  User.create(user)
+  await User.create(user)
     .then(data => {
       res.send(data);
     })
@@ -49,7 +63,7 @@ exports.sign_in = (req, res) => {
       model: Role
     }],
   }).then((user) => {
-    console.log("Line 48", user.status);
+    console.log("Line 48", user);
     if(user.status == false){
       console.log("Line 50", user.status);
       return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });

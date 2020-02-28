@@ -83,7 +83,8 @@ exports.findOne = (req, res) => {
 // Update a ProjectAuditItems by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
-
+  console.log(req.params);
+  console.log(req.body);
   ProjectAuditItems.update(req.body, {
     where: { id: id }
   })
@@ -148,93 +149,137 @@ exports.deleteAll = (req, res) => {
 };
 
 exports.countByProject = async (req, res) => {
-  // async function newFunction{
-    var countTable=[];
-    const id = req.params.id;
-    var totalCount = 0;
-    var foundCount = 0;
-    var manuallyrecovered = 0;
-    await ProjectAuditItems.count({
-      where:{
-        'projectId':id,
+
+  await ProjectAuditItems.findAll({
+    where:{
+      projectId:req.params.id
+    }
+  })
+  .then(data => {
+    var foundData=0;
+    var notFoundData=0;
+    var manuallyApprovedData=0;
+    var scrapData=0;
+    var totalData = data.length;
+    for(var i=0; i < data.length; i++){
+      if(data[i]["dataValues"]["itemStatus"] == "Found"){
+        foundData++;
       }
-    })
-    .then(data => {
-      console.log(data);
-      // res.status(200);
-      // // res.send(data);
-      // res.status(200).send({
-      //   count:data
-      // });
-      let singleData = {
-        'total':data
-      };
-      countTable.push(singleData);
-    })
-    await ProjectAuditItems.count({
-      where:{
-        'projectId':id,
-        'status':'found'
+      else if(data[i]["dataValues"]["itemStatus"] == "Not Found"){
+        notFoundData++;
       }
-    })
-    .then(data => {
-      console.log(data);
-      // res.status(200);
-      // // res.send(data);
-      // res.status(200).send({
-      //   count:data
-      // });
-      let singleData = {
-        'found':data
-      };
-      countTable.push(singleData);
-    })
-    await ProjectAuditItems.count({
-      where:{
-        'projectId':id,
-        'status':'scrap'
+      else if(data[i]["dataValues"]["itemStatus"] == "Manually Approved"){
+        manuallyApprovedData++;
       }
-    })
-    .then(data => {
-      console.log(data);
-      // res.status(200);
-      // // res.send(data);
-      // res.status(200).send({
-      //   count:data
-      // });
-      let singleData = {
-        'scrap':data
-      };
-      countTable.push(singleData);
-    })
-    await ProjectAuditItems.count({
-      where:{
-        'projectId':id,
-        'status':'manually approved'
+      else if(data[i]["dataValues"]["itemStatus"] == "Scrap"){
+        scrapData++;
       }
-    })
-    .then(data => {
-      console.log(data);
-      // res.status(200);
-      // // res.send(data);
-      // res.status(200).send({
-      //   count:data
-      // });
-      let singleData = {
-        'manual':data
-      };
-      countTable.push(singleData);
-      res.status(200).send({
-        countTable
+    }
+    var sendData = {
+      foundData:foundData,
+      notFoundData:notFoundData,
+      manuallyApprovedData:manuallyApprovedData,
+      scrapData:scrapData,
+      totalData:totalData
+    }
+    res.send(sendData)
+  })
+  .catch(err => {
+    res.status(500).send({
+        message:
+          err.message || "Some error occurred while removing all ProjectAuditItems."
       });
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500);
-      res.send(err);
-      // res.status(500).send({
-      //   message: "Error retrieving ProjectAuditItems with Project id=" + id
-      // });
-    });
-  // }
+  })
+
+
+
+  // async function newFunction{
+  //   var countTable=[];
+  //   const id = req.params.id;
+  //   var totalCount = 0;
+  //   var foundCount = 0;
+  //   var manuallyrecovered = 0;
+  //   await ProjectAuditItems.count({
+  //     where:{
+  //       'projectId':id,
+  //     }
+  //   })
+  //   .then(data => {
+  //     console.log(data);
+  //     // res.status(200);
+  //     // // res.send(data);
+  //     // res.status(200).send({
+  //     //   count:data
+  //     // });
+  //     let singleData = {
+  //       'total':data
+  //     };
+  //     countTable.push(singleData);
+  //   })
+  //   await ProjectAuditItems.count({
+  //     where:{
+  //       'projectId':id,
+  //       'status':'found'
+  //     }
+  //   })
+  //   .then(data => {
+  //     console.log(data);
+  //     // res.status(200);
+  //     // // res.send(data);
+  //     // res.status(200).send({
+  //     //   count:data
+  //     // });
+  //     let singleData = {
+  //       'found':data
+  //     };
+  //     countTable.push(singleData);
+  //   })
+  //   await ProjectAuditItems.count({
+  //     where:{
+  //       'projectId':id,
+  //       'status':'scrap'
+  //     }
+  //   })
+  //   .then(data => {
+  //     console.log(data);
+  //     // res.status(200);
+  //     // // res.send(data);
+  //     // res.status(200).send({
+  //     //   count:data
+  //     // });
+  //     let singleData = {
+  //       'scrap':data
+  //     };
+  //     countTable.push(singleData);
+  //   })
+  //   await ProjectAuditItems.count({
+  //     where:{
+  //       'projectId':id,
+  //       'status':'manually approved'
+  //     }
+  //   })
+  //   .then(data => {
+  //     console.log(data);
+  //     // res.status(200);
+  //     // // res.send(data);
+  //     // res.status(200).send({
+  //     //   count:data
+  //     // });
+  //     let singleData = {
+  //       'manual':data
+  //     };
+  //     countTable.push(singleData);
+  //     res.status(200).send({
+  //       countTable
+  //     });
+  //   })
+  //   .catch(err => {
+  //     console.log(err);
+  //     res.status(500);
+  //     res.send(err);
+  //     // res.status(500).send({
+  //     //   message: "Error retrieving ProjectAuditItems with Project id=" + id
+  //     // });
+  //   });
+  // // }
 };
