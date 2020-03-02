@@ -73,6 +73,18 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.DATE,
       allowNull:true
     },
+    driverMobileNumber:{
+      type:DataTypes.STRING,
+      allowNull:true
+    },
+    transportor:{
+      type:DataTypes.STRING,
+      allowNull:true
+    },
+    outRemarks:{
+      type:DataTypes.STRING,
+      allowNull:true
+    },
     createdBy:{
       type:DataTypes.STRING,
       allowNull:true

@@ -20,4 +20,6 @@ router.put('/:id',users.loginRequired,materials.update);
 router.get("/findAllScrapped", users.loginRequired,materials.findAllScrapped);
 router.get("/findAllRecovered", users.loginRequired,materials.findAllRecovered);
 
+router.post("/bulkUpload/createEach", users.loginRequired,materials.createEach);
+
 module.exports = router;

@@ -25,6 +25,8 @@ exports.create = (req, res) => {
     loadingTime: req.body.loadingTime,
     inOutTime: req.body.inOutTime,
     idleTime: req.body.idleTime,
+    driverMobileNumber: req.body.driverMobileNumber,
+    transportor: req.body.transportor,
     createdBy:req.user.username,
     updatedBy:req.user.username
   };

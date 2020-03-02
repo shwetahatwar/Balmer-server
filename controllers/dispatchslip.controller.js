@@ -130,7 +130,7 @@ exports.create = async (req, res) => {
               break;
             }
             else{
-              console.log("Line 118",req.body.material[i]["batchNumber"]);
+              // console.log("Line 118",req.body.material[i]["batchNumber"]);
               // req.body.material[i]["numberOfPacks"] = batchQuantity;
               const dispatchSlipMaterialListData = {
                 dispatchSlipId: dispatchSlipId,
@@ -555,12 +555,6 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
     });
   });
 
-  //updated Ttat
-  // var newDate = new Date(req.body.loadStartTime);
-  // console.log("Line 560", newDate);
-  // var loadingTime = req.body.loadEndTime - req.body.loadStartTime;
-  // console.log("Line 562", new Date(req.body.loadEndTime));
-  // console.log("Line 563", loadingTime);
   var updatedTtat = {
     loadStartTime: req.body.loadStartTime,
     loadEndTime: Date.now()

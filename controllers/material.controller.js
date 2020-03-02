@@ -166,34 +166,64 @@ exports.findByMaterialCode = (req, res) => {
   });
 };
 
-exports.createEach = (req, res) => {
+exports.createEach = async (req, res) => {
   console.log(req.body);
-  //for(var i=0;i<req.body)
-  // const material = {
-  //   materialCode: req.body.materialCode,
-  //   materialType: req.body.materialType,
-  //   materialDescription: req.body.materialDescription,
-  //   genericName: req.body.genericName,
-  //   packingType: req.body.packingType,
-  //   packSize: req.body.packSize,
-  //   netWeight: req.body.netWeight,
-  //   grossWeight: req.body.grossWeight,
-  //   tareWeight: req.body.tareWeight,
-  //   UOM: req.body.UOM,
-  //   status:true,
-  //   createdBy:req.body.createdBy,
-  //   updatedBy:req.body.updatedBy
-  // };
+  // for(var i=0;i<req.body.material)
+  var packagingtypesId;
+  await PackagingType.findAll({
+    where: {
+      name: req.body.packagingtypesId
+    }
+  })
+  .then(data => {
+    packagingtypesId = data[0]["dataValues"]["id"]
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error retrieving MaterialInward with id=" + id
+    });
+  });
 
-  // // Save material in the database
-  // Material.create(material)
-  // .then(data => {
-  //   res.send(data);
-  // })
-  // .catch(err => {
-  //   res.status(500).send({
-  //     message:
-  //     err.message || "Some error occurred while creating the material."
-  //   });
-  // });
+  var materialtypesId;
+  await MaterialType.findAll({
+    where: {
+      name: req.body.materialtypesId
+    }
+  })
+  .then(data => {
+    materialtypesId = data[0]["dataValues"]["id"]
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error retrieving MaterialInward with id=" + id
+    });
+  });
+
+  const material = {
+    materialCode: req.body.materialCode,
+    materialType: materialtypesId,
+    materialDescription: req.body.materialDescription,
+    genericName: req.body.genericName,
+    packingType: packagingtypesId,
+    packSize: req.body.packSize,
+    netWeight: req.body.netWeight,
+    grossWeight: req.body.grossWeight,
+    tareWeight: req.body.tareWeight,
+    UOM: req.body.UOM,
+    status:true,
+    createdBy:req.user.username,
+    updatedBy:req.user.username
+  };
+
+  // Save material in the database
+  Material.create(material)
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while creating the material."
+    });
+  });
 };
