@@ -46,10 +46,32 @@ exports.create = (req, res) => {
     });
 };
 
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
   const id = req.params.id;
+  var inTime=0;
+  var loadingTime;
+  await Ttat.findAll({
+    where:req.params
+  })
+  .then(data => {
+    inTime = data[0]["dataValues"]["inTime"];
+    loadingTime = data[0]["dataValues"]["loadingTime"];
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error Ttat with id=" + id
+    });
+  });
 
-  Ttat.update(req.body, {
+  var inOutTime = req.body.outTime - inTime;
+  var idleTime = inOutTime - loadingTime;
+  var updatedBody = {
+    outTime: req.body.outTime,
+    inOutTime:inOutTime,
+    idleTime:idleTime,
+    outRemarks:req.body.outRemarks
+  }
+  await Ttat.update(updatedBody, {
     where: req.params
   })
     .then(num => {

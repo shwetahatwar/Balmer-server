@@ -58,11 +58,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     start:{
-      type:DataTypes.DATE,
+      type:DataTypes.BIGINT,
       allowNull:true
     },
     end:{
-      type:DataTypes.DATE,
+      type:DataTypes.BIGINT,
       allowNull:true
     },
     status:{

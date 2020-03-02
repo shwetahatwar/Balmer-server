@@ -42,11 +42,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     inTime: {
-      type: DataTypes.DATE,
+      type: DataTypes.BIGINT,
       allowNull: false
     },
     outTime: {
-      type: DataTypes.DATE,
+      type: DataTypes.BIGINT,
       allowNull: true
     },
     driver: {
@@ -54,23 +54,23 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     loadStartTime: {
-      type: DataTypes.DATE,
+      type: DataTypes.BIGINT,
       allowNull: true
     },
     loadEndTime: {
-      type: DataTypes.DATE,
+      type: DataTypes.BIGINT,
       allowNull: true
     },
     loadingTime: {
-      type: DataTypes.DATE,
+      type: DataTypes.BIGINT,
       allowNull: true
     },
     inOutTime: {
-      type: DataTypes.DATE,
+      type: DataTypes.BIGINT,
       allowNull: true
     },
     idleTime:{
-      type:DataTypes.DATE,
+      type:DataTypes.BIGINT,
       allowNull:true
     },
     driverMobileNumber:{

@@ -555,9 +555,11 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
     });
   });
 
+  var diffLoading = parseInt(req.body.loadEndTime) - parseInt(req.body.loadStartTime);
   var updatedTtat = {
     loadStartTime: req.body.loadStartTime,
-    loadEndTime: Date.now()
+    loadEndTime: req.body.loadEndTime,
+    loadingTime: diffLoading
   };
   await Ttat.update(updatedTtat, {
     where: {
