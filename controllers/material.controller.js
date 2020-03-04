@@ -27,6 +27,7 @@ exports.create = (req, res) => {
     grossWeight: req.body.grossWeight,
     tareWeight: req.body.tareWeight,
     UOM: req.body.UOM,
+    stickerType:req.body.stickerType,
     status:true,
     createdBy:req.user.username,
     updatedBy:req.user.username

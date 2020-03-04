@@ -242,6 +242,11 @@ exports.uploadMaterialMaster = async (req,res) =>{
       var uomValue1 = sheet10[uomName];
       var uomResult = uomValue1['v'];
       console.log(uomName + " \t" + uomResult);
+
+      var stickerTypeName = xls_utils.encode_cell({c:10, r:i});
+      var stickerTypeValue1 = sheet10[stickerTypeName];
+      var stickerTypeResult = stickerTypeValue1['v'];
+      console.log(stickerTypeName + " \t" + stickerTypeResult);
       
       const material = {
         materialType: materialTypeId,
@@ -254,6 +259,7 @@ exports.uploadMaterialMaster = async (req,res) =>{
         grossWeight: grossWeightResult,
         tareWeight: tareWeightResult,
         UOM: uomResult,
+        stickerType: stickerTypeResult,
         status: true,
         createdBy: "nikhil",
         updatedBy: "nikhil"
