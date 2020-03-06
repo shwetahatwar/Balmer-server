@@ -518,8 +518,24 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
 
     // Save MaterialInward in the database
     await DispatchLoadingMaterialList.create(dispatchloadingmateriallist)
-    .then(data => {
-      // res.send(data);
+    .then(async data => {
+      var updatedMaterial = {
+        dispatchSlipId:req.body.dispatchId,
+        status:false
+      }
+      await MaterialInward.update(updatedTtat, {
+        where: {
+          serialNumber: req.body.materials[i].serialNumber
+        }
+      })
+      .then(num => {
+        
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: "Error updating Ttat with id=" + truckId
+        });
+      });
     })
     .catch(err => {
       res.status(500).send({
