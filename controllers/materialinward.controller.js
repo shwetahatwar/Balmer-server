@@ -381,7 +381,6 @@ exports.findCount = (req, res) => {
     }],
   })
   .then(data => {
-    
     var stockValues = 0;
     var scrapValue = 0;
     var bucketStockValue=0;
@@ -391,16 +390,16 @@ exports.findCount = (req, res) => {
     for(var i=0; i < data.length; i++){
       if(data[i]["isScrapped"] == false){
         stockValues++
-        if(data[i]["material"]["packingType"] == 1){
+        if(data[i]["material"]["packingType"] == 5){
           bucketStockValue++;
         }
-        else if(data[i]["material"]["packingType"] == 2){
+        else if(data[i]["material"]["packingType"] == 6){
           drumStockValue++;
         }
-        else if(data[i]["material"]["packingType"] == 3){
+        else if(data[i]["material"]["packingType"] == 7){
           cartonStockValue++;
         }
-        else if(data[i]["material"]["packingType"] == 4){
+        else if(data[i]["material"]["packingType"] == 8){
           carboyStockValue++;
         }
       }
@@ -424,4 +423,277 @@ exports.findCount = (req, res) => {
       err.message || "Some error occurred while retrieving materialinwards."
     });
   });
+};
+
+exports.findMaterialByQuery = (req, res) => {
+  var queryString = req.query;
+  var offset = 0;
+  var limit = 50;
+  if(req.query.offset != null || req.query.offset != undefined){
+    offset = parseInt(req.query.offset)
+  }
+  if(req.query.offset != null || req.query.offset != undefined){
+    limit = parseInt(req.query.limit)
+  }
+  delete queryString['offset'];
+  delete queryString['limit'];
+  console.log("Generic Name",req.query.genericName);
+  if(req.query.genericName != undefined && req.query.genericName != null){
+    console.log("In If");
+    if(req.query.genericName == undefined){
+      req.query.genericName="";
+    }
+    if(req.query.batchNumber == undefined){
+      req.query.batchNumber="";
+    }
+    if(req.query.serialNumber == undefined){
+      req.query.serialNumber="";
+    }
+    if(req.query.materialCode == undefined){
+      req.query.materialCode="";
+    }
+    var materialCodeTobeSearched ="";
+    Material.findAll({
+      where: {
+         genericName: {
+          [Op.or]: {
+            [Op.like]: ''+req.query.genericName+'%',
+            [Op.eq]: ''+req.query.genericName+''
+          }
+        }
+      }
+    })
+    .then(async data => {
+      console.log("Material Code",data);
+      materialCodeTobeSearched= data[0]["dataValues"]["materialCode"];
+      await MaterialInward.findAll({ 
+        where: {
+          materialCode: materialCodeTobeSearched,
+          batchNumber: {
+            [Op.or]: {
+              [Op.like]: ''+req.query.batchNumber+'%',
+              [Op.eq]: ''+req.query.batchNumber+''
+            }
+          },
+          serialNumber: {
+            [Op.or]: {
+              [Op.like]: ''+req.query.serialNumber+'%',
+              [Op.eq]: ''+req.query.serialNumber+''
+            }
+          }
+        },
+        include: [{
+          model: Material
+        }],
+        offset:offset,
+        limit:limit
+      })
+      .then(async data => {
+        var countArray =[];
+        var responseData =[];
+        responseData.push(data);
+
+        var stockValues = 0;
+        var scrapValue = 0;
+        var bucketStockValue=0;
+        var drumStockValue=0;
+        var cartonStockValue=0;
+        var carboyStockValue=0;
+        await MaterialInward.findAll({ 
+          where: {
+            materialCode: materialCodeTobeSearched,
+            batchNumber: {
+              [Op.or]: {
+                [Op.like]: ''+req.query.batchNumber+'%',
+                [Op.eq]: ''+req.query.batchNumber+''
+              }
+            },
+            serialNumber: {
+              [Op.or]: {
+                [Op.like]: ''+req.query.serialNumber+'%',
+                [Op.eq]: ''+req.query.serialNumber+''
+              }
+            }
+          },
+          include: [{
+            model: Material
+          }]
+        })
+        .then(data => {
+          for(var i=0; i < data.length; i++){
+            if(data[i]["isScrapped"] == false){
+              stockValues++
+              if(data[i]["material"]["packingType"] == 5){
+                bucketStockValue++;
+              }
+              else if(data[i]["material"]["packingType"] == 6){
+                drumStockValue++;
+              }
+              else if(data[i]["material"]["packingType"] == 7){
+                cartonStockValue++;
+              }
+              else if(data[i]["material"]["packingType"] == 8){
+                carboyStockValue++;
+              }
+            }
+            else{
+              scrapValue++;
+            }
+          }
+        })
+        .catch(err => {
+          res.status(500).send({
+            message:
+            err.message || "Some error occurred while retrieving materialinwards."
+          });
+        });
+        var totalStock = {
+          scrapCount: scrapValue,
+          stockCount: stockValues,
+          bucketStockValue:bucketStockValue,
+          drumStockValue:drumStockValue,
+          cartonStockValue:cartonStockValue,
+          carboyStockValue:carboyStockValue
+        }
+        countArray.push(totalStock);
+        responseData.push(countArray);
+        res.send(responseData);
+      });
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+        err.message || "Some error occurred while retrieving materialinwards."
+      });
+    });
+    
+  }
+  else{
+    console.log("In Else if");
+    var materialCode ='';
+    var batchNumber ='';
+    var serialNumber ='';
+    var genericName ='';
+    if(req.query.genericName != undefined){
+      genericName = req.query.genericName;
+    }
+    if(req.query.batchNumber != undefined){
+      batchNumber = req.query.batchNumber;
+    }
+    if(req.query.serialNumber != undefined){
+      serialNumber = req.query.serialNumber;
+    }
+    if(req.query.materialCode != undefined){
+      materialCode = req.query.materialCode;
+    }
+    MaterialInward.findAll({ 
+      where: {
+        materialCode: {
+          [Op.or]: {
+            [Op.like]: ''+materialCode+'%',
+            [Op.eq]: ''+materialCode+''
+          }
+        },
+        batchNumber: {
+          [Op.or]: {
+            [Op.like]: ''+batchNumber+'%',
+            [Op.eq]: ''+batchNumber+''
+          }
+        },
+        serialNumber: {
+          [Op.or]: {
+            [Op.like]: ''+serialNumber+'%',
+            [Op.eq]: ''+serialNumber+''
+          }
+        }
+      },
+      include: [{
+        model: Material
+      }],
+      offset:offset,
+      limit:limit
+    })
+    .then(async data => {
+      var countArray =[];
+      var responseData =[];
+      responseData.push(data);
+
+      var stockValues = 0;
+      var scrapValue = 0;
+      var bucketStockValue=0;
+      var drumStockValue=0;
+      var cartonStockValue=0;
+      var carboyStockValue=0;
+      await MaterialInward.findAll({ 
+        where: {
+          materialCode: {
+            [Op.or]: {
+              [Op.like]: ''+materialCode+'%',
+              [Op.eq]: ''+materialCode+''
+            }
+          },
+          batchNumber: {
+            [Op.or]: {
+              [Op.like]: ''+batchNumber+'%',
+              [Op.eq]: ''+batchNumber+''
+            }
+          },
+          serialNumber: {
+            [Op.or]: {
+              [Op.like]: ''+serialNumber+'%',
+              [Op.eq]: ''+serialNumber+''
+            }
+          }
+        },
+        include: [{
+          model: Material
+        }]
+      })
+      .then(data => {
+        for(var i=0; i < data.length; i++){
+          if(data[i]["isScrapped"] == false){
+            stockValues++
+            if(data[i]["material"]["packingType"] == 5){
+              bucketStockValue++;
+            }
+            else if(data[i]["material"]["packingType"] == 6){
+              drumStockValue++;
+            }
+            else if(data[i]["material"]["packingType"] == 7){
+              cartonStockValue++;
+            }
+            else if(data[i]["material"]["packingType"] == 8){
+              carboyStockValue++;
+            }
+          }
+          else{
+            scrapValue++;
+          }
+        }
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+          err.message || "Some error occurred while retrieving materialinwards."
+        });
+      });
+      var totalStock = {
+        scrapCount: scrapValue,
+        stockCount: stockValues,
+        bucketStockValue:bucketStockValue,
+        drumStockValue:drumStockValue,
+        cartonStockValue:cartonStockValue,
+        carboyStockValue:carboyStockValue
+      }
+      countArray.push(totalStock);
+      responseData.push(countArray);
+      res.send(responseData);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+        err.message || "Some error occurred while retrieving materialinwards."
+      });
+    });
+  }
 };
