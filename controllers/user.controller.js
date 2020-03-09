@@ -49,9 +49,10 @@ exports.create = async (req, res) => {
       res.send(data);
     })
     .catch(err => {
+      console.log("Error",err["errors"][0]["message"]);
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the User."
+          err["errors"][0]["message"] || "Some error occurred while creating the User."
       });
     });
 };

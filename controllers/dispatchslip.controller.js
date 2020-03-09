@@ -61,7 +61,10 @@ exports.create = async (req, res) => {
     dispatchSlipId = data["dataValues"]["id"]
   })
   .catch(err => {
-
+     res.status(500).send({
+        message:
+          err["errors"][0]["message"] || "Some error occurred while creating the MaterialInward."
+      });
   });
   for(var i=0;i<req.body.material.length;i++){
     var checkMaterialQty;
@@ -184,6 +187,9 @@ exports.findAll = (req, res) => {
     {
       model: Depot
     }],
+    order: [
+    ['id', 'DESC'],
+    ],
     offset:offset,
     limit:limit
   })
