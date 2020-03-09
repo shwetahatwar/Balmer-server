@@ -3,9 +3,10 @@ const Ttat = db.ttats;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new ttat
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   console.log(req.body);
   // Validate request
+  var isTruckAlreadyIn = 0;
   if (!req.body.truckNumber) {
     res.status(400).send({
       message: "Content can not be empty!"
@@ -31,8 +32,18 @@ exports.create = (req, res) => {
     updatedBy:req.user.username
   };
 
-
+  await Ttat.findAll({
+    where:{
+      truckNumber : req.body.truckNumber,
+      outTime : null
+    }
+    }).then(data => {
+      if(data[0] != undefined && data[0] !=null){
+        isTruckAlreadyIn =1;
+      }
+  })
   // Save ttat in the database
+  if(isTruckAlreadyIn == 0){
   Ttat.create(ttat)
     .then(data => {
       res.send(data);
@@ -44,6 +55,13 @@ exports.create = (req, res) => {
           err.message || "Some error occurred while creating the ttat."
       });
     });
+  }
+  else{
+    res.status(500).send({
+        message:
+          "Truck is already in"
+      });
+  }
 };
 
 exports.update = async (req, res) => {

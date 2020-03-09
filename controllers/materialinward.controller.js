@@ -482,6 +482,9 @@ exports.findMaterialByQuery = (req, res) => {
             }
           }
         },
+        order: [
+        ['materialCode', 'ASC'],
+        ],
         include: [{
           model: Material
         }],
@@ -607,6 +610,9 @@ exports.findMaterialByQuery = (req, res) => {
           }
         }
       },
+      order: [
+      ['materialCode', 'ASC'],
+      ],
       include: [{
         model: Material
       }],
