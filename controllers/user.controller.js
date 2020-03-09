@@ -3,6 +3,8 @@ const User = db.users;
 const Op = db.Sequelize.Op;
 var jwt = require('jsonwebtoken');
 const Role = db.roles;
+var bcrypt = require('bcrypt-nodejs');
+var bbPromise = require('bluebird');
 
 // Create and Save a new User
 exports.create = async (req, res) => {
@@ -210,4 +212,44 @@ exports.loginRequired = (req,res,next) => {
   } else {
     return res.status(401).json({ message: 'Unauthorized user!' });
   }
+};
+
+exports.reset_pass = (req, res) => {
+  console.log("Inside reset Pass");
+  var resetPassword = req.query.password;
+  
+    var passwordReset = new bbPromise(function(resolve, reject) {
+          bcrypt.genSalt(5, function(err, salt) {
+            if (err) { reject(err); return; }
+
+            bcrypt.hash(resetPassword, salt, null, function(err, hash) {
+              if (err) { reject(err); return; }
+              var hashGenerated = hash;
+              var json = {
+                "password":hashGenerated
+              };
+              console.log("json",json);
+              console.log("resetPassword",hashGenerated);
+              User.update(json, {
+                where: req.params
+              })
+              .then(num => {
+                if (num == 1) {
+                  res.send({
+                    message: "User was updated successfully."
+                  });
+                } else {
+                  res.send({
+                    message: `Cannot update User with id=${id}. Maybe User was not found or req.body is empty!`
+                  });
+                }
+              })
+              .catch(err => {
+                res.status(500).send({
+                  message: "Error updating User with id=" + id
+                });
+              });
+            });
+          });
+        });
 };

@@ -66,5 +66,6 @@ router.post("/", users.create);
 router.get("/", users.findAll);
 router.get("/:id", users.findOne);
 router.put("/:id", users.update);
+router.get("/resetPassword/:id", users.reset_pass);
 
 module.exports = router;
