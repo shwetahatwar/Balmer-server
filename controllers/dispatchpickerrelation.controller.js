@@ -184,7 +184,7 @@ exports.getDispatchSlipbyUser = async (req,res) =>{
             dispatchListArray.push(dispatchSlipData[0]["dataValues"]);  
             console.log("Line 182",dispatchListArray);
           }
-          else if(dispatchSlipData[0]["dataValues"]["dispatchSlipStatus"] == "Completed" && updatedAt.toString().includes(newDateTimeNow)){
+          else if(dispatchSlipData[0]["dataValues"]["dispatchSlipStatus"] == "Picked" && updatedAt.toString().includes(newDateTimeNow)){
              dispatchListArray.push(dispatchSlipData[0]["dataValues"]);  
              console.log("Line 185",dispatchListArray);
           }

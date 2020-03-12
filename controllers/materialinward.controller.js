@@ -471,6 +471,8 @@ exports.findMaterialByQuery = (req, res) => {
       materialCodeTobeSearched= data[0]["dataValues"]["materialCode"];
       await MaterialInward.findAll({ 
         where: {
+          status:1,
+          isScrapped:0,
           materialCode: materialCodeTobeSearched,
           batchNumber: {
             [Op.or]: {
@@ -507,6 +509,8 @@ exports.findMaterialByQuery = (req, res) => {
         var carboyStockValue=0;
         await MaterialInward.findAll({ 
           where: {
+            status:1,
+            isScrapped:0,
             materialCode: materialCodeTobeSearched,
             batchNumber: {
               [Op.or]: {
@@ -594,6 +598,8 @@ exports.findMaterialByQuery = (req, res) => {
     }
     MaterialInward.findAll({ 
       where: {
+        status:1,
+        isScrapped:0,
         materialCode: {
           [Op.or]: {
             [Op.like]: ''+materialCode+'%',
@@ -635,6 +641,8 @@ exports.findMaterialByQuery = (req, res) => {
       var carboyStockValue=0;
       await MaterialInward.findAll({ 
         where: {
+          status:1,
+          isScrapped:0,
           materialCode: {
             [Op.or]: {
               [Op.like]: ''+materialCode+'%',
