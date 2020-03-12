@@ -425,7 +425,7 @@ exports.postDispatchSlipPickingMaterialLists = async (req, res) => {
     await DispatchPickingMaterialList.create(dispatchpickingmateriallist)
     .then(data => {
       // res.send(data);
-      DispatchSlip.update()
+      // DispatchSlip.update()
     })
     .catch(err => {
       res.status(500).send({
@@ -434,6 +434,31 @@ exports.postDispatchSlipPickingMaterialLists = async (req, res) => {
       });
     });
   }
+  //updated Dispatch Slip
+  var updatedDispatchSlip = {
+    dispatchSlipStatus: "Picked"
+  }
+  await DispatchSlip.update(updatedDispatchSlip, {
+    where: {
+      id: req.params.dispatchId
+    }
+  })
+  .then(num => {
+    if (num == 1) {
+      // res.send({
+      //   message: "DispatchSlip was updated successfully."
+      // });
+    } else {
+      // res.send({
+      //   message: `Cannot update DispatchSlip with id=${id}. Maybe DispatchSlip was not found or req.body is empty!`
+      // });
+    }
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error updating DispatchSlip with id=" + id
+    });
+  });
   res.status(200).send({
     message:
       "Completed Successfully."
@@ -529,7 +554,7 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
         dispatchSlipId:req.body.dispatchId,
         status:false
       }
-      await MaterialInward.update(updatedTtat, {
+      await MaterialInward.update(updatedMaterial, {
         where: {
           serialNumber: req.body.materials[i].serialNumber
         }

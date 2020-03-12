@@ -128,6 +128,9 @@ exports.findAll = (req, res) => {
     include: [{
       model: Material
     }],
+     order: [
+        ['id', 'DESC'],
+        ],
     offset:offset,
     limit:limit
   })
