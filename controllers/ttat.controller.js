@@ -112,14 +112,27 @@ exports.update = async (req, res) => {
 
 // Retrieve all ttats from the database.
 exports.findAll = (req, res) => {
-  const title = req.query.title;
-  var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
   // console.log();
+  var queryString = req.query;
+  var offset = 0;
+  var limit = 100;
+  console.log("Line 51", req.query);
+  if(req.query.offset != null || req.query.offset != undefined){
+    offset = parseInt(req.query.offset)
+  }
+  if(req.query.offset != null || req.query.offset != undefined){
+    limit = parseInt(req.query.limit)
+  }
+  delete queryString['offset'];
+  delete queryString['limit'];
+  console.log("queryString",queryString);
   Ttat.findAll({ 
-    where: req.query,
+    where: queryString,
     order: [
             ['id', 'DESC'],
         ],
+        offset:offset,
+        limit:limit
     })
     .then(data => {
       res.send(data);
