@@ -6,7 +6,7 @@ const User = db.users;
 const Ttat = db.ttats;
 const Depot = db.depots;
 
-// Create and Save a new MaterialInward
+// Create and Save a new Dispatch Loader Relation
 exports.create = async (req, res) => {
   console.log(req.body);
   // Validate request
@@ -32,7 +32,7 @@ exports.create = async (req, res) => {
     // });
     console.log(err);
   });
-  // Create a MaterialInward
+  // Create a Dispatch Loader Relation
   const dispatchloaderrelation = {
     dispatchId: req.body.dispatchId,
     userId:userId,
@@ -40,7 +40,7 @@ exports.create = async (req, res) => {
     updatedBy:req.user.username
   };
 
-  // Save MaterialInward in the database
+  // Save Dispatch Loader Relation in the database
   DispatchLoaderRelation.create(dispatchloaderrelation)
   .then(data => {
     res.send(data);
@@ -53,6 +53,7 @@ exports.create = async (req, res) => {
   });
 };
 
+//Get Dispatch Loader Relation
 exports.getAll = (req,res) =>{
   DispatchLoaderRelation.findAll({
     where:req.query
@@ -68,6 +69,7 @@ exports.getAll = (req,res) =>{
     });
 };
 
+//Get Dispatch Loader Relation by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
 
@@ -82,6 +84,7 @@ exports.getById = (req,res) => {
     });
 };
 
+//Update Dispatch Loader Relation
 exports.update = (req, res) => {
   const id = req.params.id;
 
@@ -106,6 +109,7 @@ exports.update = (req, res) => {
     });
 };
 
+//Get Users by Dispatch Slip
 exports.getUsersbyDispatchSlip = (req,res) =>{
   var userListArray=[];
   DispatchLoaderRelation.findAll({
@@ -141,6 +145,7 @@ exports.getUsersbyDispatchSlip = (req,res) =>{
   });
 };
 
+//Get Dispatch Slip by User
 exports.getDispatchSlipbyUser = (req,res) =>{
 
   var d = new Date();

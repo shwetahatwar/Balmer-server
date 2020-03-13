@@ -2,7 +2,7 @@ const db = require("../models");
 const Depo = db.depos;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new MaterialInward
+// Create and Save a new Depo
 exports.create = (req, res) => {
   console.log(req.body);
   // Validate request
@@ -13,7 +13,7 @@ exports.create = (req, res) => {
     return;
   }
 
-  // Create a MaterialInward
+  // Create a Depo
   const depo = {
     name: req.body.name,
     location:req.body.location,
@@ -22,7 +22,7 @@ exports.create = (req, res) => {
     updatedBy:req.user.username
   };
 
-  // Save MaterialInward in the database
+  // Save Depo in the database
   Depo.create(depo)
     .then(data => {
       res.send(data);

@@ -3,13 +3,9 @@ const Depot = db.depots;
 const Op = db.Sequelize.Op;
 const User = db.users;
 
-// Create and Save a new MaterialInward
+// Create and Save a new Depot
 exports.create = (req, res) => {
-  // var uderId;
-  // User.findAll({
-  //   where:
-  // })
-
+  
   if (!req.body.name) {
     res.status(400).send({
       message: "Content can not be empty!"
@@ -17,7 +13,7 @@ exports.create = (req, res) => {
     return;
   }
 
-  // Create a MaterialInward
+  // Create a Depot
   const depot = {
     name: req.body.name,
     location:req.body.location,
@@ -26,7 +22,7 @@ exports.create = (req, res) => {
     updatedBy:req.user.username
   };
 
-  // Save MaterialInward in the database
+  // Save Depot in the database
   Depot.create(depot)
     .then(data => {
       res.send(data);
@@ -39,6 +35,7 @@ exports.create = (req, res) => {
     });
 };
 
+//Get all Depots
 exports.getAll = (req,res) =>{
   console.log(req.user.id);
   Depot.findAll({
@@ -55,6 +52,7 @@ exports.getAll = (req,res) =>{
     });
 };
 
+//Get Depot by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
   console.log(req.params);
@@ -70,6 +68,7 @@ exports.getById = (req,res) => {
     });
 };
 
+//Update Depot by Id
 exports.update = (req, res) => {
   const id = req.params.id;
 
