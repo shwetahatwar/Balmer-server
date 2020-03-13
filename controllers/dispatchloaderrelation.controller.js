@@ -187,7 +187,7 @@ exports.getDispatchSlipbyUser = (req,res) =>{
         })
         .then(dispatchSlipData => {
           var updatedAt = dispatchSlipData[0]["dataValues"]["updatedAt"];
-          if(dispatchSlipData[0]["dataValues"]["dispatchSlipStatus"] == "Active"){
+          if(dispatchSlipData[0]["dataValues"]["dispatchSlipStatus"] == "Active" || dispatchSlipData[0]["dataValues"]["dispatchSlipStatus"] == "Picked" ){
             dispatchListArray.push(dispatchSlipData[0]["dataValues"]);  
             console.log("Line 182",dispatchListArray);
           }

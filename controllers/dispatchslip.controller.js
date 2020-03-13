@@ -17,9 +17,24 @@ exports.create = async (req, res) => {
       message: "Content can not be empty!"
     });
     return;
-  }  
+  } 
 
-  const truckNumber = req.body.truckId;
+  var canCreate = 0; 
+  for(var i=0;i<req.body.material.length;i++){
+    var checkMaterialQty = await MaterialInward.count({
+      where:{
+        'materialCode':req.body.material[i].materialCode,
+        'status':1,
+        'isScrapped':0,
+      }
+    });
+    if(checkMaterialQty > req.body.material[i].numberOfPacks){
+      canCreate =1;
+    }
+  }
+
+  if(canCreate == 1){
+    const truckNumber = req.body.truckId;
   var truckData;
   await Ttat.findAll({
     where: {
@@ -70,7 +85,9 @@ exports.create = async (req, res) => {
     var checkMaterialQty;
     checkMaterialQty = await MaterialInward.count({
       where:{
-        'materialCode':req.body.material[i].materialCode
+        'materialCode':req.body.material[i].materialCode,
+        'status':1,
+        'isScrapped':0,
       }
     })
     .then(async data=>{
@@ -80,7 +97,9 @@ exports.create = async (req, res) => {
       if(checkMaterialQty >= req.body.material[i].numberOfPacks){
         var getBatchCode = await MaterialInward.findAll({
           where: {
-            'materialCode':req.body.material[i].materialCode
+            'materialCode':req.body.material[i].materialCode,
+            'status':1,
+            'isScrapped':0,
           },
           order: [
           ['createdAt', 'ASC'],
@@ -102,7 +121,9 @@ exports.create = async (req, res) => {
             var batchQuantity = await MaterialInward.count({
               where:{
                 'materialCode':req.body.material[i].materialCode,
-                'batchNumber':dups[s]
+                'batchNumber':dups[s],
+                'status':1,
+                'isScrapped':0,
               }
             });
             console.log("Line 93 batchQuantity :",batchQuantity);
@@ -138,7 +159,7 @@ exports.create = async (req, res) => {
               const dispatchSlipMaterialListData = {
                 dispatchSlipId: dispatchSlipId,
                 batchNumber: dups[i],
-                numberOfPacks:counter,
+                numberOfPacks:batchQuantity,
                 materialCode:req.body.material[i]["materialCode"],
                 createdBy:req.user.username,
                 updatedBy:req.user.username
@@ -161,6 +182,14 @@ exports.create = async (req, res) => {
 
     })
   }
+  }
+  else{
+    res.status(500).send({
+      message:
+      "Dispatch slip not created due to insufficient quantity ."
+    });
+  }
+  
 };
 
 
