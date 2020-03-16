@@ -29,7 +29,7 @@ exports.create = async (req, res) => {
         'isScrapped':0,
       }
     });
-    if(checkMaterialQty > req.body.material[i].numberOfPacks){
+    if(checkMaterialQty >= req.body.material[i].numberOfPacks){
       canCreate =1;
     }
   }
