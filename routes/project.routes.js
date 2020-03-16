@@ -10,5 +10,6 @@ router.put("/:id", users.loginRequired,projects.update);
 router.get("/:projectId/projectItems", users.loginRequired,projects.findProjectItemsByProject);
 router.get("/:projectId/projectItems/:id", users.loginRequired,projects.findSingleProjectItemByProject);
 router.put("/:projectId/projectItems/:id", users.loginRequired,projects.updateSingleProjectItemByProject);
+router.get("/get/getbydate", users.loginRequired,projects.findByDatewise);
 
 module.exports = router;
