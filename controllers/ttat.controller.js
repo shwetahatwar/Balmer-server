@@ -165,11 +165,7 @@ exports.findByDatewise = (req, res) => {
       createdAt: {
         [Op.gte]: parseInt(req.query.createdAtStart),
         [Op.lt]: parseInt(req.query.createdAtEnd),
-      },
-      updatedAt: {
-        [Op.gte]: parseInt(req.query.updatedAtStart),
-        [Op.lt]: parseInt(req.query.updatedAtEnd),
-      },
+      }
     },
     order: [
             ['id', 'DESC'],

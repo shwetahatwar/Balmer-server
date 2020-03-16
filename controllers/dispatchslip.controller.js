@@ -764,17 +764,19 @@ exports.findByDatewise = (req, res) => {
   delete queryString['offset'];
   delete queryString['limit'];
   console.log("queryString",queryString);
-  Ttat.findAll({ 
+  DispatchSlip.findAll({ 
     where: {
       createdAt: {
         [Op.gte]: parseInt(req.query.createdAtStart),
         [Op.lt]: parseInt(req.query.createdAtEnd),
-      },
-      updatedAt: {
-        [Op.gte]: parseInt(req.query.updatedAtStart),
-        [Op.lt]: parseInt(req.query.updatedAtEnd),
-      },
+      }
     },
+    include: [{
+      model: Ttat
+    },
+    {
+      model: Depot
+    }],
     order: [
             ['id', 'DESC'],
         ],
