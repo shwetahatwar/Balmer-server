@@ -5,7 +5,7 @@ const Op = db.Sequelize.Op;
 const DispatchSlipMaterialList = db.dispatchslipmateriallists;
 const MaterialInward = db.materialinwards;
 
-// Create and Save a new MaterialInward
+// Create and Save a new Dispatch Picking Material List
 exports.create = (req, res) => {
   console.log(req.body);
   // Validate request
@@ -19,7 +19,7 @@ exports.create = (req, res) => {
   console.log(req.body.material.length);
   for(var i=0;i<req.body.material.length;i++){
     console.log(req.body.material[i]);
-    // Create a DispatchPickingMaterialList
+    // Create a Dispatch Picking Material List
     const dispatchpickingmateriallist = {
       dispatchId: req.body.dispatchId,
       userId:req.body.userId,
@@ -30,7 +30,7 @@ exports.create = (req, res) => {
       serialNumber:req.body.material[i].serialNumber
     };
 
-    // Save DispatchPickingMaterialList in the database
+    // Save Dispatch Picking Material List in the database
     DispatchPickingMaterialList.create(dispatchpickingmateriallist)
     .then(data => {
       // res.send(data);
@@ -49,6 +49,7 @@ exports.create = (req, res) => {
   
 };
 
+//Get Dispatch Picking Material List
 exports.getAll = (req,res) =>{
   DispatchPickingMaterialList.findAll({
     where:req.query
@@ -64,6 +65,7 @@ exports.getAll = (req,res) =>{
     });
 };
 
+//Get Dispatch Picking Material List by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
 

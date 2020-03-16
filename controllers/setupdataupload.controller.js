@@ -83,7 +83,7 @@ exports.uploadMaterialMaster = async (req,res) =>{
         console.log("Line 37", err);
         // res.status(500).send({
         //   message:
-        //     err.message || "Some error occurred while creating the role."
+        //     err.message || "Some error occurred while creating the PackagingType."
         // });
       });
     }
@@ -151,7 +151,7 @@ exports.uploadMaterialMaster = async (req,res) =>{
           updatedBy:"nikhil"
         };
 
-        // Save MaterialInward in the database
+        // Save MaterialType in the database
         await MaterialType.create(materialtype)
         .then(data => {
           console.log("Line 47",data.id);
@@ -160,7 +160,7 @@ exports.uploadMaterialMaster = async (req,res) =>{
         .catch(err => {
           // res.status(500).send({
           //   message:
-          //     err.message || "Some error occurred while creating the MaterialInward."
+          //     err.message || "Some error occurred while creating the MaterialType."
           // });
         });
       });
@@ -203,7 +203,7 @@ exports.uploadMaterialMaster = async (req,res) =>{
           updatedBy:"nikhil"
         };
 
-        // Save MaterialInward in the database
+        // Save PackagingType in the database
         await PackagingType.create(packagingType)
         .then(data => {
           // packagingTypeId.send(data);
@@ -212,7 +212,7 @@ exports.uploadMaterialMaster = async (req,res) =>{
         .catch(err => {
           // res.status(500).send({
           //   message:
-          //     err.message || "Some error occurred while creating the MaterialInward."
+          //     err.message || "Some error occurred while creating the PackagingType."
           // });
         });
       });

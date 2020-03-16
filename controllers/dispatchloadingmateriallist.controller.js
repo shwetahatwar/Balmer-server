@@ -32,7 +32,7 @@ exports.create = (req, res) => {
   .catch(err => {
     res.status(500).send({
       message:
-      err.message || "Some error occurred while creating the MaterialInward."
+      err.message || "Some error occurred while creating the DispatchLoadingMaterialList."
     });
   });
 };
@@ -48,7 +48,7 @@ exports.getAll = (req,res) =>{
   .catch(err => {
     res.status(500).send({
       message:
-      err.message || "Some error occurred while retrieving materialinwards."
+      err.message || "Some error occurred while retrieving DispatchLoadingMaterialList."
     });
   });
 };
@@ -63,7 +63,7 @@ exports.getById = (req,res) => {
   })
   .catch(err => {
     res.status(500).send({
-      message: "Error retrieving MaterialInward with id=" + id
+      message: "Error retrieving DispatchLoadingMaterialList with id=" + id
     });
   });
 };
@@ -93,7 +93,7 @@ exports.update = (req, res) => {
     });
 };
 
-
+//Get Dispatch Loader Material List by Dispatch Id
 exports.getAllByDispatchSlipId = (req,res) =>{
   DispatchLoadingMaterialList.findAll({
     where:{
@@ -106,7 +106,7 @@ exports.getAllByDispatchSlipId = (req,res) =>{
   .catch(err => {
     res.status(500).send({
       message:
-      err.message || "Some error occurred while retrieving materialinwards."
+      err.message || "Some error occurred while retrieving DispatchLoadingMaterialList."
     });
   });
 };

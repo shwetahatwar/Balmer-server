@@ -185,6 +185,7 @@ exports.update = (req, res) => {
   });
 };
 
+//Not in Use API
 exports.updateWithBarcode = (req, res) => {
   // const serialNumber = req.query.barcodeSerial;
   // console.log("Barcode Serial",req.query.barcodeSerial);
@@ -265,6 +266,7 @@ exports.deleteAll = (req, res) => {
 //     });
 // };
 
+//Not in Use API
 exports.updateScrapAndRecover = (req, res) => {
   console.log(req.body);
   MaterialInward.update(req.body, {
@@ -296,17 +298,18 @@ exports.updateScrapAndRecover = (req, res) => {
         // });
       } else {
         res.send({
-          message: `Cannot update MaterialInward with id=${id}. Maybe MaterialInward was not found or req.body is empty!`
+          message: `Cannot update MaterialInward with id=${req.body.id}. Maybe MaterialInward was not found or req.body is empty!`
         });
       }
     })
   .catch(err => {
     res.status(500).send({
-      message: "Error updating MaterialInward with id=" + id
+      message: "Error updating MaterialInward with id=" + req.body.id
     });
   });
 }; 
 
+//Not in Use API
 exports.findAllByBatchCode = (req, res) => {
   MaterialInward.findAll({ 
     where: {
@@ -324,6 +327,7 @@ exports.findAllByBatchCode = (req, res) => {
   });
 };
 
+//Not in Use API
 exports.findAllByMaterialCode = (req, res) => {
   MaterialInward.findAll({ 
     where: {
@@ -341,6 +345,7 @@ exports.findAllByMaterialCode = (req, res) => {
   });
 };
 
+//By Material Inward by Material Code and Batch Code
 exports.findAllByMaterialCodeandBatchCode = (req, res) => {
   MaterialInward.findAll({ 
     where: {
@@ -359,6 +364,7 @@ exports.findAllByMaterialCodeandBatchCode = (req, res) => {
   });
 };
 
+//Not in Use API
 exports.findAllByBarcode = (req, res) => {
   MaterialInward.findAll({ 
     where: {
@@ -376,7 +382,8 @@ exports.findAllByBarcode = (req, res) => {
   });
 };
 
-exports.findCount = (req, res) => {
+//Stock Count for Dashboard
+exports.countOfStockForDashboard = (req, res) => {
   MaterialInward.findAll({ 
     where: req.query,
     include: [{
@@ -428,6 +435,7 @@ exports.findCount = (req, res) => {
   });
 };
 
+//Get Stock for Material Stock Report
 exports.findMaterialByQuery = (req, res) => {
   var queryString = req.query;
   var offset = 0;

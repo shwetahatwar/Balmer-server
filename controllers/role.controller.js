@@ -2,7 +2,7 @@ const db = require("../models");
 const Role = db.roles;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new MaterialInward
+// Create and Save a new Role
 exports.create = (req, res) => {
   console.log(req.body);
   // Validate request
@@ -33,6 +33,7 @@ exports.create = (req, res) => {
     });
 };
 
+//Get All Roles
 exports.getAll = (req,res) =>{
   console.log("Line 37 IN");
   Role.findAll({
@@ -49,6 +50,7 @@ exports.getAll = (req,res) =>{
     });
 };
 
+//Update Roles by Id
 exports.update = (req, res) => {
   const id = req.params.id;
 
@@ -73,6 +75,7 @@ exports.update = (req, res) => {
     });
 };
 
+//Get Role by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
 

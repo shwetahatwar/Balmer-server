@@ -6,7 +6,7 @@ const User = db.users;
 const Ttat = db.ttats;
 const Depot = db.depots;
 
-// Create and Save a new MaterialInward
+// Create and Save a new Dispatch Picker Relations
 exports.create = async (req, res) => {
   console.log(req.body);
   // Validate request
@@ -33,7 +33,7 @@ exports.create = async (req, res) => {
     console.log(err);
   });
 
-  // Create a MaterialInward
+  // Create a Dispatch Picker Relations
   const dispatchpickerrelation = {
     dispatchId: req.body.dispatchId,
     userId:userId,
@@ -41,7 +41,7 @@ exports.create = async (req, res) => {
     updatedBy:req.user.username
   };
 
-  // Save MaterialInward in the database
+  // Save Dispatch Picker Relations in the database
   DispatchPickerRelation.create(dispatchpickerrelation)
   .then(data => {
     res.send(data);
@@ -49,11 +49,12 @@ exports.create = async (req, res) => {
   .catch(err => {
     res.status(500).send({
       message:
-        err.message || "Some error occurred while creating the MaterialInward."
+        err.message || "Some error occurred while creating the DispatchLoadingMaterialList."
     });
   });
 };
 
+//Get Dispatch Picker Relations list
 exports.getAll = (req,res) =>{
   DispatchPickerRelation.findAll({
     where:req.query
@@ -64,11 +65,12 @@ exports.getAll = (req,res) =>{
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving materialinwards."
+          err.message || "Some error occurred while retrieving DispatchLoadingMaterialList."
       });
     });
 };
 
+//Get Dispatch Picker Relations by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
 
@@ -78,11 +80,12 @@ exports.getById = (req,res) => {
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving MaterialInward with id=" + id
+        message: "Error retrieving DispatchLoadingMaterialList with id=" + id
       });
     });
 };
 
+//Update Dispatch Picker Relations by Id
 exports.update = (req, res) => {
   const id = req.params.id;
 
@@ -107,6 +110,7 @@ exports.update = (req, res) => {
     });
 };
 
+//Get User by Dispatch Slip Id
 exports.getUsersbyDispatchSlip = (req,res) =>{
   var userListArray=[];
   DispatchPickerRelation.findAll({
@@ -128,7 +132,7 @@ exports.getUsersbyDispatchSlip = (req,res) =>{
         .catch(err => {
           res.status(500).send({
             message:
-              err.message || "Some error occurred while retrieving materialinwards."
+              err.message || "Some error occurred while retrieving DispatchLoadingMaterialList."
           });
         })
       }
@@ -137,11 +141,12 @@ exports.getUsersbyDispatchSlip = (req,res) =>{
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving materialinwards."
+          err.message || "Some error occurred while retrieving DispatchLoadingMaterialList."
       });
     });
 };
 
+//Get Dispatch Slip by User
 exports.getDispatchSlipbyUser = async (req,res) =>{
 
   var d = new Date();
@@ -193,7 +198,7 @@ exports.getDispatchSlipbyUser = async (req,res) =>{
         .catch(err=>{
           res.status(500).send({
           message:
-            err.message || "Some error occurred while retrieving materialinwards."
+            err.message || "Some error occurred while retrieving DispatchLoadingMaterialList."
           });
         })
       }
@@ -211,7 +216,7 @@ exports.getDispatchSlipbyUser = async (req,res) =>{
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving materialinwards."
+          err.message || "Some error occurred while retrieving DispatchLoadingMaterialList."
       });
     });
 };

@@ -84,6 +84,7 @@ exports.findAll = (req, res) => {
   });
 };
 
+//Get Material by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
 
@@ -93,11 +94,12 @@ exports.getById = (req,res) => {
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving MaterialInward with id=" + id
+        message: "Error retrieving Materials with id=" + id
       });
     });
 }
 
+//Get Scrapped Material
 exports.findAllScrapped = (req, res) => {
   Material.findAll({ 'status': 0})
   .then(data => {
@@ -105,6 +107,7 @@ exports.findAllScrapped = (req, res) => {
   })
 };
 
+//Get Recovered
 exports.findAllRecovered = (req, res) => {
   Material.findAll({ 'status': 1})
   .then(data => {
@@ -112,6 +115,7 @@ exports.findAllRecovered = (req, res) => {
   })
 };
 
+//Update Material by Id
 exports.update = (req, res) => {
   const id = req.params.id;
 
@@ -137,20 +141,6 @@ exports.update = (req, res) => {
 };
 
 
-// exports.findOne = (req, res) => {
-//   const id = req.params.id;
-
-//   Material.findByPk(id)
-//     .then(data => {
-//       res.send(data);
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message: "Error retrieving MaterialInward with id=" + id
-//       });
-//     });
-// };
-
 exports.findByMaterialCode = (req, res) => {
   Material.findAll({
    where: {
@@ -162,7 +152,7 @@ exports.findByMaterialCode = (req, res) => {
   })
   .catch(err => {
     res.status(500).send({
-      message: "Error retrieving MaterialInward with id=" + id
+      message: "Error retrieving Materials with Material Code=" + req.query.materialCode
     });
   });
 };
@@ -181,7 +171,7 @@ exports.createEach = async (req, res) => {
   })
   .catch(err => {
     res.status(500).send({
-      message: "Error retrieving MaterialInward with id=" + id
+      message: "Error retrieving PackagingType with id=" + req.body.packagingtypesId
     });
   });
 
@@ -196,7 +186,7 @@ exports.createEach = async (req, res) => {
   })
   .catch(err => {
     res.status(500).send({
-      message: "Error retrieving MaterialInward with id=" + id
+      message: "Error retrieving MaterialType with id=" + req.body.materialtypesId
     });
   });
 

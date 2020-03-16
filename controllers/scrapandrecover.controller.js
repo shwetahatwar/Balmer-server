@@ -5,7 +5,7 @@ const MaterialInward = db.materialinwards;
 const InventoryTransaction = db.inventorytransactions;
 const ProjectAuditItems = db.projectaudititems;
 
-// Create and Save a new MaterialInward
+// Create and Save a new ScrapandRecover
 exports.create = (req, res) => {
   console.log(req.body);
   // Validate request
@@ -16,7 +16,7 @@ exports.create = (req, res) => {
     return;
   }
 
-  // Create a MaterialInward
+  // Create a ScrapandRecover
   const scrapandrecover = {
     materialInwardId: req.body.id,
     comments:req.body.comments,
@@ -25,7 +25,7 @@ exports.create = (req, res) => {
     updatedBy:req.user.username
   };
 
-  // Save MaterialInward in the database
+  // Save ScrapandRecover in the database
   ScrapandRecover.create(scrapandrecover)
     .then(data => {
       MaterialInward.update(req.body, {
@@ -57,11 +57,12 @@ exports.create = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the MaterialInward."
+          err.message || "Some error occurred while creating the ScrapandRecover."
       });
     });
 };
 
+//Get All ScrapandRecover
 exports.getAll = (req,res) =>{
   ScrapandRecover.findAll({
     where: req.query
@@ -72,11 +73,12 @@ exports.getAll = (req,res) =>{
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving materialinwards."
+          err.message || "Some error occurred while retrieving ScrapandRecover."
       });
     });
 };
 
+//Get ScrapandRecover by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
 
@@ -91,6 +93,7 @@ exports.getById = (req,res) => {
     });
 };
 
+//Update ScrapandRecover by Id
 exports.update = (req, res) => {
   const id = req.params.id;
 
@@ -100,21 +103,22 @@ exports.update = (req, res) => {
     .then(num => {
       if (num == 1) {
         res.send({
-          message: "Role was updated successfully."
+          message: "ScrapandRecover was updated successfully."
         });
       } else {
         res.send({
-          message: `Cannot update Role with id=${id}. Maybe Role was not found or req.body is empty!`
+          message: `Cannot update ScrapandRecover with id=${id}. Maybe ScrapandRecover was not found or req.body is empty!`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error updating Role with id=" + id
+        message: "Error updating ScrapandRecover with id=" + id
       });
     });
 };
 
+//Update ScrapandRecover by Barcode Serial Scan
 exports.updateByBarcodeSerial = async (req,res) => {
   var materialInwardId;
   var getBatchNumber;
@@ -127,7 +131,7 @@ exports.updateByBarcodeSerial = async (req,res) => {
   })
   .catch(err => {
     res.status(500).send({
-        message: "Error updating Role with id=" + id
+        message: "Error finding MaterialInward with Serial Number=" + req.body.serialNumber
       });
   });
 
@@ -142,22 +146,20 @@ exports.updateByBarcodeSerial = async (req,res) => {
   })
   .then(num => {
     if (num == 1) {
-      // res.send({
-      //   message: "Role was updated successfully."
-      // });
+      
     } else {
       res.send({
-        message: `Cannot update Role with id=${id}. Maybe Role was not found or req.body is empty!`
+        message: `Cannot update MaterialInward with Serial Number=${req.body.serialNumber}. Maybe MaterialInward was not found or req.body is empty!`
       });
     }
   })
   .catch(err => {
     res.status(500).send({
-      message: "Error updating Role with id=" + id
+      message: "Error updating MaterialInward with Serial Number=" + req.body.serialNumber
     });
   });
 
-  // Create a MaterialInward
+  // Create a ScrapandRecover
   const scrapandrecover = {
     materialInwardId: materialInwardId,
     comments:req.body.comments,
@@ -166,7 +168,7 @@ exports.updateByBarcodeSerial = async (req,res) => {
     updatedBy:req.user.username
   };
 
-  // Save MaterialInward in the database
+  // Save ScrapandRecover in the database
   await ScrapandRecover.create(scrapandrecover)
   .then(data => {
     MaterialInward.update(req.body, {
@@ -196,17 +198,17 @@ exports.updateByBarcodeSerial = async (req,res) => {
         .then(num => {
           if (num == 1) {
             // res.send({
-            //   message: "Role was updated successfully."
+            //   message: "ProjectAuditItems was updated successfully."
             // });
           } else {
             res.send({
-              message: `Cannot update Role with id=${id}. Maybe Role was not found or req.body is empty!`
+              message: `Cannot update ProjectAuditItems with id=${req.body.id}. Maybe ProjectAuditItems was not found or req.body is empty!`
             });
           }
         })
         .catch(err => {
           res.status(500).send({
-            message: "Error updating Role with id=" + id
+            message: "Error updating ProjectAuditItems with id=" + req.body.id
           });
         });
       })
@@ -222,7 +224,7 @@ exports.updateByBarcodeSerial = async (req,res) => {
   .catch(err => {
     res.status(500).send({
       message:
-        err.message || "Some error occurred while creating the MaterialInward."
+        err.message || "Some error occurred while creating the ScrapandRecover."
     });
   });
   

@@ -30,7 +30,7 @@ exports.create = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the MaterialInward."
+          err.message || "Some error occurred while creating the Depo."
       });
     });
 };
@@ -43,7 +43,7 @@ exports.getAll = (req,res) =>{
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving materialinwards."
+          err.message || "Some error occurred while retrieving Depo."
       });
     });
 };
@@ -57,7 +57,7 @@ exports.getById = (req,res) => {
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving MaterialInward with id=" + id
+        message: "Error retrieving Depo with id=" + id
       });
     });
 }

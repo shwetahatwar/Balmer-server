@@ -78,7 +78,7 @@ exports.create = async (req, res) => {
   .catch(err => {
      res.status(500).send({
         message:
-          err["errors"][0]["message"] || "Some error occurred while creating the MaterialInward."
+          err["errors"][0]["message"] || "Some error occurred while creating the DispatchSlip."
       });
   });
   for(var i=0;i<req.body.material.length;i++){
@@ -193,7 +193,7 @@ exports.create = async (req, res) => {
 };
 
 
-// Retrieve all DispatchSlips from the database.
+// Get all DispatchSlips from the database.
 exports.findAll = (req, res) => {
   var queryString = req.query;
   var offset = 0;
@@ -315,7 +315,7 @@ exports.deleteAll = (req, res) => {
   });
 };
 
-// Material List
+//Get Dispatch Slip Material List
 exports.getDispatchSlipMaterialLists = (req, res) => {
   // console.log("Line 272: ",req.params);
   
@@ -333,6 +333,7 @@ exports.getDispatchSlipMaterialLists = (req, res) => {
   });
 };
 
+//Create Dispatch Slip Material List
 exports.postDispatchSlipMaterialLists = async (req, res) => {
   console.log(req.body);
   // Validate request
@@ -375,6 +376,8 @@ exports.postDispatchSlipMaterialLists = async (req, res) => {
   });
   
 };
+
+//Get Dispatch Slip Material List
 exports.getDispatchSlipMaterialList = (req, res) => {
 
   DispatchSlipMaterialList.findAll({ 
@@ -391,6 +394,7 @@ exports.getDispatchSlipMaterialList = (req, res) => {
   });
 };
 
+//Update Dispatch Slip Material List
 exports.putDispatchSlipMaterialList = (req, res) => {
   const id = req.params.id;
 
@@ -417,6 +421,7 @@ exports.putDispatchSlipMaterialList = (req, res) => {
 
 
 //Picking 
+//Get Dispatch Picking Material List
 exports.getDispatchSlipPickingMaterialLists = (req, res) => {
 
   DispatchPickingMaterialList.findAll({ 
@@ -428,11 +433,12 @@ exports.getDispatchSlipPickingMaterialLists = (req, res) => {
   .catch(err => {
     res.status(500).send({
       message:
-      err.message || "Some error occurred while retrieving dispatchslips."
+      err.message || "Some error occurred while retrieving DispatchPickingMaterialList."
     });
   });
 };
 
+//Create Dispatch Picking Material List
 exports.postDispatchSlipPickingMaterialLists = async (req, res) => {
   console.log(req.body);
 
@@ -459,7 +465,7 @@ exports.postDispatchSlipPickingMaterialLists = async (req, res) => {
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the MaterialInward."
+          err.message || "Some error occurred while creating the DispatchPickingMaterialList."
       });
     });
   }
@@ -485,7 +491,7 @@ exports.postDispatchSlipPickingMaterialLists = async (req, res) => {
   })
   .catch(err => {
     res.status(500).send({
-      message: "Error updating DispatchSlip with id=" + id
+      message: "Error updating DispatchPickingMaterialList with id=" + id
     });
   });
   res.status(200).send({
@@ -495,6 +501,7 @@ exports.postDispatchSlipPickingMaterialLists = async (req, res) => {
   
 };
 
+//Get Dispatch Picking Material List
 exports.getDispatchSlipPickingMaterialList = (req, res) => {
 
   DispatchPickingMaterialList.findAll({ 
@@ -511,6 +518,7 @@ exports.getDispatchSlipPickingMaterialList = (req, res) => {
   });
 };
 
+//Update Dispatch Picking Material List
 exports.putDispatchSlipPickingMaterialList = (req, res) => {
   const id = req.params.id;
 
@@ -536,6 +544,7 @@ exports.putDispatchSlipPickingMaterialList = (req, res) => {
 };
 
 //Loading
+//Get Dispatch Loading Material List
 exports.getDispatchSlipLoadingMaterialLists = (req, res) => {
 
   DispatchLoadingMaterialList.findAll({ 
@@ -547,11 +556,12 @@ exports.getDispatchSlipLoadingMaterialLists = (req, res) => {
   .catch(err => {
     res.status(500).send({
       message:
-      err.message || "Some error occurred while retrieving dispatchslips."
+      err.message || "Some error occurred while retrieving DispatchLoadingMaterialList."
     });
   });
 };
 
+//Create Dispatch Loading Material List
 exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
   console.log(req.body);
   // Validate request
@@ -593,14 +603,14 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
       })
       .catch(err => {
         res.status(500).send({
-          message: "Error updating Ttat with id=" + truckId
+          message: "Error updating MaterialInward with id=" + dispatchSlipId
         });
       });
     })
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the MaterialInward."
+          err.message || "Some error occurred while creating the DispatchLoadingMaterialList."
       });
     });
   }
@@ -649,13 +659,13 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
       // });
     } else {
       res.send({
-        message: `Cannot update Ttat with id=${truckId}. Maybe Ttat was not found or req.body is empty!`
+        message: `Cannot update Ttat with id=${req.body.truckId}. Maybe Ttat was not found or req.body is empty!`
       });
     }
   })
   .catch(err => {
     res.status(500).send({
-      message: "Error updating Ttat with id=" + truckId
+      message: "Error updating Ttat with id=" + req.body.truckId
     });
   });
 
@@ -667,6 +677,7 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
   
 };
 
+// Get Dispatch Loading Material List by Id
 exports.getDispatchSlipLoadingMaterialList = (req, res) => {
 
   DispatchLoadingMaterialList.findAll({ 
@@ -683,6 +694,7 @@ exports.getDispatchSlipLoadingMaterialList = (req, res) => {
   });
 };
 
+//Update Dispatch Loading Material List by Id
 exports.putDispatchSlipLoadingMaterialList = (req, res) => {
   const id = req.params.id;
 
@@ -702,11 +714,12 @@ exports.putDispatchSlipLoadingMaterialList = (req, res) => {
   })
   .catch(err => {
     res.status(500).send({
-      message: "Error updating DispatchPickingMaterialList with id=" + id
+      message: "Error updating DispatchLoadingMaterialList with id=" + id
     });
   });
 };
 
+//Get Count of Dispatch Slip for Dashboard
 exports.getDispatchSlipCountDashboard = async (req, res) => {
   var d = new Date();
   console.log("Line 576",d);
@@ -747,10 +760,17 @@ exports.getDispatchSlipCountDashboard = async (req, res) => {
       total:total
     }
     res.send(dispatchSlipCount);
+  })
+  .catch(function(err){
+    res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Stock."
+      });
   });
 };
 
-exports.findByDatewise = (req, res) => {
+//Get Dispatch Slip Between Dates
+exports.getDispactSlipByDate = (req, res) => {
   // console.log();
   var queryString = req.query;
   var offset = 0;
@@ -789,7 +809,7 @@ exports.findByDatewise = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving ttats."
+          err.message || "Some error occurred while retrieving DispatchSlip."
       });
     });
 };

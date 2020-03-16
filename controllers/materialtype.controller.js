@@ -2,7 +2,7 @@ const db = require("../models");
 const MaterialType = db.materialtypes;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new MaterialInward
+// Create and Save a new Material Type
 exports.create = (req, res) => {
   console.log(req.body);
   // Validate request
@@ -13,7 +13,7 @@ exports.create = (req, res) => {
     return;
   }
 
-  // Create a MaterialInward
+  // Create a Material Type
   const materialtype = {
     name: req.body.name,
     status:true,
@@ -21,7 +21,7 @@ exports.create = (req, res) => {
     updatedBy:req.user.username
   };
 
-  // Save MaterialInward in the database
+  // Save Material Type in the database
   MaterialType.create(materialtype)
     .then(data => {
       res.send(data);
@@ -30,11 +30,12 @@ exports.create = (req, res) => {
       console.log("Error",err["errors"][0]["message"]);
       res.status(500).send({
         message:
-          err["errors"][0]["message"] || "Some error occurred while creating the User."
+          err["errors"][0]["message"] || "Some error occurred while creating the MaterialType."
       });
     });
 };
 
+//Get All Material Type
 exports.getAll = (req,res) =>{
   MaterialType.findAll({
     where:req.query
@@ -45,11 +46,12 @@ exports.getAll = (req,res) =>{
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving materialinwards."
+          err.message || "Some error occurred while retrieving MaterialType."
       });
     });
 };
 
+//Get Material Type by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
 
@@ -59,11 +61,12 @@ exports.getById = (req,res) => {
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving MaterialInward with id=" + id
+        message: "Error retrieving MaterialType with id=" + id
       });
     });
 }
 
+//Update Material Type by Id
 exports.update = (req, res) => {
   const id = req.params.id;
 
