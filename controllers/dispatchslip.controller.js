@@ -749,3 +749,45 @@ exports.getDispatchSlipCountDashboard = async (req, res) => {
     res.send(dispatchSlipCount);
   });
 };
+
+exports.findByDatewise = (req, res) => {
+  // console.log();
+  var queryString = req.query;
+  var offset = 0;
+  var limit = 100;
+  if(req.query.offset != null || req.query.offset != undefined){
+    offset = parseInt(req.query.offset)
+  }
+  if(req.query.offset != null || req.query.offset != undefined){
+    limit = parseInt(req.query.limit)
+  }
+  delete queryString['offset'];
+  delete queryString['limit'];
+  console.log("queryString",queryString);
+  Ttat.findAll({ 
+    where: {
+      createdAt: {
+        [Op.gte]: parseInt(req.query.createdAtStart),
+        [Op.lt]: parseInt(req.query.createdAtEnd),
+      },
+      updatedAt: {
+        [Op.gte]: parseInt(req.query.updatedAtStart),
+        [Op.lt]: parseInt(req.query.updatedAtEnd),
+      },
+    },
+    order: [
+            ['id', 'DESC'],
+        ],
+        offset:offset,
+        limit:limit
+    })
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving ttats."
+      });
+    });
+};
