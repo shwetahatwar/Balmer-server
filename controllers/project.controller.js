@@ -114,7 +114,7 @@ exports.findByDatewise = (req, res) => {
   delete queryString['offset'];
   delete queryString['limit'];
   console.log("queryString",queryString);
-  Ttat.findAll({ 
+  Project.findAll({ 
     where: {
       createdAt: {
         [Op.gte]: parseInt(req.query.createdAtStart),
