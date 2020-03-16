@@ -8,7 +8,7 @@ router.get("/", users.loginRequired,ttats.findAll);
 router.get("/:id", users.loginRequired,ttats.findOne);
 router.put("/put/truckOut", users.loginRequired,ttats.truckOut);
 router.put("/:id", users.loginRequired,ttats.update);
-
 router.get("/dashboard/count", users.loginRequired,ttats.getTtatDashboard);
+router.get("/get/getbydate", users.loginRequired,ttats.findByDatewise);
 
 module.exports = router;

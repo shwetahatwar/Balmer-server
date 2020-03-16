@@ -40,18 +40,27 @@ exports.create = (req, res) => {
     });
 };
 
-// Retrieve all ProjectAuditItems from the database.
 exports.findAll = (req, res) => {
-  // console.log(Project);
-  // res.send(Project);
-  const title = req.query.title;
-  var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
-
-
- // ProjectAuditItems.findAll({
- //  include:[{model:Project}], where: condition })
+  
+ var queryString = req.query;
+  var offset = 0;
+  var limit = 100;
+  console.log("Line 51", req.query);
+  if(req.query.offset != null || req.query.offset != undefined){
+    offset = parseInt(req.query.offset)
+  }
+  if(req.query.offset != null || req.query.offset != undefined){
+    limit = parseInt(req.query.limit)
+  }
+  delete queryString['offset'];
+  delete queryString['limit'];
   ProjectAuditItems.findAll({
     where: req.query,
+    offset:offset,
+    limit:limit,
+    order: [
+    ['id', 'DESC'],
+    ],
     include: [{model: Project}]
    })
     .then(data => {
