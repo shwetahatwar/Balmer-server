@@ -5,5 +5,6 @@ var users = require('../controllers/user.controller');
 
 router.get("/", users.loginRequired,inventorytransactions.findAll);
 router.get("/:id", users.loginRequired,inventorytransactions.findOne);
+router.get("/get/getbydate", users.loginRequired,inventorytransactions.findByDatewise);
 
 module.exports = router;

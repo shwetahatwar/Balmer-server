@@ -38,3 +38,44 @@ exports.findOne = (req, res) => {
       });
     });
 };
+
+//Find all data Date wise for Inventory transaction report
+exports.findByDatewise = (req, res) => {
+  var queryString = req.query;
+  var offset = 0;
+  var limit = 100;
+  console.log("Line 51", req.query);
+  if(req.query.offset != null || req.query.offset != undefined){
+    offset = parseInt(req.query.offset)
+  }
+  if(req.query.offset != null || req.query.offset != undefined){
+    limit = parseInt(req.query.limit)
+  }
+  delete queryString['offset'];
+  delete queryString['limit'];
+  console.log("queryString",queryString);
+  InventoryTransaction.findAll({ 
+    where: {
+      createdAt: {
+        [Op.gte]: parseInt(req.query.createdAtStart),
+        [Op.lt]: parseInt(req.query.createdAtEnd),
+      }
+    },
+    include: [{model: MaterialInward}], 
+    order: [
+            ['id', 'DESC'],
+        ],
+        offset:offset,
+        limit:limit
+    })
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Inventory Transactions."
+      });
+    });
+};
+
