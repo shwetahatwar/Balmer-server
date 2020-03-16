@@ -3,7 +3,7 @@ const MaterialInward = db.materialinwards;
 const InventoryTransaction = db.inventorytransactions;
 const Op = db.Sequelize.Op;
 
-// Retrieve all MaterialInwards from the database.
+// Retrieve all Inventory Transaction from the database.
 exports.findAll = (req, res) => {
   // console.log(req)
   const title = req.params.title;
@@ -19,12 +19,12 @@ exports.findAll = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving materialinwards."
+          err.message || "Some error occurred while retrieving InventoryTransaction."
       });
     });
 };
 
-// Find a single MaterialInward with an id
+// Find a single Inventory Transaction with an id
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
@@ -34,7 +34,7 @@ exports.findOne = (req, res) => {
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving MaterialInward with id=" + id
+        message: "Error retrieving InventoryTransaction with id=" + id
       });
     });
 };

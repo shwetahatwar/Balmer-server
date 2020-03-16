@@ -25,7 +25,7 @@ exports.create = (req, res) => {
       createdBy:req.user.username,
       updatedBy:req.user.username
   };
-  // Save material in the database
+  // Save Project in the database
   Project.create(project)
   .then(data => {
     projectId = data["id"]
@@ -138,7 +138,7 @@ exports.findByDatewise = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving ttats."
+          err.message || "Some error occurred while retrieving Projects."
       });
     });
 };

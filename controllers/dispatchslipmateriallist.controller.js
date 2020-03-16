@@ -6,7 +6,7 @@ const Material = db.materials;
 // const DispatchSlip = require("../models").DispatchSlip;
 
 
-// Create and Save a new DispatchSlipMaterialList
+// Create and Save a new Dispatch Slip Material List
 exports.create = (req, res) => {
   console.log(req.body);
   // Validate request
@@ -17,7 +17,7 @@ exports.create = (req, res) => {
     return;
   }
 
-  // Create a DispatchSlipMaterialList
+  // Create a Dispatch Slip Material List
   const dispatchslipmateriallist = {
     dispatchSlipId: req.body.dispatchSlipId,
     batchNumber: req.body.batchNumber,
@@ -27,7 +27,7 @@ exports.create = (req, res) => {
     updatedBy:req.user.username
   };
 
-  // Save DispatchSlipMateriallist in the database
+  // Save Dispatch Slip Material List in the database
   DispatchSlipMaterialList.create(dispatchslipmateriallist)
   .then(data => {
     res.send(data);
@@ -40,7 +40,7 @@ exports.create = (req, res) => {
   });
 };
 
-// Retrieve all DispatchSlipsMaterialList from the database.
+// Retrieve all Dispatch Slip Material List from the database.
 exports.findAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
@@ -60,12 +60,12 @@ exports.findAll = (req, res) => {
  .catch(err => {
   res.status(500).send({
     message:
-    err.message || "Some error occurred while retrieving dispatchslips."
+    err.message || "Some error occurred while retrieving DispatchSlipMaterialList."
   });
 });
 };
 
-// Find a single DispatchSlipMaterialList with an id
+// Find a single Dispatch Slip Material List with an id
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
@@ -80,7 +80,7 @@ exports.findOne = (req, res) => {
   });
 };
 
-// Update a DispatchSlip by the id in the request
+// Update a Dispatch Slip Material List by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
 
@@ -105,7 +105,7 @@ exports.update = (req, res) => {
   });
 };
 
-// Delete a DispatchSlipMaterialList with the specified id in the request
+// Delete a Dispatch Slip Material List with the specified id in the request
 exports.delete = (req, res) => {
   const id = req.params.id;
 
@@ -130,7 +130,7 @@ exports.delete = (req, res) => {
   });
 };
 
-// Delete all DispatchSlips from the database.
+// Delete all Dispatch Slip Material List from the database.
 exports.deleteAll = (req, res) => {
   DispatchSlipMaterialList.destroy({
     where: {},
@@ -147,7 +147,8 @@ exports.deleteAll = (req, res) => {
   });
 };
 
-exports.findByDispatchSlip = (req, res) => {
+//Get Dispatch Slip Material List with Dispatch Slip Id
+exports.getDispatchSlipMaterialListByDispatchSlipId = (req, res) => {
   var dispatchSlipId = req.query.dispatchSlipId
   DispatchSlipMaterialList.findAll({
     where: { dispatchSlipId : dispatchSlipId },
@@ -161,7 +162,7 @@ exports.findByDispatchSlip = (req, res) => {
  .catch(err => {
     res.status(500).send({
       message:
-      err.message || "Some error occurred while retrieving dispatchslips."
+      err.message || "Some error occurred while retrieving DispatchSlipMaterialList."
     });
   });
 };

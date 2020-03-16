@@ -2,7 +2,7 @@ const db = require("../models");
 const Ttat = db.ttats;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new ttat
+// Create and Save a new TTAT
 exports.create = async (req, res) => {
   console.log(req.body);
   // Validate request
@@ -14,7 +14,7 @@ exports.create = async (req, res) => {
     return;
   }
   // var getSerialNumber = Date.now();
-  // Create a ttat
+  // Create a TTAT
   const ttat = {
     truckNumber: req.body.truckNumber,
     capacity: req.body.capacity,
@@ -42,7 +42,7 @@ exports.create = async (req, res) => {
         isTruckAlreadyIn =1;
       }
   })
-  // Save ttat in the database
+  // Save TTAT in the database
   if(isTruckAlreadyIn == 0){
   Ttat.create(ttat)
     .then(data => {
@@ -52,7 +52,7 @@ exports.create = async (req, res) => {
       console.log("Line 39",err);
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the ttat."
+          err.message || "Some error occurred while creating the TTAT."
       });
     });
   }
@@ -64,6 +64,7 @@ exports.create = async (req, res) => {
   }
 };
 
+//Update TTAT by Id
 exports.update = async (req, res) => {
   const id = req.params.id;
   var inTime=0;
@@ -95,22 +96,22 @@ exports.update = async (req, res) => {
     .then(num => {
       if (num == 1) {
         res.send({
-          message: "Ttat was updated successfully."
+          message: "TTAT was updated successfully."
         });
       } else {
         res.send({
-          message: `Cannot update Ttat with id=${id}. Maybe Ttat was not found or req.body is empty!`
+          message: `Cannot update TTAT with id=${id}. Maybe TTAT was not found or req.body is empty!`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error updating Ttat with id=" + id
+        message: "Error updating TTAT with id=" + id
       });
     });
 };
 
-// Retrieve all ttats from the database.
+// Retrieve all TTAT from the database.
 exports.findAll = (req, res) => {
   // console.log();
   var queryString = req.query;
@@ -145,6 +146,7 @@ exports.findAll = (req, res) => {
     });
 };
 
+//Find all truck Date wise for TTAT report
 exports.findByDatewise = (req, res) => {
   // console.log();
   var queryString = req.query;
@@ -184,6 +186,7 @@ exports.findByDatewise = (req, res) => {
     });
 };
 
+//Find TTAT by Id
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
@@ -193,15 +196,16 @@ exports.findOne = (req, res) => {
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving TtatInward with id=" + id
+        message: "Error retrieving Ttat with id=" + id
       });
     });
 };
 
-exports.findByTtatCode = (req, res) => {
+//Find by TTAT Code
+exports.findByTtat = (req, res) => {
   Ttat.findAll({
      where: {
-        'ttatCode': req.query.ttatCode
+        'ttat': req.query.ttat
     }
   })
   .then(data => {
@@ -209,11 +213,12 @@ exports.findByTtatCode = (req, res) => {
   })
   .catch(err => {
     res.status(500).send({
-      message: "Error retrieving TtatInward with id=" + id
+      message: "Error retrieving Ttat with id=" + id
     });
   });
 };
 
+//TTAT truck Out
 exports.truckOut = (req, res) => {
   const id = req.body.id;
   // console.log("Barcode Serial",req.query.barcodeSerial);

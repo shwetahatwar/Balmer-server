@@ -24,6 +24,6 @@ router.get("/:dispatchId/dispatchsliploadermaterials/:id", users.loginRequired,d
 router.put("/:dispatchId/dispatchsliploadermaterials/:id", users.loginRequired,dispatchslips.putDispatchSlipLoadingMaterialList);
 
 router.get("/dashboard/count", users.loginRequired,dispatchslips.getDispatchSlipCountDashboard);
-router.get("/get/getbydate", users.loginRequired,dispatchslips.findByDatewise);
+router.get("/get/getbydate", users.loginRequired,dispatchslips.getDispactSlipByDate);
 
 module.exports = router;

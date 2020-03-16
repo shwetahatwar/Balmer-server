@@ -48,7 +48,7 @@ exports.create = async (req, res) => {
   .catch(err => {
     res.status(500).send({
       message:
-        err.message || "Some error occurred while creating the MaterialInward."
+        err.message || "Some error occurred while creating the DispatchLoaderRelation."
     });
   });
 };
@@ -64,7 +64,7 @@ exports.getAll = (req,res) =>{
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving materialinwards."
+          err.message || "Some error occurred while retrieving DispatchLoaderRelation."
       });
     });
 };
@@ -79,7 +79,7 @@ exports.getById = (req,res) => {
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving MaterialInward with id=" + id
+        message: "Error retrieving DispatchLoaderRelation with id=" + id
       });
     });
 };
@@ -131,7 +131,7 @@ exports.getUsersbyDispatchSlip = (req,res) =>{
       .catch(err => {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while retrieving materialinwards."
+            err.message || "Some error occurred while retrieving DispatchLoaderRelation."
         });
       })
     }
@@ -140,7 +140,7 @@ exports.getUsersbyDispatchSlip = (req,res) =>{
   .catch(err => {
     res.status(500).send({
       message:
-        err.message || "Some error occurred while retrieving materialinwards."
+        err.message || "Some error occurred while retrieving DispatchLoaderRelation."
     });
   });
 };
@@ -199,7 +199,7 @@ exports.getDispatchSlipbyUser = (req,res) =>{
         .catch(err=>{
           res.status(500).send({
           message:
-            err.message || "Some error occurred while retrieving materialinwards."
+            err.message || "Some error occurred while retrieving DispatchLoaderRelation."
           });
         })
       }
@@ -218,7 +218,7 @@ exports.getDispatchSlipbyUser = (req,res) =>{
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving materialinwards."
+          err.message || "Some error occurred while retrieving DispatchLoaderRelation."
       });
     });
 };

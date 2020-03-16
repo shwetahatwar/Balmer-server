@@ -2,7 +2,7 @@ const db = require("../models");
 const PackagingType = db.packagingtypes;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new MaterialInward
+// Create and Save a new Packaging Type
 exports.create = (req, res) => {
   console.log(req.body);
   // Validate request
@@ -13,7 +13,7 @@ exports.create = (req, res) => {
     return;
   }
 
-  // Create a MaterialInward
+  // Create a Packaging Type
   const packagingtype = {
     name: req.body.name,
     status:true,
@@ -21,7 +21,7 @@ exports.create = (req, res) => {
     updatedBy:req.user.username
   };
 
-  // Save MaterialInward in the database
+  // Save Packaging Type in the database
   PackagingType.create(packagingtype)
     .then(data => {
       res.send(data);
@@ -29,11 +29,12 @@ exports.create = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the MaterialInward."
+          err.message || "Some error occurred while creating the Packaging Type."
       });
     });
 };
 
+//Get All Packaging Type
 exports.getAll = (req,res) =>{
   PackagingType.findAll({
     where:req.query
@@ -44,11 +45,12 @@ exports.getAll = (req,res) =>{
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving materialinwards."
+          err.message || "Some error occurred while retrieving Packaging Type."
       });
     });
 };
 
+//Get Packaging Type by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
 
@@ -63,6 +65,7 @@ exports.getById = (req,res) => {
     });
 }
 
+//Update Packaging Type by Id
 exports.update = (req, res) => {
   const id = req.params.id;
 
