@@ -105,7 +105,6 @@ exports.findByDatewise = (req, res) => {
   var queryString = req.query;
   var offset = 0;
   var limit = 100;
-  console.log("Line 51", req.query);
   if(req.query.offset != null || req.query.offset != undefined){
     offset = parseInt(req.query.offset)
   }
