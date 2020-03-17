@@ -279,3 +279,85 @@ exports.getTtatDashboard = async (req, res) => {
     res.send(ttatCount);
   });
 };
+
+// Retrieve all TTAT from the database by transportor.
+exports.findAllTTATByTransportor = (req, res) => {
+  // console.log();
+  var queryString = req.query;
+  var offset = 0;
+  var limit = 100;
+  if(req.query.offset != null || req.query.offset != undefined){
+    offset = parseInt(req.query.offset)
+  }
+  if(req.query.offset != null || req.query.offset != undefined){
+    limit = parseInt(req.query.limit)
+  }
+  delete queryString['offset'];
+  delete queryString['limit'];
+  console.log("queryString",queryString);
+  Ttat.findAll({ 
+    where: { 
+      transportor: {
+          [Op.or]: {
+            [Op.like]: ''+req.query.transportor+'%',
+            [Op.eq]: ''+req.query.transportor+''
+          }
+        }
+      },
+    order: [
+            ['id', 'DESC'],
+        ],
+        offset:offset,
+        limit:limit
+    })
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving ttats."
+      });
+    });
+};
+
+// Retrieve all TTAT from the database by truckNumber.
+exports.findAllTTATByTruckNumber = (req, res) => {
+  // console.log();
+  var queryString = req.query;
+  var offset = 0;
+  var limit = 100;
+  if(req.query.offset != null || req.query.offset != undefined){
+    offset = parseInt(req.query.offset)
+  }
+  if(req.query.offset != null || req.query.offset != undefined){
+    limit = parseInt(req.query.limit)
+  }
+  delete queryString['offset'];
+  delete queryString['limit'];
+  console.log("queryString",queryString);
+  Ttat.findAll({ 
+    where: { 
+      truckNumber: {
+          [Op.or]: {
+            [Op.like]: ''+req.query.truckNumber+'%',
+            [Op.eq]: ''+req.query.truckNumber+''
+          }
+        }
+      },
+    order: [
+            ['id', 'DESC'],
+        ],
+        offset:offset,
+        limit:limit
+    })
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving ttats."
+      });
+    });
+};

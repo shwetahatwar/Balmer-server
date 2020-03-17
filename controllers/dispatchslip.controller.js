@@ -19,6 +19,7 @@ exports.create = async (req, res) => {
     return;
   } 
 
+  var responseData;
   var canCreate = 0; 
   for(var i=0;i<req.body.material.length;i++){
     var checkMaterialQty = await MaterialInward.count({
@@ -28,7 +29,7 @@ exports.create = async (req, res) => {
         'isScrapped':0,
       }
     });
-    if(checkMaterialQty > req.body.material[i].numberOfPacks){
+    if(checkMaterialQty >= req.body.material[i].numberOfPacks){
       canCreate =1;
     }
   }
@@ -73,6 +74,7 @@ exports.create = async (req, res) => {
   };
   await DispatchSlip.create(dispatchSlipInput)
   .then(data => {
+    responseData = data;
     dispatchSlipId = data["dataValues"]["id"]
   })
   .catch(err => {
@@ -182,6 +184,7 @@ exports.create = async (req, res) => {
 
     })
   }
+  res.send(responseData);
   }
   else{
     res.status(500).send({
