@@ -118,6 +118,7 @@ exports.create = async (req, res) => {
           return false;
         });
         for(var s=0;s<dups.length;s++){
+          console.log("dups",dups[s])
           console.log("Quantity:",counter);
           if(counter != 0 && counter > 0){
             var batchQuantity = await MaterialInward.count({
@@ -160,7 +161,7 @@ exports.create = async (req, res) => {
               // req.body.material[i]["numberOfPacks"] = batchQuantity;
               const dispatchSlipMaterialListData = {
                 dispatchSlipId: dispatchSlipId,
-                batchNumber: dups[i],
+                batchNumber: dups[s],
                 numberOfPacks:batchQuantity,
                 materialCode:req.body.material[i]["materialCode"],
                 createdBy:req.user.username,
