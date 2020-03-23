@@ -9,7 +9,6 @@ const Ttat = db.ttats;
 const Depot = db.depots;
 const Sequelize = require("sequelize");
 var sequelize = require('../config/db.config.js');
-var shortid = require("shortid");
   
 
 // Create and Save a new DispatchSlip
