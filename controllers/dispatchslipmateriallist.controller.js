@@ -21,6 +21,7 @@ exports.create = (req, res) => {
   const dispatchslipmateriallist = {
     dispatchSlipId: req.body.dispatchSlipId,
     batchNumber: req.body.batchNumber,
+    dispatchSlipNumber: req.body.dispatchSlipNumber,
     numberOfPacks: req.body.numberOfPacks,
     materialCode:req.body.materialCode,
     createdBy:req.user.username,
