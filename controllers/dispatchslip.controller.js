@@ -9,10 +9,12 @@ const Ttat = db.ttats;
 const Depot = db.depots;
 const Sequelize = require("sequelize");
 var sequelize = require('../config/db.config.js');
+var shortid = require("shortid");
+  
 
 // Create and Save a new DispatchSlip
 exports.create = async (req, res) => {
-  if (!req.body.dispatchSlipNumber) {
+  if (!req.body.material) {
     res.status(400).send({
       message: "Content can not be empty!"
     });
@@ -45,8 +47,6 @@ exports.create = async (req, res) => {
   })
   .then(data => {
     truckData = data[0]["dataValues"]["id"];
-    // console.log(data[0]["dataValues"]["id"]);
-    // res.send(data);
     console.log("Line 27", truckData);
   });
 
@@ -57,14 +57,13 @@ exports.create = async (req, res) => {
   })
   .then(data => {
     depoData = data[0]["dataValues"]["id"];
-    // console.log(data[0]["dataValues"]["id"]);
-    // res.send(data);
-    console.log("Line 39", depoData);
   });
 
+  var shortNumber = generate(8);
+  var dispatchSlipNumberData = "DSN " +shortNumber;
   var dispatchSlipId;
   const dispatchSlipInput = {
-    dispatchSlipNumber: req.body.dispatchSlipNumber,
+    dispatchSlipNumber: dispatchSlipNumberData,
     truckId: truckData,
     depoId: depoData,
     status:true,
@@ -138,6 +137,7 @@ exports.create = async (req, res) => {
                 dispatchSlipId: dispatchSlipId,
                 batchNumber: dups[s],
                 numberOfPacks:counter,
+                dispatchSlipNumber:req.body.material[i]["dispatchSlipNumber"],
                 materialCode:req.body.material[i]["materialCode"],
                 createdBy:req.user.username,
                 updatedBy:req.user.username
@@ -164,6 +164,7 @@ exports.create = async (req, res) => {
                 batchNumber: dups[s],
                 numberOfPacks:batchQuantity,
                 materialCode:req.body.material[i]["materialCode"],
+                dispatchSlipNumber:req.body.material[i]["dispatchSlipNumber"],
                 createdBy:req.user.username,
                 updatedBy:req.user.username
               }
@@ -196,6 +197,20 @@ exports.create = async (req, res) => {
   
 };
 
+function generate(n) {
+  var add = 1,
+    max = 12 - add;
+
+  if (n > max) {
+    return generate(max) + generate(n - max);
+  }
+
+  max = Math.pow(10, n + add);
+  var min = max / 10; // Math.pow(10, n) basically 
+  var number = Math.floor(Math.random() * (max - min + 1)) + min;
+
+  return ("" + number).substring(add);
+}
 
 // Get all DispatchSlips from the database.
 exports.findAll = (req, res) => {

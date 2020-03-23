@@ -5,6 +5,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
+    dispatchSlipNumber: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     batchNumber:{
       type: DataTypes.STRING,
       allowNull: false
