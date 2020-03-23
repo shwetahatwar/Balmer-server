@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    dispatchSlipNumber: {
+    salesOrderNumber: {
       type: DataTypes.STRING,
       allowNull: false,
     },

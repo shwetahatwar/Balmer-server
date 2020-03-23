@@ -136,7 +136,7 @@ exports.create = async (req, res) => {
                 dispatchSlipId: dispatchSlipId,
                 batchNumber: dups[s],
                 numberOfPacks:counter,
-                dispatchSlipNumber:req.body.material[i]["dispatchSlipNumber"],
+                salesOrderNumber:req.body.material[i]["dispatchSlipNumber"],
                 materialCode:req.body.material[i]["materialCode"],
                 createdBy:req.user.username,
                 updatedBy:req.user.username
@@ -163,7 +163,7 @@ exports.create = async (req, res) => {
                 batchNumber: dups[s],
                 numberOfPacks:batchQuantity,
                 materialCode:req.body.material[i]["materialCode"],
-                dispatchSlipNumber:req.body.material[i]["dispatchSlipNumber"],
+                salesOrderNumber:req.body.material[i]["dispatchSlipNumber"],
                 createdBy:req.user.username,
                 updatedBy:req.user.username
               }
