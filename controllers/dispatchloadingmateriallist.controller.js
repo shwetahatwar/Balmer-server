@@ -12,7 +12,10 @@ exports.create = (req, res) => {
     });
     return;
   }
-
+ 
+   if(req.body.serialNumber){
+     req.body.serialNumber = req.body.serialNumber.trim();
+   }
   // Create a Dispatch Loading Material List
   const dispatchloadingmateriallist = {
     dispatchId: req.body.dispatchId,
@@ -39,6 +42,9 @@ exports.create = (req, res) => {
 
 //Get Dispatch Loading Material List
 exports.getAll = (req,res) =>{
+  if(req.query.serialNumber){
+     req.query.serialNumber = req.query.serialNumber.trim();
+   }
   DispatchLoadingMaterialList.findAll({
     where:req.query
   })
@@ -71,7 +77,9 @@ exports.getById = (req,res) => {
 //Update Dispatch Loading Material List by Id
 exports.update = (req, res) => {
   const id = req.params.id;
-
+  if(req.body.serialNumber){
+     req.body.serialNumber = req.body.serialNumber.trim();
+   }
   DispatchLoadingMaterialList.update(req.body, {
     where: req.params
   })

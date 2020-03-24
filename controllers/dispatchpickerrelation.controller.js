@@ -56,6 +56,9 @@ exports.create = async (req, res) => {
 
 //Get Dispatch Picker Relations list
 exports.getAll = (req,res) =>{
+  if(req.query.serialNumber){
+     req.query.serialNumber = req.query.serialNumber.trim();
+   }
   DispatchPickerRelation.findAll({
     where:req.query
   })
@@ -88,7 +91,9 @@ exports.getById = (req,res) => {
 //Update Dispatch Picker Relations by Id
 exports.update = (req, res) => {
   const id = req.params.id;
-
+  if(req.body.serialNumber){
+    req.body.serialNumber = req.body.serialNumber.trim();
+  }
   DispatchPickerRelation.update(req.body, {
     where: req.params
   })

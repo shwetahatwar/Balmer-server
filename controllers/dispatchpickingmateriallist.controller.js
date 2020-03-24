@@ -19,6 +19,9 @@ exports.create = (req, res) => {
   console.log(req.body.material.length);
   for(var i=0;i<req.body.material.length;i++){
     console.log(req.body.material[i]);
+    if(req.body.material[i].serialNumber){
+     req.body.material[i].serialNumber = req.body.material[i].serialNumber.trim();
+   }
     // Create a Dispatch Picking Material List
     const dispatchpickingmateriallist = {
       dispatchId: req.body.dispatchId,
@@ -51,6 +54,9 @@ exports.create = (req, res) => {
 
 //Get Dispatch Picking Material List
 exports.getAll = (req,res) =>{
+  if(req.query.serialNumber){
+    req.query.serialNumber = req.query.serialNumber.trim();
+  }
   DispatchPickingMaterialList.findAll({
     where:req.query
   })
