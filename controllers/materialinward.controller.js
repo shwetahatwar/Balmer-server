@@ -189,6 +189,7 @@ exports.update = (req, res) => {
 exports.updateWithBarcode = (req, res) => {
   // const serialNumber = req.query.barcodeSerial;
   // console.log("Barcode Serial",req.query.barcodeSerial);
+
   MaterialInward.update(req.body, {
     where: req.body
   })
@@ -366,6 +367,9 @@ exports.findAllByMaterialCodeandBatchCode = (req, res) => {
 
 //Not in Use API
 exports.findAllByBarcode = (req, res) => {
+  if(req.query.serialNumber){
+     req.query.serialNumber = req.query.serialNumber.trim();
+   }
   MaterialInward.findAll({ 
     where: {
       serialNumber:req.query.serialNumber
@@ -449,6 +453,9 @@ exports.findMaterialByQuery = (req, res) => {
   delete queryString['offset'];
   delete queryString['limit'];
   console.log("Generic Name",req.query.genericName);
+  if(req.query.serialNumber){
+     req.query.serialNumber = req.query.serialNumber.trim();
+   }
   if(req.query.genericName != undefined && req.query.genericName != null){
     console.log("In If");
     if(req.query.genericName == undefined){

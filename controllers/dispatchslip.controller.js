@@ -366,6 +366,9 @@ exports.postDispatchSlipMaterialLists = async (req, res) => {
   for(var i=0;i<req.body.material.length;i++){
     console.log(req.body.material[i]);
     // Create a MaterialInward
+    if(req.body.material[i].serialNumber){
+      req.body.material[i].serialNumber = req.body.material[i].serialNumber.trim();
+    }
     const dispatchpickingmateriallist = {
       dispatchId: req.params.dispatchId,
       userId:req.body.userId,
@@ -464,6 +467,9 @@ exports.postDispatchSlipPickingMaterialLists = async (req, res) => {
   for(var i=0;i<req.body.materials.length;i++){
     console.log(req.body.materials[i]);
     // Create a MaterialInward
+     if(req.body.materials[i].serialNumber){
+      req.body.materials[i].serialNumber = req.body.materials[i].serialNumber.trim();
+    }
     const dispatchpickingmateriallist = {
       dispatchId: req.params.dispatchId,
       userId:1,
@@ -594,6 +600,9 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
   for(var i=0;i<req.body.materials.length;i++){
     console.log(req.body.materials[i]);
     // Create a Material picking
+    if(req.body.materials[i].serialNumber){
+      req.body.materials[i].serialNumber = req.body.materials[i].serialNumber.trim();
+    }
     const dispatchloadingmateriallist = {
       dispatchId: req.body.dispatchId,
       userId:1,

@@ -122,6 +122,8 @@ exports.update = (req, res) => {
 exports.updateByBarcodeSerial = async (req,res) => {
   var materialInwardId;
   var getBatchNumber;
+  req.body.serialNumber = req.body.serialNumber.trim();
+  console.log("Barcode ",req.body.serialNumber);
   await MaterialInward.findAll({
     serialNumber:req.body.serialNumber
   })
