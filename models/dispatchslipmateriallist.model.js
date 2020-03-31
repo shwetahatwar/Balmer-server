@@ -21,6 +21,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    materialGenericName:{
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    materialDescription:{
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     createdBy:{
       type:DataTypes.STRING,
       allowNull:true

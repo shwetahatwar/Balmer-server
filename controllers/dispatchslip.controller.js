@@ -5,6 +5,7 @@ const DispatchLoadingMaterialList = db.dispatchloadingmateriallists;
 const DispatchPickingMaterialList = db.dispatchpickingmateriallists;
 const MaterialInward = db.materialinwards;
 const Op = db.Sequelize.Op;
+const Material = db.materials;
 const Ttat = db.ttats;
 const Depot = db.depots;
 const Sequelize = require("sequelize");
@@ -103,7 +104,7 @@ exports.create = async (req, res) => {
           },
           order: [
           ['createdAt', 'ASC'],
-          ]
+          ],
         });
         counter = req.body.material[i]["numberOfPacks"];
         var dups = [];
@@ -129,8 +130,27 @@ exports.create = async (req, res) => {
             });
             console.log("Line 93 batchQuantity :",batchQuantity);
             console.log("Line 94 counter :",counter);
+            var materialName;
+            var materialDescription;
+            await Material.findAll({ 
+              where:
+              {
+                materialCode:req.body.material[i]["materialCode"]
+              }
+            }).then(data => {
+              console.log("Data on line 140", data);
+              materialName = data[0]["dataValues"]["genericName"];
+              materialDescription = data[0]["dataValues"]["materialDescription"];
+            })
+            .catch(err => {
+              res.status(500).send({
+                message:
+                err.message || "Some error occurred while retrieving materials."
+              });
+            });
             if(batchQuantity >= counter){
               console.log("Line 95",req.body.material[i]["materialCode"]);
+              
               // console.log("Line 96",req.body.material[i]["createdBy"]);
               const dispatchSlipMaterialListData = {
                 dispatchSlipId: dispatchSlipId,
@@ -138,10 +158,13 @@ exports.create = async (req, res) => {
                 numberOfPacks:counter,
                 salesOrderNumber:req.body.material[i]["dispatchSlipNumber"],
                 materialCode:req.body.material[i]["materialCode"],
+                materialGenericName:materialName,
+                materialDescription:materialDescription,
                 createdBy:req.user.username,
                 updatedBy:req.user.username
               }
-              DispatchSlipMaterialList.create(dispatchSlipMaterialListData)
+              console.log("Data on line 165",dispatchSlipMaterialListData)
+             await DispatchSlipMaterialList.create(dispatchSlipMaterialListData)
               .then(dispatchSlipMaterialList=>{
                 console.log("In");
                 // console.log("Line 107",dispatchSlipMaterialList);
@@ -150,7 +173,7 @@ exports.create = async (req, res) => {
                 console.log("Line 110", err);
                 // t.rollback();
               });
-              counter = counter - batchQuantity;
+              counter = counter - counter;
               console.log("Line 116 counter :",counter);
               console.log("Out");
               break;
