@@ -187,6 +187,8 @@ exports.create = async (req, res) => {
                 numberOfPacks:batchQuantity,
                 materialCode:req.body.material[i]["materialCode"],
                 salesOrderNumber:req.body.material[i]["dispatchSlipNumber"],
+                materialGenericName:materialName,
+                materialDescription:materialDescription,
                 createdBy:req.user.username,
                 updatedBy:req.user.username
               }
