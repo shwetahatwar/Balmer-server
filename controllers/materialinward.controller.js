@@ -113,6 +113,9 @@ exports.findAll = (req, res) => {
   var queryString = req.query;
   var offset = 0;
   var limit = 50;
+  if(req.query.serialNumber){
+     req.query.serialNumber = req.query.serialNumber.trim();
+   }
   console.log("Line 51", req.query);
   if(req.query.offset != null || req.query.offset != undefined){
     offset = parseInt(req.query.offset)
@@ -728,4 +731,13 @@ exports.findMaterialByQuery = (req, res) => {
       });
     });
   }
+};
+
+//Production Report API
+exports.ProductionReportData =async (req, res) => {
+var query = "SELECT materialCode,COUNT( materialCode ) count,(select materialDescription from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode) as materialDescription,(select packSize from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode) as packSize,(select netWeight from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode) as netQuantity,(select UOM from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode) as UOM,(select name from balmerlawrie.packagingtypes where id = (select packingType from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode)) as packagingType,(select name from balmerlawrie.materialtypes where id = (select materialType from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode)) as materialType FROM balmerlawrie.materialinwards where status = true and createdAt between '"+req.query.createdAtStart+"' and '"+req.query.createdAtEnd+"' GROUP BY materialCode HAVING count >=1;";
+  await db.sequelize.query(query, { type: db.sequelize.QueryTypes.SELECT})
+  .then(function(data) {
+     res.send(data);
+  });
 };
