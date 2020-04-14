@@ -6,6 +6,7 @@ const DispatchPickingMaterialList = db.dispatchpickingmateriallists;
 const MaterialInward = db.materialinwards;
 const Op = db.Sequelize.Op;
 const Material = db.materials;
+const FIFOViolationList = db.fifoviolationlists;
 const Ttat = db.ttats;
 const Depot = db.depots;
 const Sequelize = require("sequelize");
@@ -667,6 +668,47 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
     });
   }
 
+  await DispatchSlipMaterialList.findAll({ 
+    where: {
+      dispatchSlipId:req.body.dispatchId
+    }
+  })
+  .then(async data => {
+    for(var i=0;i<data.length;i++){
+      let item = req.body.materials.filter(material => material.materialCode == data[i]["materialCode"]);
+      for(var a=0;a<item.length;a++){
+        if(item[a]["batchNumber"] != data[i]["batchNumber"]){
+          const fifoItem = {
+            dispatchId: req.body.dispatchId,
+            createdBy:req.user.username,
+            updatedBy:req.user.username,
+            batchNumber:data[i]["batchNumber"],
+            salesOrderNumber:data[i]["salesOrderNumber"],
+            materialCode:item[a]["materialCode"],
+            violatedBatchNumber:item[a]["batchNumber"],
+            serialNumber:item[a]["serialNumber"]
+          };
+          console.log("Line 691");
+          //add item to fifo violation list
+          await FIFOViolationList.create(fifoItem)
+          .then(async data => {
+          })
+          .catch(err => {
+            console.log("Error",err);
+          });
+
+        }
+      }      
+    }
+
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving DispatchLoadingMaterialList."
+    });
+  });
+
   //updated Dispatch Slip
   var updatedDispatchSlip = {
     dispatchSlipStatus: "Completed"
@@ -720,7 +762,6 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
       message: "Error updating Ttat with id=" + req.body.truckId
     });
   });
-
 
   res.status(200).send({
     message:

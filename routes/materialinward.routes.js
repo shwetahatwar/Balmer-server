@@ -15,5 +15,6 @@ router.get("/get/findAllByMaterialCodeandBatchCode", users.loginRequired,materia
 router.get("/get/findAllByBarcode", users.loginRequired,materialinwards.findAllByBarcode);
 router.get("/get/findMaterialByQuery", users.loginRequired,materialinwards.findMaterialByQuery);
 router.get("/get/getCount", users.loginRequired,materialinwards.countOfStockForDashboard);
+router.get("/get/productionreportdata", users.loginRequired,materialinwards.ProductionReportData);
 
 module.exports = router;

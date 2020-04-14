@@ -122,3 +122,23 @@ exports.getAllByDispatchSlipId = (req,res) =>{
 exports.getAllorCreateNew = async (req,res) =>{
   
 };
+
+//Dispatch Report API
+exports.DispatchReportData = async (req, res) => {
+  if(req.query.createdAtStart == 0 && req.query.createdAtEnd == 0){
+    console.log("In if")
+    var query = "SELECT materialCode,COUNT(materialCode) count,(select materialDescription from balmerlawrie.materials where materialCode = balmerlawrie.dispatchloadingmateriallists.materialCode) as materialDescription,(select packSize from balmerlawrie.materials where materialCode = balmerlawrie.dispatchloadingmateriallists.materialCode) as packSize,(select netWeight from balmerlawrie.materials where materialCode = balmerlawrie.dispatchloadingmateriallists.materialCode) as netQuantity,(select UOM from balmerlawrie.materials where materialCode = balmerlawrie.dispatchloadingmateriallists.materialCode) as UOM,(select name from balmerlawrie.packagingtypes where id = (select packingType from balmerlawrie.materials where materialCode = balmerlawrie.dispatchloadingmateriallists.materialCode)) as packagingType,(select name from balmerlawrie.materialtypes where id = (select materialType from balmerlawrie.materials where materialCode = balmerlawrie.dispatchloadingmateriallists.materialCode)) as materialType FROM balmerlawrie.dispatchloadingmateriallists GROUP BY materialCode HAVING count >=1;";
+    await db.sequelize.query(query, { type: db.sequelize.QueryTypes.SELECT})
+    .then(function(data) {
+      res.send(data);
+    });
+  }
+  else{
+    console.log("In Else")
+    var query = "SELECT materialCode,COUNT(materialCode) count,(select materialDescription from balmerlawrie.materials where materialCode = balmerlawrie.dispatchloadingmateriallists.materialCode) as materialDescription,(select packSize from balmerlawrie.materials where materialCode = balmerlawrie.dispatchloadingmateriallists.materialCode) as packSize,(select netWeight from balmerlawrie.materials where materialCode = balmerlawrie.dispatchloadingmateriallists.materialCode) as netQuantity,(select UOM from balmerlawrie.materials where materialCode = balmerlawrie.dispatchloadingmateriallists.materialCode) as UOM,(select name from balmerlawrie.packagingtypes where id = (select packingType from balmerlawrie.materials where materialCode = balmerlawrie.dispatchloadingmateriallists.materialCode)) as packagingType,(select name from balmerlawrie.materialtypes where id = (select materialType from balmerlawrie.materials where materialCode = balmerlawrie.dispatchloadingmateriallists.materialCode)) as materialType FROM balmerlawrie.dispatchloadingmateriallists where createdAt between '"+req.query.createdAtStart+"' and '"+req.query.createdAtEnd+"' GROUP BY materialCode HAVING count >=1;";
+    await db.sequelize.query(query, { type: db.sequelize.QueryTypes.SELECT})
+    .then(function(data) {
+      res.send(data);
+    });
+  }
+};
