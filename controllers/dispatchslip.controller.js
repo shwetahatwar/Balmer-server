@@ -261,7 +261,7 @@ exports.findAll = (req, res) => {
       model: Depot
     }],
     order: [
-    ['id', 'DESC'],
+    ['dispatchSlipStatus', 'DESC'],
     ],
     offset:offset,
     limit:limit

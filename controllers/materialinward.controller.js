@@ -389,6 +389,23 @@ exports.findAllByBarcode = (req, res) => {
   });
 };
 
+exports.countOfScrappedForDashboard = (req, res) => {
+  MaterialInward.count({ 
+    where: {
+      isScrapped:true,
+      status:true
+    }
+  })
+  .then(data => {
+    res.status(200).send({data});
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving materialinwards."
+    });
+  });
+}
 //Stock Count for Dashboard
 exports.countOfStockForDashboard = (req, res) => {
   MaterialInward.findAll({ 
@@ -398,6 +415,7 @@ exports.countOfStockForDashboard = (req, res) => {
     }],
   })
   .then(data => {
+    console.log("Data length",data.length)
     var stockValues = 0;
     var scrapValue = 0;
     var bucketStockValue=0;
@@ -405,7 +423,7 @@ exports.countOfStockForDashboard = (req, res) => {
     var cartonStockValue=0;
     var carboyStockValue=0;
     for(var i=0; i < data.length; i++){
-      if(data[i]["isScrapped"] == false){
+      if(data[i]["isScrapped"] == req.query.isScrapped){
         stockValues++
         if(data[i]["material"]["packingType"] == 5){
           bucketStockValue++;
@@ -420,7 +438,7 @@ exports.countOfStockForDashboard = (req, res) => {
           carboyStockValue++;
         }
       }
-      else{
+      if(data[i]["isScrapped"] == true){
         scrapValue++;
       }
     }
@@ -490,7 +508,7 @@ exports.findMaterialByQuery = (req, res) => {
       await MaterialInward.findAll({ 
         where: {
           status:1,
-          isScrapped:0,
+          isScrapped:req.query.isScrapped,
           materialCode: materialCodeTobeSearched,
           batchNumber: {
             [Op.or]: {
@@ -528,7 +546,7 @@ exports.findMaterialByQuery = (req, res) => {
         await MaterialInward.findAll({ 
           where: {
             status:1,
-            isScrapped:0,
+            isScrapped:req.query.isScrapped,
             materialCode: materialCodeTobeSearched,
             batchNumber: {
               [Op.or]: {
@@ -549,7 +567,7 @@ exports.findMaterialByQuery = (req, res) => {
         })
         .then(data => {
           for(var i=0; i < data.length; i++){
-            if(data[i]["isScrapped"] == false){
+            if(data[i]["isScrapped"] == req.query.isScrapped){
               stockValues++
               if(data[i]["material"]["packingType"] == 5){
                 bucketStockValue++;
@@ -617,7 +635,7 @@ exports.findMaterialByQuery = (req, res) => {
     MaterialInward.findAll({ 
       where: {
         status:1,
-        isScrapped:0,
+        isScrapped:req.query.isScrapped,
         materialCode: {
           [Op.or]: {
             [Op.like]: ''+materialCode+'%',
@@ -660,7 +678,7 @@ exports.findMaterialByQuery = (req, res) => {
       await MaterialInward.findAll({ 
         where: {
           status:1,
-          isScrapped:0,
+          isScrapped:req.query.isScrapped,
           materialCode: {
             [Op.or]: {
               [Op.like]: ''+materialCode+'%',
@@ -686,7 +704,7 @@ exports.findMaterialByQuery = (req, res) => {
       })
       .then(data => {
         for(var i=0; i < data.length; i++){
-          if(data[i]["isScrapped"] == false){
+          if(data[i]["isScrapped"] == req.query.isScrapped){
             stockValues++
             if(data[i]["material"]["packingType"] == 5){
               bucketStockValue++;
