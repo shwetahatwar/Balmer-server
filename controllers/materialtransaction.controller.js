@@ -65,3 +65,79 @@ exports.getById = (req,res) => {
       });
     });
 };
+
+exports.findMaterialTransactionsBySearchQuery = (req, res) => {
+  var queryString = req.query;
+  var offset = 0;
+  var limit = 100;
+  if(req.query.offset != null || req.query.offset != undefined){
+    offset = parseInt(req.query.offset)
+  }
+  if(req.query.limit != null || req.query.limit != undefined){
+    limit = parseInt(req.query.limit)
+  }
+  delete queryString['offset'];
+  delete queryString['limit'];
+
+  var serialNumber ='';
+  var materialGenericName ='';
+  var materialDescription ='';
+
+  if(req.query.serialNumber != undefined){
+    serialNumber = req.query.serialNumber;
+  }
+  if(req.query.materialGenericName != undefined){
+    materialGenericName = req.query.materialGenericName;
+  }
+  if(req.query.materialDescription != undefined){
+    materialDescription = req.query.materialDescription;
+  }
+
+  MaterialTransaction.findAll({ 
+    where: {
+      serialNumber: {
+        [Op.or]: {
+          [Op.like]: '%'+serialNumber+'%',
+          [Op.eq]: ''+serialNumber+''
+        }
+      },
+      materialGenericName: {
+        [Op.or]: {
+          [Op.like]: '%'+materialGenericName+'%',
+          [Op.eq]: ''+materialGenericName+''
+        }
+      },
+      materialDescription: {
+        [Op.or]: {
+          [Op.like]: '%'+materialDescription+'%',
+          [Op.eq]: ''+materialDescription+''
+        }
+      }
+    },
+    include: [
+    {
+      model: DispatchSlip
+    },
+    {
+      model: Ttat
+    },
+    {
+      model: Depot
+    }
+    ],
+    order: [
+    ['id', 'DESC'],
+    ],
+    offset:offset,
+    limit:limit 
+  })
+  .then(async data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving PartNumbers."
+    });
+  });
+};
