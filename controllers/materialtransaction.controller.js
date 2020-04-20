@@ -3,6 +3,8 @@ const MaterialTransaction = db.materialtransactions;
 const Op = db.Sequelize.Op;
 const DispatchSlip = db.dispatchslips;
 const User = db.users;
+const Ttat = db.ttats;
+const Depot = db.depots;
 
 //Get all Material Transactions
 exports.getAll = (req,res) =>{
@@ -23,9 +25,17 @@ exports.getAll = (req,res) =>{
   delete queryString['limit'];
   MaterialTransaction.findAll({
     where:req.query,
-    include: [{
+    include: [
+    {
       model: DispatchSlip
-    }],
+    },
+    {
+      model: Ttat
+    },
+    {
+      model: Depot
+    }
+    ],
     order: [
         ['id', 'DESC'],
         ],

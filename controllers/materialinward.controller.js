@@ -91,7 +91,9 @@ exports.create = async (req, res) => {
         inwardedOn : Date.now(),
         inwardedBy : req.user.username,
         materialGenericName:materialGenericName,
-        materialDescription:materialDescription
+        materialDescription:materialDescription,
+        createdBy:req.user.username,
+        updatedBy:req.user.username
       })
       .then(data => {
           console.log("materialtransactions data",data);
