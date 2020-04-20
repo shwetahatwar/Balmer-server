@@ -111,6 +111,12 @@ exports.create = (req, res) => {
 
 //Get All ScrapandRecover
 exports.getAll = (req,res) =>{
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   ScrapandRecover.findAll({
     where: req.query
   })
@@ -128,7 +134,12 @@ exports.getAll = (req,res) =>{
 //Get ScrapandRecover by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   ScrapandRecover.findByPk(id)
     .then(data => {
       res.send(data);
@@ -143,7 +154,12 @@ exports.getById = (req,res) => {
 //Update ScrapandRecover by Id
 exports.update = (req, res) => {
   const id = req.params.id;
-
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   ScrapandRecover.update(req.body, {
     where: req.params
   })
@@ -169,6 +185,12 @@ exports.update = (req, res) => {
 exports.updateByBarcodeSerial = async (req,res) => {
   var materialInwardId;
   var getBatchNumber;
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   req.body.serialNumber = req.body.serialNumber.trim();
   console.log("Barcode ",req.body.serialNumber);
   await MaterialInward.findAll({

@@ -57,6 +57,12 @@ exports.getAll = (req,res) =>{
   if(req.query.serialNumber){
     req.query.serialNumber = req.query.serialNumber.trim();
   }
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   DispatchPickingMaterialList.findAll({
     where:req.query
   })
@@ -74,7 +80,12 @@ exports.getAll = (req,res) =>{
 //Get Dispatch Picking Material List by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   DispatchPickingMaterialList.findByPk(id)
     .then(data => {
       res.send(data);

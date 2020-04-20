@@ -145,7 +145,12 @@ exports.findAll = (req, res) => {
   }
   delete queryString['offset'];
   delete queryString['limit'];
-  
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   MaterialInward.findAll({ 
     where: queryString,
     include: [{
@@ -171,7 +176,12 @@ exports.findAll = (req, res) => {
 // Find a single MaterialInward with an id
 exports.findOne = (req, res) => {
   const id = req.params.id;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   MaterialInward.findByPk(id)
   .then(data => {
     res.send(data);
@@ -186,7 +196,12 @@ exports.findOne = (req, res) => {
 // Update a MaterialInward by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
-
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   MaterialInward.update(req.body, {
     where: req.params
   })
@@ -212,7 +227,12 @@ exports.update = (req, res) => {
 exports.updateWithBarcode = (req, res) => {
   // const serialNumber = req.query.barcodeSerial;
   // console.log("Barcode Serial",req.query.barcodeSerial);
-
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   MaterialInward.update(req.body, {
     where: req.body
   })
@@ -293,6 +313,12 @@ exports.deleteAll = (req, res) => {
 //Not in Use API
 exports.updateScrapAndRecover = (req, res) => {
   console.log(req.body);
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   MaterialInward.update(req.body, {
     where: { id: req.body.id }
   })
@@ -428,6 +454,12 @@ exports.countOfScrappedForDashboard = (req, res) => {
 }
 //Stock Count for Dashboard
 exports.countOfStockForDashboard = (req, res) => {
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   MaterialInward.findAll({ 
     where: req.query,
     include: [{
@@ -527,7 +559,7 @@ exports.findMaterialByQuery = (req, res) => {
       materialCodeTobeSearched= data[0]["dataValues"]["materialCode"];
       await MaterialInward.findAll({ 
         where: {
-          status:1,
+          status:true,
           isScrapped:req.query.isScrapped,
           materialCode: materialCodeTobeSearched,
           batchNumber: {
@@ -565,7 +597,7 @@ exports.findMaterialByQuery = (req, res) => {
         var carboyStockValue=0;
         await MaterialInward.findAll({ 
           where: {
-            status:1,
+            status:true,
             isScrapped:req.query.isScrapped,
             materialCode: materialCodeTobeSearched,
             batchNumber: {
@@ -654,7 +686,7 @@ exports.findMaterialByQuery = (req, res) => {
     }
     MaterialInward.findAll({ 
       where: {
-        status:1,
+        status:true,
         isScrapped:req.query.isScrapped,
         materialCode: {
           [Op.or]: {
@@ -697,7 +729,7 @@ exports.findMaterialByQuery = (req, res) => {
       var carboyStockValue=0;
       await MaterialInward.findAll({ 
         where: {
-          status:1,
+          status:true,
           isScrapped:req.query.isScrapped,
           materialCode: {
             [Op.or]: {

@@ -23,6 +23,12 @@ exports.getAll = (req,res) =>{
   }
   delete queryString['offset'];
   delete queryString['limit'];
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   MaterialTransaction.findAll({
     where:req.query,
     include: [
@@ -55,6 +61,12 @@ exports.getAll = (req,res) =>{
 
 //Get Material Transaction by Id
 exports.getById = (req,res) => {
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   MaterialTransaction.findByPk(id)
     .then(data => {
       res.send(data);

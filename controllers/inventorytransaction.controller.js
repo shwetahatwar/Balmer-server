@@ -20,7 +20,12 @@ exports.findAll = (req, res) => {
   
   console.log(offset);
   console.log(limit);
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   InventoryTransaction.findAll({ 
     where: req.query,
     include: [{model: MaterialInward}],
@@ -41,7 +46,12 @@ exports.findAll = (req, res) => {
 // Find a single Inventory Transaction with an id
 exports.findOne = (req, res) => {
   const id = req.params.id;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   InventoryTransaction.findByPk(id)
     .then(data => {
       res.send(data);
@@ -68,6 +78,12 @@ exports.findByDatewise = (req, res) => {
   delete queryString['offset'];
   delete queryString['limit'];
   console.log("queryString",queryString);
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   InventoryTransaction.findAll({ 
     where: {
       createdAt: {

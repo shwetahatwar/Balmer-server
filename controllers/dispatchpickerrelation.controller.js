@@ -59,6 +59,12 @@ exports.getAll = (req,res) =>{
   if(req.query.serialNumber){
      req.query.serialNumber = req.query.serialNumber.trim();
    }
+   if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   DispatchPickerRelation.findAll({
     where:req.query
   })
@@ -76,7 +82,12 @@ exports.getAll = (req,res) =>{
 //Get Dispatch Picker Relations by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   DispatchPickerRelation.findByPk(id)
     .then(data => {
       res.send(data);
@@ -93,6 +104,12 @@ exports.update = (req, res) => {
   const id = req.params.id;
   if(req.body.serialNumber){
     req.body.serialNumber = req.body.serialNumber.trim();
+  }
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
   }
   DispatchPickerRelation.update(req.body, {
     where: req.params
@@ -118,6 +135,12 @@ exports.update = (req, res) => {
 //Get User by Dispatch Slip Id
 exports.getUsersbyDispatchSlip = (req,res) =>{
   var userListArray=[];
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   DispatchPickerRelation.findAll({
     where:req.params
   })

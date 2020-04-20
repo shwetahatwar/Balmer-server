@@ -69,6 +69,12 @@ exports.update = async (req, res) => {
   const id = req.params.id;
   var inTime=0;
   var loadingTime;
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   await Ttat.findAll({
     where:req.params
   })
@@ -115,6 +121,12 @@ exports.update = async (req, res) => {
 exports.findAll = (req, res) => {
   // console.log();
   var queryString = req.query;
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   var offset = 0;
   var limit = 100;
   console.log("Line 51", req.query);
@@ -161,6 +173,7 @@ exports.findByDatewise = (req, res) => {
   }
   delete queryString['offset'];
   delete queryString['limit'];
+  
   console.log("queryString",queryString);
   Ttat.findAll({ 
     where: {
@@ -189,7 +202,12 @@ exports.findByDatewise = (req, res) => {
 //Find TTAT by Id
 exports.findOne = (req, res) => {
   const id = req.params.id;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   Ttat.findByPk(id)
     .then(data => {
       res.send(data);

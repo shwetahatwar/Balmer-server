@@ -55,6 +55,12 @@ exports.create = async (req, res) => {
 
 //Get Dispatch Loader Relation
 exports.getAll = (req,res) =>{
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   DispatchLoaderRelation.findAll({
     where:req.query
   })
@@ -72,7 +78,12 @@ exports.getAll = (req,res) =>{
 //Get Dispatch Loader Relation by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   DispatchLoaderRelation.findByPk(id)
     .then(data => {
       res.send(data);
@@ -87,7 +98,12 @@ exports.getById = (req,res) => {
 //Update Dispatch Loader Relation
 exports.update = (req, res) => {
   const id = req.params.id;
-
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   DispatchLoaderRelation.update(req.body, {
     where: req.params
   })
@@ -112,6 +128,12 @@ exports.update = (req, res) => {
 //Get Users by Dispatch Slip
 exports.getUsersbyDispatchSlip = (req,res) =>{
   var userListArray=[];
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   DispatchLoaderRelation.findAll({
     where:req.params
   })
