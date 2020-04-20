@@ -4,6 +4,7 @@ const ScrapandRecover = db.scrapandrecovers;
 const Op = db.Sequelize.Op;
 const Material = db.materials;
 const InventoryTransaction = db.inventorytransactions;
+const MaterialTransaction = db.materialtransactions;
 
 // Create and Save a new MaterialInward
 exports.create = async (req, res) => {
@@ -20,11 +21,15 @@ exports.create = async (req, res) => {
   for(var i=0; i < req.body.totalPack; i++){
     const materialCode = req.body.materialCode;
     var materialData;
+    var materialGenericName;
+    var materialDescription;
     await Material.findAll({
       where: {materialCode: materialCode}
     })
     .then(data => {
       materialData = data[0]["dataValues"]["id"];
+      materialGenericName = data[0]["dataValues"]["genericName"];
+      materialDescription = data[0]["dataValues"]["materialDescription"];
       // console.log(data[0]["dataValues"]["id"]);
       // res.send(data);
       console.log("Line 26", materialData);
@@ -81,6 +86,19 @@ exports.create = async (req, res) => {
     await MaterialInward.create(materialinward)
     .then(async data => {
       dataArray.push(data);
+      await MaterialTransaction.create({
+        serialNumber :serialNumberId,
+        inwardedOn : Date.now(),
+        inwardedBy : req.user.username,
+        materialGenericName:materialGenericName,
+        materialDescription:materialDescription
+      })
+      .then(data => {
+          console.log("materialtransactions data",data);
+        })
+      .catch(err => {
+        console.log(err);
+      });
       await InventoryTransaction.create({
         transactionTimestamp: Date.now(),
         performedBy:req.user.username,
@@ -113,6 +131,9 @@ exports.findAll = (req, res) => {
   var queryString = req.query;
   var offset = 0;
   var limit = 50;
+  if(req.query.serialNumber){
+     req.query.serialNumber = req.query.serialNumber.trim();
+   }
   console.log("Line 51", req.query);
   if(req.query.offset != null || req.query.offset != undefined){
     offset = parseInt(req.query.offset)
@@ -386,6 +407,23 @@ exports.findAllByBarcode = (req, res) => {
   });
 };
 
+exports.countOfScrappedForDashboard = (req, res) => {
+  MaterialInward.count({ 
+    where: {
+      isScrapped:true,
+      status:true
+    }
+  })
+  .then(data => {
+    res.status(200).send({data});
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving materialinwards."
+    });
+  });
+}
 //Stock Count for Dashboard
 exports.countOfStockForDashboard = (req, res) => {
   MaterialInward.findAll({ 
@@ -395,6 +433,7 @@ exports.countOfStockForDashboard = (req, res) => {
     }],
   })
   .then(data => {
+    console.log("Data length",data.length)
     var stockValues = 0;
     var scrapValue = 0;
     var bucketStockValue=0;
@@ -402,7 +441,7 @@ exports.countOfStockForDashboard = (req, res) => {
     var cartonStockValue=0;
     var carboyStockValue=0;
     for(var i=0; i < data.length; i++){
-      if(data[i]["isScrapped"] == false){
+      if(data[i]["isScrapped"] == req.query.isScrapped){
         stockValues++
         if(data[i]["material"]["packingType"] == 5){
           bucketStockValue++;
@@ -417,7 +456,7 @@ exports.countOfStockForDashboard = (req, res) => {
           carboyStockValue++;
         }
       }
-      else{
+      if(data[i]["isScrapped"] == true){
         scrapValue++;
       }
     }
@@ -487,7 +526,7 @@ exports.findMaterialByQuery = (req, res) => {
       await MaterialInward.findAll({ 
         where: {
           status:1,
-          isScrapped:0,
+          isScrapped:req.query.isScrapped,
           materialCode: materialCodeTobeSearched,
           batchNumber: {
             [Op.or]: {
@@ -525,7 +564,7 @@ exports.findMaterialByQuery = (req, res) => {
         await MaterialInward.findAll({ 
           where: {
             status:1,
-            isScrapped:0,
+            isScrapped:req.query.isScrapped,
             materialCode: materialCodeTobeSearched,
             batchNumber: {
               [Op.or]: {
@@ -546,7 +585,7 @@ exports.findMaterialByQuery = (req, res) => {
         })
         .then(data => {
           for(var i=0; i < data.length; i++){
-            if(data[i]["isScrapped"] == false){
+            if(data[i]["isScrapped"] == req.query.isScrapped){
               stockValues++
               if(data[i]["material"]["packingType"] == 5){
                 bucketStockValue++;
@@ -614,7 +653,7 @@ exports.findMaterialByQuery = (req, res) => {
     MaterialInward.findAll({ 
       where: {
         status:1,
-        isScrapped:0,
+        isScrapped:req.query.isScrapped,
         materialCode: {
           [Op.or]: {
             [Op.like]: ''+materialCode+'%',
@@ -657,7 +696,7 @@ exports.findMaterialByQuery = (req, res) => {
       await MaterialInward.findAll({ 
         where: {
           status:1,
-          isScrapped:0,
+          isScrapped:req.query.isScrapped,
           materialCode: {
             [Op.or]: {
               [Op.like]: ''+materialCode+'%',
@@ -683,7 +722,7 @@ exports.findMaterialByQuery = (req, res) => {
       })
       .then(data => {
         for(var i=0; i < data.length; i++){
-          if(data[i]["isScrapped"] == false){
+          if(data[i]["isScrapped"] == req.query.isScrapped){
             stockValues++
             if(data[i]["material"]["packingType"] == 5){
               bucketStockValue++;
@@ -726,6 +765,24 @@ exports.findMaterialByQuery = (req, res) => {
         message:
         err.message || "Some error occurred while retrieving materialinwards."
       });
+    });
+  }
+};
+
+//Production Report API
+exports.ProductionReportData =async (req, res) => {
+  if(req.query.createdAtStart == 0 && req.query.createdAtEnd == 0){
+    var query = "SELECT materialCode,COUNT( materialCode ) count,(select materialDescription from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode) as materialDescription,(select packSize from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode) as packSize,(select netWeight from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode) as netQuantity,(select UOM from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode) as UOM,(select name from balmerlawrie.packagingtypes where id = (select packingType from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode)) as packagingType,(select name from balmerlawrie.materialtypes where id = (select materialType from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode)) as materialType FROM balmerlawrie.materialinwards GROUP BY materialCode HAVING count >=1;";
+    await db.sequelize.query(query, { type: db.sequelize.QueryTypes.SELECT})
+    .then(function(data) {
+      res.send(data);
+    });
+  }
+  else{
+    var query = "SELECT materialCode,COUNT( materialCode ) count,(select materialDescription from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode) as materialDescription,(select packSize from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode) as packSize,(select netWeight from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode) as netQuantity,(select UOM from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode) as UOM,(select name from balmerlawrie.packagingtypes where id = (select packingType from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode)) as packagingType,(select name from balmerlawrie.materialtypes where id = (select materialType from balmerlawrie.materials where materialCode = balmerlawrie.materialinwards.materialCode)) as materialType FROM balmerlawrie.materialinwards where createdAt between '"+req.query.createdAtStart+"' and '"+req.query.createdAtEnd+"' GROUP BY materialCode HAVING count >=1;";
+    await db.sequelize.query(query, { type: db.sequelize.QueryTypes.SELECT})
+    .then(function(data) {
+      res.send(data);
     });
   }
 };

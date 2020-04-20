@@ -264,7 +264,7 @@ exports.getTtatDashboard = async (req, res) => {
     var outTruck = 0;
     var total = ttat.length;
     for(var i = 0; i < ttat.length; i++){
-      if(ttat[i]["outTime"] == "1970-01-01 00:00:00"){
+      if(ttat[i]["outTime"] != null){
         outTruck++;
       }
       else{

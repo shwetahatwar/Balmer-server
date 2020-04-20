@@ -4,6 +4,7 @@ const Op = db.Sequelize.Op;
 const MaterialInward = db.materialinwards;
 const InventoryTransaction = db.inventorytransactions;
 const ProjectAuditItems = db.projectaudititems;
+const MaterialTransaction = db.materialtransactions;
 
 // Create and Save a new ScrapandRecover
 exports.create = (req, res) => {
@@ -42,7 +43,51 @@ exports.create = (req, res) => {
           createdBy:req.user.username,
           updatedBy:req.user.username
         })
-        .then(data => {
+        .then(async data => {
+          if(req.body.transactionType == "Recover"){
+            var recoverData ={
+              recoveredOn : Date.now(),
+              recoveredBy :req.user.username
+            }
+            MaterialTransaction.update(recoverData, {
+              where: {
+                serialNumber:req.body.serialNumber,
+              }
+            })
+            .then(num => {
+              if (num == 1) {
+                console.log("MaterialTransaction updated")
+              } else {
+                res.send({
+                  message: `Cannot update MaterialTransaction with Barcode=${req.body.serialNumber}. Maybe MaterialTransaction Barcode was not found or req.body is empty!`
+                });
+              }
+            })
+            .catch(err => {
+              res.status(500).send({
+                message: "Error updating MaterialTransaction with Barcode=" + req.body.serialNumber,
+              });
+            });
+          }
+          else{
+            var scrapData ={
+              scrappedOn : Date.now(),
+              scrappedBy :req.user.username
+            }
+            MaterialTransaction.update(scrapData, {
+              where: {
+                serialNumber:req.body.serialNumber,
+              }
+            })
+            .then(num => {
+
+            })
+            .catch(err => {
+              res.status(500).send({
+                message: "Error updating MaterialTransaction with id=" + id
+              });
+            });
+          }
           console.log(data);
         })
         .catch(err => {
