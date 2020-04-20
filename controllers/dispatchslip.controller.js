@@ -7,6 +7,7 @@ const MaterialInward = db.materialinwards;
 const Op = db.Sequelize.Op;
 const Material = db.materials;
 const FIFOViolationList = db.fifoviolationlists;
+const MaterialTransaction = db.materialtransactions;
 const Ttat = db.ttats;
 const Depot = db.depots;
 const Sequelize = require("sequelize");
@@ -261,7 +262,7 @@ exports.findAll = (req, res) => {
       model: Depot
     }],
     order: [
-    ['dispatchSlipStatus', 'DESC'],
+    ['id', 'DESC']
     ],
     offset:offset,
     limit:limit
@@ -508,9 +509,32 @@ exports.postDispatchSlipPickingMaterialLists = async (req, res) => {
 
     // Save MaterialInward in the database
     await DispatchPickingMaterialList.create(dispatchpickingmateriallist)
-    .then(data => {
+    .then(async data => {
       // res.send(data);
       // DispatchSlip.update()
+      var pickedData ={
+        pickedOn : Date.now(),
+        pickedBy :req.user.username
+      }
+      MaterialTransaction.update(pickedData, {
+        where: {
+          serialNumber:req.body.materials[i].serialNumber
+        }
+      })
+      .then(num => {
+        if (num == 1) {
+          console.log("MaterialTransaction updated")
+        } else {
+          res.send({
+            message: `Cannot update MaterialTransaction with Barcode=${req.body.serialNumber}. Maybe MaterialTransaction Barcode was not found or pickedData is empty!`
+          });
+        }
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: "Error updating MaterialTransaction with serialNumber=" + req.body.materials[i].serialNumber
+        });
+      });
     })
     .catch(err => {
       res.status(500).send({
@@ -642,6 +666,25 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
     // Save MaterialInward in the database
     await DispatchLoadingMaterialList.create(dispatchloadingmateriallist)
     .then(async data => {
+       var loadedData ={
+        loadedOn : Date.now(),
+        loadedBy : req.user.username,
+        dispatchId : req.body.dispatchId
+      }
+      MaterialTransaction.update(loadedData, {
+        where: {
+          serialNumber:req.body.materials[i].serialNumber
+        }
+      })
+      .then(num => {
+        
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: "Error updating MaterialTransaction with serialNumber=" + req.body.materials[i].serialNumber
+        });
+      });
+
       var updatedMaterial = {
         dispatchSlipId:req.body.dispatchId,
         status:false

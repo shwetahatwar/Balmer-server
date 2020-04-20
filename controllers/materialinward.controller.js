@@ -4,6 +4,7 @@ const ScrapandRecover = db.scrapandrecovers;
 const Op = db.Sequelize.Op;
 const Material = db.materials;
 const InventoryTransaction = db.inventorytransactions;
+const MaterialTransaction = db.materialtransactions;
 
 // Create and Save a new MaterialInward
 exports.create = async (req, res) => {
@@ -20,11 +21,15 @@ exports.create = async (req, res) => {
   for(var i=0; i < req.body.totalPack; i++){
     const materialCode = req.body.materialCode;
     var materialData;
+    var materialGenericName;
+    var materialDescription;
     await Material.findAll({
       where: {materialCode: materialCode}
     })
     .then(data => {
       materialData = data[0]["dataValues"]["id"];
+      materialGenericName = data[0]["dataValues"]["genericName"];
+      materialDescription = data[0]["dataValues"]["materialDescription"];
       // console.log(data[0]["dataValues"]["id"]);
       // res.send(data);
       console.log("Line 26", materialData);
@@ -81,6 +86,19 @@ exports.create = async (req, res) => {
     await MaterialInward.create(materialinward)
     .then(async data => {
       dataArray.push(data);
+      await MaterialTransaction.create({
+        serialNumber :serialNumberId,
+        inwardedOn : Date.now(),
+        inwardedBy : req.user.username,
+        materialGenericName:materialGenericName,
+        materialDescription:materialDescription
+      })
+      .then(data => {
+          console.log("materialtransactions data",data);
+        })
+      .catch(err => {
+        console.log(err);
+      });
       await InventoryTransaction.create({
         transactionTimestamp: Date.now(),
         performedBy:req.user.username,
