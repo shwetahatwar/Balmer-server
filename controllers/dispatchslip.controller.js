@@ -514,7 +514,8 @@ exports.postDispatchSlipPickingMaterialLists = async (req, res) => {
       // DispatchSlip.update()
       var pickedData ={
         pickedOn : Date.now(),
-        pickedBy :req.user.username
+        pickedBy :req.user.username,
+        updatedBy:req.user.username
       }
       MaterialTransaction.update(pickedData, {
         where: {
@@ -669,7 +670,8 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
        var loadedData ={
         loadedOn : Date.now(),
         loadedBy : req.user.username,
-        dispatchId : req.body.dispatchId
+        dispatchId : req.body.dispatchId,
+        updatedBy:req.user.username
       }
       MaterialTransaction.update(loadedData, {
         where: {

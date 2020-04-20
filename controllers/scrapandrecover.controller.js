@@ -47,7 +47,8 @@ exports.create = (req, res) => {
           if(req.body.transactionType == "Recover"){
             var recoverData ={
               recoveredOn : Date.now(),
-              recoveredBy :req.user.username
+              recoveredBy :req.user.username,
+              updatedBy:req.user.username
             }
             MaterialTransaction.update(recoverData, {
               where: {
@@ -72,7 +73,8 @@ exports.create = (req, res) => {
           else{
             var scrapData ={
               scrappedOn : Date.now(),
-              scrappedBy :req.user.username
+              scrappedBy :req.user.username,
+              updatedBy:req.user.username
             }
             MaterialTransaction.update(scrapData, {
               where: {

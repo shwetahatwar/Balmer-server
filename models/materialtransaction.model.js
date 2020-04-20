@@ -46,6 +46,14 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		loadedBy: {
 			type: DataTypes.STRING,
+		},
+		createdBy:{
+			type:DataTypes.STRING,
+			allowNull:true
+		},
+		updatedBy:{
+			type:DataTypes.STRING,
+			allowNull:true
 		}
 	}),
 
