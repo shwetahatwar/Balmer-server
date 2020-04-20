@@ -647,6 +647,27 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
     return;
   }
 
+  var truckId;
+  var depoId;
+
+  await DispatchSlip.findAll({ 
+    where: {
+      id:req.body.dispatchId
+    }
+  })
+  .then(data => {
+    if(data.length != 0){
+      truckId = data[0]["dataValues"]["truckId"];
+      depoId = data[0]["dataValues"]["depoId"];
+    }
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving DispatchData"
+    });
+  });
+
   console.log(req.body.materials.length);
   for(var i=0;i<req.body.materials.length;i++){
     console.log(req.body.materials[i]);
@@ -667,10 +688,13 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
     // Save MaterialInward in the database
     await DispatchLoadingMaterialList.create(dispatchloadingmateriallist)
     .then(async data => {
+
        var loadedData ={
         loadedOn : Date.now(),
         loadedBy : req.user.username,
         dispatchId : req.body.dispatchId,
+        truckId: truckId,
+        depoId: depoId,
         updatedBy:req.user.username
       }
       MaterialTransaction.update(loadedData, {
