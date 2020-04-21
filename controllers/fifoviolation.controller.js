@@ -17,7 +17,12 @@ exports.findAll = (req, res) => {
   }
   delete queryString['offset'];
   delete queryString['limit'];
-  
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   console.log(offset);
   console.log(limit);
 
@@ -41,7 +46,12 @@ exports.findAll = (req, res) => {
 // Find a single FIFO Violation with an id
 exports.findOne = (req, res) => {
   const id = req.params.id;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   FIFOViolationList.findByPk(id)
     .then(data => {
       res.send(data);

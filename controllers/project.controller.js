@@ -71,6 +71,12 @@ exports.create = (req, res) => {
 // Retrieve all Project from the database.
 exports.findAll = (req, res) => {
   var queryString = req.query;
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   var offset = 0;
   var limit = 50;
   console.log("Line 51", req.query);
@@ -103,6 +109,12 @@ exports.findAll = (req, res) => {
 exports.findByDatewise = (req, res) => {
   // console.log();
   var queryString = req.query;
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   var offset = 0;
   var limit = 100;
   if(req.query.offset != null || req.query.offset != undefined){
@@ -162,6 +174,12 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
   const id = req.params.id;
   console.log(id);
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   Project.update(req.body, {
     where: { id: id }
   })
@@ -258,6 +276,12 @@ exports.findSingleProjectItemByProject = (req, res) => {
 // Update a Project by the id in the request
 exports.updateSingleProjectItemByProject = (req, res) => {
   // const id = req.params.id;
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   console.log("Line 200", req.params);
   ProjectAuditItems.update(req.body, {
     where: req.params 

@@ -36,6 +36,12 @@ exports.create = (req, res) => {
 
 //Get All Packaging Type
 exports.getAll = (req,res) =>{
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   PackagingType.findAll({
     where:req.query
   })
@@ -53,7 +59,12 @@ exports.getAll = (req,res) =>{
 //Get Packaging Type by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   PackagingType.findByPk(id)
     .then(data => {
       res.send(data);
@@ -68,7 +79,12 @@ exports.getById = (req,res) => {
 //Update Packaging Type by Id
 exports.update = (req, res) => {
   const id = req.params.id;
-
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   PackagingType.update(req.body, {
     where: req.params
   })

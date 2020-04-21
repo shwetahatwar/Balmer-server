@@ -36,6 +36,12 @@ exports.create = (req, res) => {
 };
 
 exports.getAll = (req,res) =>{
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   Depo.findAll()
   .then(data => {
       res.send(data);
@@ -50,7 +56,12 @@ exports.getAll = (req,res) =>{
 
 exports.getById = (req,res) => {
   const id = req.params.id;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   Depo.findByPk(id)
     .then(data => {
       res.send(data);

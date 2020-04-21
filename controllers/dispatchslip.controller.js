@@ -29,8 +29,8 @@ exports.create = async (req, res) => {
     var checkMaterialQty = await MaterialInward.count({
       where:{
         'materialCode':req.body.material[i].materialCode,
-        'status':1,
-        'isScrapped':0,
+        'status':true,
+        'isScrapped':false,
       }
     });
     if(checkMaterialQty >= req.body.material[i].numberOfPacks){
@@ -89,8 +89,8 @@ exports.create = async (req, res) => {
     checkMaterialQty = await MaterialInward.count({
       where:{
         'materialCode':req.body.material[i].materialCode,
-        'status':1,
-        'isScrapped':0,
+        'status':true,
+        'isScrapped':false,
       }
     })
     .then(async data=>{
@@ -101,8 +101,8 @@ exports.create = async (req, res) => {
         var getBatchCode = await MaterialInward.findAll({
           where: {
             'materialCode':req.body.material[i].materialCode,
-            'status':1,
-            'isScrapped':0,
+            'status':true,
+            'isScrapped':false,
           },
           order: [
           ['createdAt', 'ASC'],
@@ -126,8 +126,8 @@ exports.create = async (req, res) => {
               where:{
                 'materialCode':req.body.material[i].materialCode,
                 'batchNumber':dups[s],
-                'status':1,
-                'isScrapped':0,
+                'status':true,
+                'isScrapped':false,
               }
             });
             console.log("Line 93 batchQuantity :",batchQuantity);
@@ -243,6 +243,12 @@ exports.findAll = (req, res) => {
   var queryString = req.query;
   var offset = 0;
   var limit = 50;
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   console.log("Line 51", req.query);
   if(req.query.offset != null || req.query.offset != undefined){
     offset = parseInt(req.query.offset)
@@ -281,7 +287,12 @@ exports.findAll = (req, res) => {
 // Find a single DispatchSlip with an id
 exports.findOne = (req, res) => {
   const id = req.params.id;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   DispatchSlip.findByPk(id)
   .then(data => {
     res.send(data);
@@ -296,7 +307,12 @@ exports.findOne = (req, res) => {
 // Update a DispatchSlip by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
-
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   DispatchSlip.update(req.body, {
     where: req.params
   })

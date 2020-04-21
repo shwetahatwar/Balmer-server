@@ -55,6 +55,12 @@ exports.findAll = (req, res) => {
   }
   delete queryString['offset'];
   delete queryString['limit'];
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   ProjectAuditItems.findAll({
     where: req.query,
     offset:offset,
@@ -95,6 +101,12 @@ exports.update = (req, res) => {
   const id = req.params.id;
   console.log(req.params);
   console.log(req.body);
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   ProjectAuditItems.update(req.body, {
     where: { id: id }
   })

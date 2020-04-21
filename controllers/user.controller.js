@@ -35,7 +35,7 @@ exports.create = async (req, res) => {
   const user = {
     username: req.body.username,
     password: req.body.password,
-    status: "1",
+    status: true,
     roleId: roleId,
     employeeId:req.body.employeeId,
     designation:req.body.designation,
@@ -97,7 +97,12 @@ exports.sign_in = (req, res) => {
 exports.findAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   User.findAll({ where: req.query })
     .then(data => {
       res.send(data);
@@ -113,7 +118,12 @@ exports.findAll = (req, res) => {
 // Find a single User with an id
 exports.findOne = (req, res) => {
   const id = req.params.id;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   User.findByPk(id)
     .then(data => {
       res.send(data);
@@ -128,7 +138,12 @@ exports.findOne = (req, res) => {
 // Update a User by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
-
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   User.update(req.body, {
     where: req.params
   })

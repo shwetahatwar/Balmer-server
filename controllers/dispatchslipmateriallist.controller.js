@@ -46,7 +46,12 @@ exports.findAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
  // DispatchSlipMaterialList.findAll({
  //  include:[{model:DispatchSlip}], where: condition })
  DispatchSlipMaterialList.findAll({
@@ -69,7 +74,12 @@ exports.findAll = (req, res) => {
 // Find a single Dispatch Slip Material List with an id
 exports.findOne = (req, res) => {
   const id = req.params.id;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   DispatchSlipMaterialList.findByPk(id)
   .then(data => {
     res.send(data);
@@ -84,7 +94,12 @@ exports.findOne = (req, res) => {
 // Update a Dispatch Slip Material List by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
-
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   DispatchSlipMaterialList.update(req.body, {
     where: { id: id }
   })

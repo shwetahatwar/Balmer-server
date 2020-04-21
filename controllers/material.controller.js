@@ -49,6 +49,12 @@ exports.create = (req, res) => {
 // Retrieve all materials from the database.
 exports.findAll = (req, res) => {
   var queryString = req.query;
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   var offset = 0;
   var limit = 50;
   console.log("Line 51", req.query);
@@ -87,7 +93,12 @@ exports.findAll = (req, res) => {
 //Get Material by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   Material.findByPk(id)
     .then(data => {
       res.send(data);
@@ -101,7 +112,7 @@ exports.getById = (req,res) => {
 
 //Get Scrapped Material
 exports.findAllScrapped = (req, res) => {
-  Material.findAll({ 'status': 0})
+  Material.findAll({ 'status': false})
   .then(data => {
     res.send(data);
   })
@@ -109,7 +120,7 @@ exports.findAllScrapped = (req, res) => {
 
 //Get Recovered
 exports.findAllRecovered = (req, res) => {
-  Material.findAll({ 'status': 1})
+  Material.findAll({ 'status': true})
   .then(data => {
     res.send(data);
   })
@@ -118,7 +129,12 @@ exports.findAllRecovered = (req, res) => {
 //Update Material by Id
 exports.update = (req, res) => {
   const id = req.params.id;
-
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   Material.update(req.body, {
     where: req.params
   })

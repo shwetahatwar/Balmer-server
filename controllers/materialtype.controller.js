@@ -37,6 +37,12 @@ exports.create = (req, res) => {
 
 //Get All Material Type
 exports.getAll = (req,res) =>{
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   MaterialType.findAll({
     where:req.query
   })
@@ -54,7 +60,12 @@ exports.getAll = (req,res) =>{
 //Get Material Type by Id
 exports.getById = (req,res) => {
   const id = req.params.id;
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   MaterialType.findByPk(id)
     .then(data => {
       res.send(data);
@@ -69,7 +80,12 @@ exports.getById = (req,res) => {
 //Update Material Type by Id
 exports.update = (req, res) => {
   const id = req.params.id;
-
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   MaterialType.update(req.body, {
     where: req.params
   })

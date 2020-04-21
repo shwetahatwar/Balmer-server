@@ -38,6 +38,12 @@ exports.create = (req, res) => {
 //Get all Depots
 exports.getAll = (req,res) =>{
   console.log(req.user.id);
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   Depot.findAll({
     where:req.query
   })
@@ -56,7 +62,12 @@ exports.getAll = (req,res) =>{
 exports.getById = (req,res) => {
   const id = req.params.id;
   console.log(req.params);
-
+  if(req.query.status == 1){
+    req.query.status = true;
+  }
+  if(req.query.status == 0){
+    req.query.status = false;
+  }
   Depot.findByPk(id)
     .then(data => {
       res.send(data);
@@ -71,7 +82,12 @@ exports.getById = (req,res) => {
 //Update Depot by Id
 exports.update = (req, res) => {
   const id = req.params.id;
-
+  if(req.body.status == 1){
+    req.body.status = true;
+  }
+  if(req.body.status == 0){
+    req.body.status = false;
+  }
   Depot.update(req.body, {
     where: req.params
   })
