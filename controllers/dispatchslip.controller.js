@@ -759,33 +759,41 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
     }
   })
   .then(async data => {
-    for(var i=0;i<data.length;i++){
-      let item = req.body.materials.filter(material => material.materialCode == data[i]["materialCode"]);
+    let serialNumberData=[];
+    let item;
+    let count;
+    for(var b=0;b<data.length;b++){
+      item = req.body.materials.filter(material => material.materialCode == data[b]["materialCode"]);
+      count=0;
+      let countData = req.body.materials.filter(material => material.batchNumber == data[b]["batchNumber"]);
+      count = countData.length;
       for(var a=0;a<item.length;a++){
-        if(item[a]["batchNumber"] != data[i]["batchNumber"]){
-          const fifoItem = {
-            dispatchId: req.body.dispatchId,
-            createdBy:req.user.username,
-            updatedBy:req.user.username,
-            batchNumber:data[i]["batchNumber"],
-            salesOrderNumber:data[i]["salesOrderNumber"],
-            materialCode:item[a]["materialCode"],
-            violatedBatchNumber:item[a]["batchNumber"],
-            serialNumber:item[a]["serialNumber"]
-          };
-          console.log("Line 691");
-          //add item to fifo violation list
-          await FIFOViolationList.create(fifoItem)
-          .then(async data => {
-          })
-          .catch(err => {
-            console.log("Error",err);
-          });
-
+        if(!data.some((batch) => batch.batchNumber == item[a]["batchNumber"])){
+          if(data[b]["materialCode"]==item[a]["materialCode"]){
+            if(!serialNumberData.some((serial) => serial == item[a]["serialNumber"])){
+              const fifoItem = {
+                dispatchId: req.body.dispatchId,
+                createdBy:req.user.username,
+                updatedBy:req.user.username,
+                batchNumber:data[b]["batchNumber"],
+                salesOrderNumber:data[b]["salesOrderNumber"],
+                materialCode:item[a]["materialCode"],
+                violatedBatchNumber:item[a]["batchNumber"],
+                serialNumber:item[a]["serialNumber"]
+              };
+              await FIFOViolationList.create(fifoItem)
+              .then(async data => {
+                serialNumberData.push(item[a]["serialNumber"]);
+              })
+              .catch(err => {
+                console.log("Error",err);
+              });
+              console.log("Line 691");
+            }
+          }
         }
-      }      
+      }
     }
-
   })
   .catch(err => {
     res.status(500).send({

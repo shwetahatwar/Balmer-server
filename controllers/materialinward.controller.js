@@ -92,6 +92,14 @@ exports.create = async (req, res) => {
         inwardedBy : req.user.username,
         materialGenericName:materialGenericName,
         materialDescription:materialDescription,
+        scrappedOn : "NA",
+        scrappedBy : "NA",
+        recoveredOn : "NA",
+        recoveredBy : "NA",
+        pickedOn : "NA",
+        pickedBy : "NA",
+        loadedOn : "NA",
+        loadedBy : "NA",
         createdBy:req.user.username,
         updatedBy:req.user.username
       })
