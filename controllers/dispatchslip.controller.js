@@ -238,6 +238,26 @@ function generate(n) {
   return ("" + number).substring(add);
 }
 
+exports.getCountForDispatchSlip = async(req,res) =>{
+  let responseData =[];
+  for(var i=0;i<req.body.length;i++){
+    var checkMaterialQty = await MaterialInward.count({
+      where:{
+        'materialCode':req.body[i].materialCode,
+        'status':true,
+        'isScrapped':false,
+      }
+    });
+    let item = {
+      "materialCode":req.body[i].materialCode,
+      "quantity":checkMaterialQty
+    }
+    responseData.push(item);
+  }
+  console.log(responseData);
+  res.send(responseData);
+}
+
 // Get all DispatchSlips from the database.
 exports.findAll = (req, res) => {
   var queryString = req.query;
@@ -691,13 +711,15 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
     if(req.body.materials[i].serialNumber){
       req.body.materials[i].serialNumber = req.body.materials[i].serialNumber.trim();
     }
+    const serialNumberSeperated = req.body.materials[i].serialNumber.split('#');
+
     const dispatchloadingmateriallist = {
       dispatchId: req.body.dispatchId,
       userId:1,
       createdBy:req.user.username,
       updatedBy:req.user.username,
       materialCode:req.body.materials[i].materialCode,
-      batchNumber:req.body.materials[i].batchNumber,
+      batchNumber:serialNumberSeperated[1],
       serialNumber:req.body.materials[i].serialNumber
     };
 
@@ -762,6 +784,10 @@ exports.postDispatchSlipLoadingMaterialLists = async (req, res) => {
     let serialNumberData=[];
     let item;
     let count;
+    for(var a=0;a<req.body.materials.length;a++){
+      const serialNumberSeperated = req.body.materials[a].serialNumber.split('#');
+      req.body.materials[a]["batchNumber"]=serialNumberSeperated[1];
+    }
     for(var b=0;b<data.length;b++){
       item = req.body.materials.filter(material => material.materialCode == data[b]["materialCode"]);
       count=0;

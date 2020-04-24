@@ -521,7 +521,7 @@ exports.countOfStockForDashboard = (req, res) => {
 };
 
 //Get Stock for Material Stock Report
-exports.findMaterialByQuery = (req, res) => {
+exports.findMaterialByQuery = async (req, res) => {
   var queryString = req.query;
   var offset = 0;
   var limit = 50;
@@ -531,6 +531,7 @@ exports.findMaterialByQuery = (req, res) => {
   if(req.query.offset != null || req.query.offset != undefined){
     limit = parseInt(req.query.limit)
   }
+   let nestedWhereClause="";
   delete queryString['offset'];
   delete queryString['limit'];
   console.log("Generic Name",req.query.genericName);
@@ -551,34 +552,29 @@ exports.findMaterialByQuery = (req, res) => {
     if(req.query.materialCode == undefined){
       req.query.materialCode="";
     }
+    if(req.query.packSize == undefined){
+      req.query.packSize="";
+    }
     var materialCodeTobeSearched ="";
-    Material.findAll({
-      where: {
-         genericName: {
-          [Op.or]: {
-            [Op.like]: ''+req.query.genericName+'%',
-            [Op.eq]: ''+req.query.genericName+''
-          }
-        }
-      }
-    })
-    .then(async data => {
-      console.log("Material Code",data);
-      materialCodeTobeSearched= data[0]["dataValues"]["materialCode"];
+    if (req.query.packSize) {
+      nestedWhereClause.packSize = req.query.packSize;
+    }
       await MaterialInward.findAll({ 
         where: {
           status:true,
           isScrapped:req.query.isScrapped,
-          materialCode: materialCodeTobeSearched,
+          materialCode: {
+            [Op.like]: '%'+req.query.materialCode+'%',
+          },
           batchNumber: {
             [Op.or]: {
-              [Op.like]: ''+req.query.batchNumber+'%',
-              [Op.eq]: ''+req.query.batchNumber+''
+              [Op.like]: '%'+req.query.batchNumber+'%',
+              // [Op.eq]: ''+req.query.batchNumber+''
             }
           },
           serialNumber: {
             [Op.or]: {
-              [Op.like]: ''+req.query.serialNumber+'%',
+              [Op.like]: '%'+req.query.serialNumber+'%',
               [Op.eq]: ''+req.query.serialNumber+''
             }
           }
@@ -587,7 +583,20 @@ exports.findMaterialByQuery = (req, res) => {
         ['materialCode', 'ASC'],
         ],
         include: [{
-          model: Material
+          model: Material,
+          required: true,
+          where:{
+            genericName: {
+              [Op.or]: {
+                [Op.like]: '%'+req.query.genericName+'%',
+            },
+          },
+          packSize: {
+              [Op.or]: {
+                [Op.like]: '%'+req.query.packSize+'%',
+            },
+          }
+        }
         }],
         offset:offset,
         limit:limit
@@ -607,23 +616,41 @@ exports.findMaterialByQuery = (req, res) => {
           where: {
             status:true,
             isScrapped:req.query.isScrapped,
-            materialCode: materialCodeTobeSearched,
+            materialCode: {
+              [Op.like]: '%'+req.query.materialCode+'%',
+            },
             batchNumber: {
               [Op.or]: {
-                [Op.like]: ''+req.query.batchNumber+'%',
-                [Op.eq]: ''+req.query.batchNumber+''
-              }
-            },
-            serialNumber: {
-              [Op.or]: {
-                [Op.like]: ''+req.query.serialNumber+'%',
-                [Op.eq]: ''+req.query.serialNumber+''
-              }
+                [Op.like]: '%'+req.query.batchNumber+'%',
+              // [Op.eq]: ''+req.query.batchNumber+''
             }
           },
-          include: [{
-            model: Material
-          }]
+          serialNumber: {
+            [Op.or]: {
+              [Op.like]: '%'+req.query.serialNumber+'%',
+              [Op.eq]: ''+req.query.serialNumber+''
+            }
+          }
+        },
+        order: [
+        ['materialCode', 'ASC'],
+        ],
+        include: [{
+          model: Material,
+          required: true,
+          where:{
+            genericName: {
+              [Op.or]: {
+                [Op.like]: '%'+req.query.genericName+'%',
+              },
+            },
+            packSize: {
+              [Op.or]: {
+                [Op.like]: '%'+req.query.packSize+'%',
+            },
+          }
+          }
+        }],
         })
         .then(data => {
           for(var i=0; i < data.length; i++){
@@ -664,7 +691,6 @@ exports.findMaterialByQuery = (req, res) => {
         countArray.push(totalStock);
         responseData.push(countArray);
         res.send(responseData);
-      });
     })
     .catch(err => {
       res.status(500).send({
@@ -672,7 +698,6 @@ exports.findMaterialByQuery = (req, res) => {
         err.message || "Some error occurred while retrieving materialinwards."
       });
     });
-    
   }
   else{
     console.log("In Else if");
@@ -680,6 +705,7 @@ exports.findMaterialByQuery = (req, res) => {
     var batchNumber ='';
     var serialNumber ='';
     var genericName ='';
+    let nestedWhereClause="";
     if(req.query.genericName != undefined){
       genericName = req.query.genericName;
     }
@@ -692,25 +718,28 @@ exports.findMaterialByQuery = (req, res) => {
     if(req.query.materialCode != undefined){
       materialCode = req.query.materialCode;
     }
+    if (req.query.packSize) {
+      nestedWhereClause.packSize = req.query.packSize;
+    }
     MaterialInward.findAll({ 
       where: {
         status:true,
         isScrapped:req.query.isScrapped,
         materialCode: {
           [Op.or]: {
-            [Op.like]: ''+materialCode+'%',
+            [Op.like]: '%'+materialCode+'%',
             [Op.eq]: ''+materialCode+''
           }
         },
         batchNumber: {
           [Op.or]: {
-            [Op.like]: ''+batchNumber+'%',
+            [Op.like]: '%'+batchNumber+'%',
             [Op.eq]: ''+batchNumber+''
           }
         },
         serialNumber: {
           [Op.or]: {
-            [Op.like]: ''+serialNumber+'%',
+            [Op.like]: '%'+serialNumber+'%',
             [Op.eq]: ''+serialNumber+''
           }
         }
@@ -719,7 +748,15 @@ exports.findMaterialByQuery = (req, res) => {
       ['materialCode', 'ASC'],
       ],
       include: [{
-        model: Material
+        model: Material,
+        required: true,
+        where: {
+          packSize: {
+            [Op.or]: {
+              [Op.like]: '%'+req.query.packSize+'%',
+            }
+        },
+      }
       }],
       offset:offset,
       limit:limit
@@ -741,25 +778,33 @@ exports.findMaterialByQuery = (req, res) => {
           isScrapped:req.query.isScrapped,
           materialCode: {
             [Op.or]: {
-              [Op.like]: ''+materialCode+'%',
+              [Op.like]: '%'+materialCode+'%',
               [Op.eq]: ''+materialCode+''
             }
           },
           batchNumber: {
             [Op.or]: {
-              [Op.like]: ''+batchNumber+'%',
+              [Op.like]: '%'+batchNumber+'%',
               [Op.eq]: ''+batchNumber+''
             }
           },
           serialNumber: {
             [Op.or]: {
-              [Op.like]: ''+serialNumber+'%',
+              [Op.like]: '%'+serialNumber+'%',
               [Op.eq]: ''+serialNumber+''
             }
           }
         },
         include: [{
-          model: Material
+          model: Material,
+          required: true,
+          where: {
+            packSize: {
+              [Op.or]: {
+                [Op.like]: '%'+req.query.packSize+'%',
+              }
+            },
+          }
         }]
       })
       .then(data => {

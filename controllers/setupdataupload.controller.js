@@ -6,6 +6,8 @@ const MaterialType = db.materialtypes;
 const PackagingType = db.packagingtypes;
 const User = db.users;
 const Role = db.roles;
+const Access = db.access;
+const RoleAccessRelation = db.roleaccessrelations;
 
 
 exports.uploadMaterialMaster = async (req,res) =>{
@@ -326,6 +328,78 @@ exports.uploadUserMaster = async (req,res) =>{
       });
     });
 
+};
+
+exports.uploadRoleAccessRelation = async (req,res) =>{
+  var filepath1 = './documents/templates/bulk-upload/RoleAccess.xlsx';
+    var workbook1 = XLSX.readFile(filepath1);
+    var sheet1 = workbook1.Sheets[workbook1.SheetNames[0]];
+    var num_rows1 = xls_utils.decode_range(sheet1['!ref']).e.r;
+    var json1 = [];
+    console.log(num_rows1);
+    try{
+      for(var i = 1, l = num_rows1; i <= l; i++){
+        var accessUrl = xls_utils.encode_cell({c:0, r:i});
+
+        var accessUrlValue = sheet1[accessUrl];
+        var accessUrlResult = accessUrlValue['v'];
+
+        const accessData = {
+          url: accessUrlResult,
+          httpMethod:"CRUD",
+          status:true,
+          createdBy:"admin",
+          updatedBy:"admin"
+        };
+
+        let roleData;
+        await Role.findAll({
+          where: {
+            name:"Admin"
+          }
+        })
+        .then(data => {
+          if(data.length != 0){
+            roleData = data[0]["dataValues"]["id"];
+          }
+        })
+        .catch(err => {
+          return res.status(401).json({ message: 'Invalid Role' });
+        })
+
+        await Access.create(accessData)
+        .then(async data => {
+          const roleAccessData = {
+            roleId: roleData,
+            accessId: data["dataValues"]["id"],
+            status: true,
+            createdBy:"admin",
+            updatedBy:"admin"
+          };
+
+          await RoleAccessRelation.create(roleAccessData)
+          .then(data => {
+            console.log("RoleAccessRelation created",data);
+          })
+          .catch(err => {
+            res.status(500).send({
+              message:
+              err["errors"][0]["message"] || "Some error occurred while creating the RoleAccessRelation."
+            });
+          });
+        })
+        .catch(err => {
+          console.log("Line 37", err);
+          res.status(500).send({
+            message:
+            err.message || "Some error occurred while creating the role."
+          });
+        });
+      }
+    }
+    catch{
+      console.log("In Error");
+    }
 }
 
 exports.uploadUserMaster = async (req,res) =>{

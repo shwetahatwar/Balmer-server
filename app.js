@@ -30,6 +30,8 @@ var inventoryTransactionRouter = require('./routes/inventorytransaction.routes')
 var scrapandrecoveriesRouter = require('./routes/scrapandrecover.routes');
 var fifoViolationRouter = require('./routes/fifoviolation.routes');
 var materialTransactionRouter = require('./routes/materialtransaction.routes');
+var accessRouter = require('./routes/access.routes');
+var roleAccessRelationRouter = require('./routes/roleaccessrelation.routes');
 
 
 const app = express();
@@ -103,6 +105,8 @@ app.use('/inventorytransactions', inventoryTransactionRouter);
 app.use('/scrapandrecoveries', scrapandrecoveriesRouter);
 app.use('/fifoviolationlists',fifoViolationRouter);
 app.use('/materialtransactions',materialTransactionRouter);
+app.use('/access', accessRouter);
+app.use('/roleaccessrelations', roleAccessRelationRouter);
 
 //sync
 const db = require("./models");

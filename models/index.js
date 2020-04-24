@@ -40,5 +40,7 @@ db.users = require("./user.model.js")(sequelize, Sequelize);
 db.inventorytransactions = require("./inventorytransaction.model.js")(sequelize, Sequelize);
 db.fifoviolationlists = require("./fifoviolation.model.js")(sequelize, Sequelize);
 db.materialtransactions = require("./materialtransaction.model.js")(sequelize, Sequelize);
+db.access = require("./access.model.js")(sequelize, Sequelize);
+db.roleaccessrelations = require("./roleaccessrelation.model.js")(sequelize, Sequelize);
 
 module.exports = db;
