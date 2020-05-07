@@ -304,3 +304,46 @@ exports.updateSingleProjectItemByProject = (req, res) => {
     });
   });
 };
+
+// Update a Project items by the Barcode in the request
+exports.updateProjectItemByProject = (req, res) => {
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    });
+    return;
+  }
+
+  for(var i= 0;i<req.body.length;i++){
+    let iValue = i;
+    let updateData = {
+      itemStatus : "Found"
+    }
+    ProjectAuditItems.update(updateData, {
+      where: {
+        projectId: req.body[i]["projectId"],
+        serialNumber: req.body[i]["serialNumber"]
+      }
+    })
+    .then(num => {
+      if (num == 1) {
+        let a = req.body.length-1;
+        if(iValue == a){
+          res.send({
+            message: "ProjectAuditItems was updated successfully."
+          });
+        }
+        console.log("ProjectAuditItems was updated successfully")
+      } else {
+        res.send({
+          message: `Cannot update ProjectAuditItems sent data, Maybe ProjectAuditItems was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating ProjectAuditItems with serialNumber=" + req.body[i]["serialNumber"]
+      });
+    });
+  }
+};
