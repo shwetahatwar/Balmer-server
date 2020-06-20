@@ -12,5 +12,6 @@ router.get("/:projectId/projectItems/:id", users.loginRequired,projects.findSing
 router.put("/:projectId/projectItems/:id", users.loginRequired,projects.updateSingleProjectItemByProject);
 router.get("/get/getbydate", users.loginRequired,projects.findByDatewise);
 router.post("/projectItems", users.loginRequired,projects.updateProjectItemByProject);
+router.get("/get/getdashboardcount", users.loginRequired,projects.getDashboardCountByProject);
 
 module.exports = router;

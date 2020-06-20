@@ -317,7 +317,8 @@ exports.updateProjectItemByProject = (req, res) => {
   for(var i= 0;i<req.body.length;i++){
     let iValue = i;
     let updateData = {
-      itemStatus : "Found"
+      itemStatus : "Found",
+      updatedBy:req.user.username
     }
     ProjectAuditItems.update(updateData, {
       where: {
@@ -347,3 +348,70 @@ exports.updateProjectItemByProject = (req, res) => {
     });
   }
 };
+
+// Get dashboard count
+exports.getDashboardCountByProject = async (req, res) => {
+  let projectId = 0;
+  let date;
+  await Project.findAll({ 
+    where:{
+      status:true,
+      projectStatus:"Completed"
+    },
+    order: [
+    ['id', 'DESC'],
+    ],
+  }).then(data=> {
+    projectId= data[0]["dataValues"]["id"];
+    date = data[0]["dataValues"]["updatedAt"];
+  }).catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving last audit."
+    });
+  });
+
+  if(projectId != 0){
+    await ProjectAuditItems.findAll({
+      where:{
+        projectId:projectId
+      }
+    })
+    .then(data => {
+      var foundData=0;
+      var notFoundData=0;
+      var manuallyApprovedData=0;
+      var scrapData=0;
+      var totalData = data.length;
+      for(var i=0; i < data.length; i++){
+        if(data[i]["dataValues"]["itemStatus"] == "Found"){
+          foundData++;
+        }
+        else if(data[i]["dataValues"]["itemStatus"] == "Not Found"){
+          notFoundData++;
+        }
+        else if(data[i]["dataValues"]["itemStatus"] == "Manually Approved"){
+          manuallyApprovedData++;
+        }
+        else if(data[i]["dataValues"]["itemStatus"] == "Scrap"){
+          scrapData++;
+        }
+      }
+      var sendData = {
+        foundData:foundData,
+        notFoundData:notFoundData,
+        manuallyApprovedData:manuallyApprovedData,
+        scrapData:scrapData,
+        totalData:totalData,
+        date:date
+      }
+      res.send(sendData)
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+        err.message || "Some error occurred while removing all ProjectAuditItems."
+      });
+    })
+  }
+}
