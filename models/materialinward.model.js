@@ -37,6 +37,14 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.BOOLEAN,
       allowNull:false
     },
+    grossWeight: {
+      type: DataTypes.FLOAT,
+      allowNull: false
+    },
+    tareWeight: {
+      type: DataTypes.FLOAT,
+      allowNull: false
+    },
     createdBy:{
       type:DataTypes.STRING,
       allowNull:true

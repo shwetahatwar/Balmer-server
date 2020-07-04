@@ -78,6 +78,8 @@ exports.create = async (req, res) => {
       isInward:true,
       dispatchSlipId:null,
       status:true,
+      grossWeight:req.body.grossWeight,
+      tareWeight:req.body.tareWeight,
       createdBy:req.user.username,
       updatedBy:req.user.username
     };
@@ -520,6 +522,61 @@ exports.countOfStockForDashboard = (req, res) => {
   });
 };
 
+
+//
+exports.findMaterialForReprint = async (req, res) => {
+  var queryString = req.query;
+  var offset = 0;
+  var limit = 100;
+  if(req.query.offset != null || req.query.offset != undefined){
+    offset = parseInt(req.query.offset)
+  }
+  if(req.query.offset != null || req.query.offset != undefined){
+    limit = parseInt(req.query.limit)
+  }
+  let nestedWhereClause="";
+  delete queryString['offset'];
+  delete queryString['limit'];
+  if(req.query.batchNumber == undefined){
+    req.query.batchNumber="";
+  }
+  if(req.query.materialCode == undefined){
+    req.query.materialCode="";
+  }
+
+  await MaterialInward.findAll({ 
+    where: {
+      status:true,
+      isScrapped:false,
+      materialCode: {
+        [Op.like]: '%'+req.query.materialCode+'%',
+      },
+      batchNumber: {
+        [Op.or]: {
+          [Op.like]: '%'+req.query.batchNumber+'%',
+              // [Op.eq]: ''+req.query.batchNumber+''
+            }
+          }
+        },
+        order: [
+        ['materialCode', 'ASC'],
+        ],
+        include: [{
+          model: Material,
+
+        }],
+        offset:offset,
+        limit:limit
+      })
+  .then(async data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error retrieving MaterialInward with id=" + id
+    });
+  });
+}
 //Get Stock for Material Stock Report
 exports.findMaterialByQuery = async (req, res) => {
   var queryString = req.query;

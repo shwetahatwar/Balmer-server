@@ -17,5 +17,6 @@ router.get("/get/findMaterialByQuery", users.loginRequired,materialinwards.findM
 router.get("/get/getCount", users.loginRequired,materialinwards.countOfStockForDashboard);
 router.get("/get/productionreportdata", users.loginRequired,materialinwards.ProductionReportData);
 router.get("/get/getScrappedCount", users.loginRequired,materialinwards.countOfScrappedForDashboard);
+router.get("/reprint/get", users.loginRequired,materialinwards.findMaterialForReprint);
 
 module.exports = router;
