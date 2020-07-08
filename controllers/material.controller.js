@@ -234,3 +234,25 @@ exports.createEach = async (req, res) => {
     });
   });
 };
+
+
+exports.findForMaterialInward = async (req, res, next) => {
+  console.log("In");
+  var whereClaus = {};
+  var { materialCode } = req.body;
+
+  if (materialCode) {
+    whereClaus.materialCode = materialCode;
+  }
+
+  var material = await Material.findOne({
+    where: whereClaus
+  });
+  // console.log(material);
+  if (!material) {
+    return res.status(500).send("Material Not Found");
+  }
+  req.materail = material.toJSON();  
+
+  next();
+}

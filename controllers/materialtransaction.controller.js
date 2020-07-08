@@ -12,8 +12,8 @@ exports.getAll = (req,res) =>{
   var offset = 0;
   var limit = 50;
   if(req.query.serialNumber){
-     req.query.serialNumber = req.query.serialNumber.trim();
-   }
+    req.query.serialNumber = req.query.serialNumber.trim();
+  }
   console.log("Line 51", req.query);
   if(req.query.offset != null || req.query.offset != undefined){
     offset = parseInt(req.query.offset)
@@ -43,20 +43,20 @@ exports.getAll = (req,res) =>{
     }
     ],
     order: [
-        ['id', 'DESC'],
-        ],
+    ['id', 'DESC'],
+    ],
     offset:offset,
     limit:limit 
   })
   .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving Material Transactions."
-      });
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving Material Transactions."
     });
+  });
 };
 
 //Get Material Transaction by Id
@@ -68,14 +68,14 @@ exports.getById = (req,res) => {
     req.query.status = false;
   }
   MaterialTransaction.findByPk(id)
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error retrieving Material Transaction with id=" + id
-      });
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error retrieving Material Transaction with id=" + id
     });
+  });
 };
 
 exports.findMaterialTransactionsBySearchQuery = (req, res) => {
@@ -153,3 +153,35 @@ exports.findMaterialTransactionsBySearchQuery = (req, res) => {
     });
   });
 };
+
+exports.MaterialInwardTransactions = async (req, res, next) => {
+  var { batchNumber } = req.body;
+  if (!req.materialInwardBulkUpload) {
+    return res.status(500).send("No Material Inwarded");
+  }
+  var transactionMaterail = req.materialInwardBulkUpload.map(el => {
+    return {
+      serialNumber :el["serialNumber"],
+      inwardedOn : Date.now(),
+      inwardedBy : req.user.username,
+      materialGenericName: req.materail["genericName"],
+      materialDescription: req.materail["materialDescription"],
+      scrappedOn : "NA",
+      scrappedBy : "NA",
+      recoveredOn : "NA",
+      recoveredBy : "NA",
+      pickedOn : "NA",
+      pickedBy : "NA",
+      loadedOn : "NA",
+      loadedBy : "NA",
+      createdBy:req.user.username,
+      updatedBy:req.user.username 
+    }
+  });
+
+  var transactionMaterailInward = await MaterialTransaction.bulkCreate(transactionMaterail);
+  transactionMaterailInward = transactionMaterailInward.map ( el => { return el.get({ plain: true }) } );
+  console.log(transactionMaterailInward);
+
+  next();
+}

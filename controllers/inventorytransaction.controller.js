@@ -5,7 +5,7 @@ const Op = db.Sequelize.Op;
 
 // Retrieve all Inventory Transaction from the database.
 exports.findAll = (req, res) => {
- var queryString = req.query;
+  var queryString = req.query;
   var offset = 0;
   var limit = 50;
   console.log("Line 51", req.query);
@@ -32,15 +32,15 @@ exports.findAll = (req, res) => {
     offset:offset,
     limit:limit 
   })
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving InventoryTransaction."
-      });
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving InventoryTransaction."
     });
+  });
 };
 
 // Find a single Inventory Transaction with an id
@@ -53,14 +53,14 @@ exports.findOne = (req, res) => {
     req.query.status = false;
   }
   InventoryTransaction.findByPk(id)
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error retrieving InventoryTransaction with id=" + id
-      });
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: "Error retrieving InventoryTransaction with id=" + id
     });
+  });
 };
 
 //Find all data Date wise for Inventory transaction report
@@ -93,19 +93,42 @@ exports.findByDatewise = (req, res) => {
     },
     include: [{model: MaterialInward}], 
     order: [
-            ['id', 'DESC'],
-        ],
-        offset:offset,
-        limit:limit
-    })
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving Inventory Transactions."
-      });
+    ['id', 'DESC'],
+    ],
+    offset:offset,
+    limit:limit
+  })
+  .then(data => {
+    res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+      err.message || "Some error occurred while retrieving Inventory Transactions."
     });
+  });
 };
 
+exports.MaterialInwardTransactions = async (req, res, next) => {
+  var { batchNumber } = req.body;
+  if (!req.materialInwardBulkUpload) {
+    return res.status(500).send("No Material Inwarded");
+  }
+  var transactionMaterail = req.materialInwardBulkUpload.map(el => {
+    return {
+      transactionTimestamp: Date.now(),
+      performedBy: req.user.username,
+      transactionType: "Inward",
+      materialInwardId: el["id"],
+      batchNumber: batchNumber,
+      createdBy: req.user.username,
+      updatedBy: req.user.username  
+    }
+  });
+
+  var transactionMaterailInward = await InventoryTransaction.bulkCreate(transactionMaterail);
+  transactionMaterailInward = transactionMaterailInward.map ( el => { return el.get({ plain: true }) } );
+  console.log(transactionMaterailInward);
+
+  next();
+}

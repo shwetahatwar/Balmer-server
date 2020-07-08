@@ -930,3 +930,45 @@ exports.ProductionReportData =async (req, res) => {
     });
   }
 };
+
+
+exports.findForMaterialInward = async (req, res, next) => {
+  console.log("In Material Inward");
+  var whereClaus = {};
+  var { materialCode, batchNumber } = req.body;
+
+  if (materialCode) {
+    whereClaus.materialCode = materialCode;
+  }
+  if (batchNumber) {
+    whereClaus.batchNumber = batchNumber;
+  }
+
+  var materialInward = await MaterialInward.findOne({
+    where: whereClaus,
+    order: [
+      ['id', 'DESC'],
+    ],
+  });
+
+  if (materialInward) {
+    req.materialInward = materialInward.toJSON();
+  }
+  
+  next();
+}
+
+exports.materialInwardBulkUpload = async (req, res, next) => {
+  
+  if (!req.materialInwardList) {
+    return res.status(500).send("No Material");
+  }
+  var materialInward = await MaterialInward.bulkCreate(req.materialInwardList);
+  req.materialInwardBulkUpload = materialInward.map ( el => { return el.get({ plain: true }) } );
+  
+  next();
+}
+
+exports.sendResponse = (req, res, next) => {
+  return res.status(200).send(req.materialInwardBulkUpload)
+}

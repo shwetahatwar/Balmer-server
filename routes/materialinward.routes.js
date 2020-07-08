@@ -2,8 +2,23 @@ var express = require('express');
 var router = express.Router();
 var materialinwards = require('../controllers/materialinward.controller');
 var users = require('../controllers/user.controller');
+var materials = require('../controllers/material.controller');
+var serialNumberHelper = require('../helpers/serialNumberHelper');
+var inventorytransactions = require('../controllers/inventorytransaction.controller');
+var materialtransactions = require('../controllers/materialtransaction.controller');
 
 router.post("/", users.loginRequired,materialinwards.create);
+
+router.post("/bulkupload", users.loginRequired,
+  materials.findForMaterialInward,
+  materialinwards.findForMaterialInward,
+  serialNumberHelper.getSerailNumbers,
+  materialinwards.materialInwardBulkUpload,
+  materialtransactions.MaterialInwardTransactions,
+  inventorytransactions.MaterialInwardTransactions,
+  materialinwards.sendResponse
+  );
+
 router.get("/", users.loginRequired,materialinwards.findAll);
 router.get("/:id", users.loginRequired,materialinwards.findOne);
 router.put("/:id", users.loginRequired,materialinwards.update);
