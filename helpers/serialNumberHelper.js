@@ -1,7 +1,7 @@
 
 
 exports.getSerailNumbers = (req, res, next) => {
-  var { materialCode, batchNumber, totalPack, grossWeight, tareWeight } = req.body;
+  var { materialCode,extraComment, batchNumber, totalPack, grossWeight, tareWeight } = req.body;
   var materialinward = [];
   var serialNumberId;
   
@@ -32,6 +32,7 @@ exports.getSerailNumbers = (req, res, next) => {
       status:true,
       grossWeight:grossWeight,
       tareWeight:tareWeight,
+      extraComment:extraComment,
       createdBy:req.user.username,
       updatedBy:req.user.username
     };

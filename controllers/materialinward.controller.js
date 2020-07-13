@@ -80,6 +80,7 @@ exports.create = async (req, res) => {
       status:true,
       grossWeight:req.body.grossWeight,
       tareWeight:req.body.tareWeight,
+      extraComment:req.body.extraComment,
       createdBy:req.user.username,
       updatedBy:req.user.username
     };

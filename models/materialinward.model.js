@@ -45,6 +45,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: false
     },
+    extraComment:{
+      type:DataTypes.STRING
+    },
     createdBy:{
       type:DataTypes.STRING,
       allowNull:true
