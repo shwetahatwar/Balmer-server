@@ -92,6 +92,7 @@ exports.create = async (req, res) => {
       await MaterialTransaction.create({
         serialNumber :serialNumberId,
         inwardedOn : Date.now(),
+        materialInwardId:data["id"],
         inwardedBy : req.user.username,
         materialGenericName:materialGenericName,
         materialDescription:materialDescription,

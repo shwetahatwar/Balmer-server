@@ -6,6 +6,10 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull:false,
 			unique: true
 		},
+		materialInwardId:{
+			type: DataTypes.INTEGER,
+			allowNull: false
+		},
 		inwardedOn: {
 			type: DataTypes.STRING
 		},
@@ -178,10 +182,59 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull:true
 		}
 		
-	});
+	}),
+
+	MaterialInward = sequelize.define("materialinward", {
+    materialId: {
+      type: DataTypes.INTEGER,
+      references: {
+          model: 'materials', 
+          key: 'id',
+       }
+    },
+    materialCode: {
+      type: DataTypes.INTEGER,
+      allowNull:false
+    },
+    batchNumber:{
+      type:DataTypes.STRING,
+      allowNull:false
+    },
+    serialNumber:{
+      type:DataTypes.STRING,
+      allowNull:false
+    },
+    isScrapped:{
+      type:DataTypes.BOOLEAN,
+      allowNull:true
+    },
+    isInward:{
+      type:DataTypes.BOOLEAN,
+      allowNull:true
+    },
+    dispatchSlipId:{
+      type:DataTypes.INTEGER,
+      allowNull:true
+    },
+    status:{
+      type:DataTypes.BOOLEAN,
+      allowNull:false
+    },
+    createdBy:{
+      type:DataTypes.STRING,
+      allowNull:true
+    },
+    updatedBy:{
+      type:DataTypes.STRING,
+      allowNull:true
+    }
+    
+  });
 
 	MaterialTransaction.belongsTo(Ttat, {foreignKey: 'truckId',onDelete: 'CASCADE'});
 	MaterialTransaction.belongsTo(Depot, {foreignKey: 'depoId',onDelete: 'CASCADE'})
 	MaterialTransaction.belongsTo(DispatchSlip, {foreignKey: 'dispatchId',onDelete: 'CASCADE'})
+	MaterialTransaction.belongsTo(MaterialInward, {foreignKey: 'materialInwardId',onDelete: 'CASCADE'})
+  
 	return MaterialTransaction;
 };

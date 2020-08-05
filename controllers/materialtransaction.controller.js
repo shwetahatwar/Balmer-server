@@ -5,6 +5,7 @@ const DispatchSlip = db.dispatchslips;
 const User = db.users;
 const Ttat = db.ttats;
 const Depot = db.depots;
+const MaterialInward = db.materialinwards;
 
 //Get all Material Transactions
 exports.getAll = (req,res) =>{
@@ -40,6 +41,9 @@ exports.getAll = (req,res) =>{
     },
     {
       model: Depot
+    },
+    {
+      model:MaterialInward
     }
     ],
     order: [
@@ -135,6 +139,9 @@ exports.findMaterialTransactionsBySearchQuery = (req, res) => {
     },
     {
       model: Depot
+    },
+    {
+      model:MaterialInward
     }
     ],
     order: [
@@ -164,6 +171,7 @@ exports.MaterialInwardTransactions = async (req, res, next) => {
       serialNumber :el["serialNumber"],
       inwardedOn : Date.now(),
       inwardedBy : req.user.username,
+      materialInwardId: el["id"],
       materialGenericName: req.materail["genericName"],
       materialDescription: req.materail["materialDescription"],
       scrappedOn : "NA",
