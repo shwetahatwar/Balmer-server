@@ -26,6 +26,7 @@ exports.create = async (req, res) => {
     loadingTime: req.body.loadingTime,
     inOutTime: req.body.inOutTime,
     idleTime: req.body.idleTime,
+    consignmentLocation: req.body.consignmentLocation,
     driverMobileNumber: req.body.driverMobileNumber,
     transportor: req.body.transportor,
     createdBy:req.user.username,

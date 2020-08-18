@@ -116,6 +116,10 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.STRING,
 			allowNull: false
 		},
+		consignmentLocation: {
+			type: DataTypes.STRING,
+			allowNull: true
+		},
 		loadStartTime: {
 			type: DataTypes.BIGINT,
 			allowNull: true
