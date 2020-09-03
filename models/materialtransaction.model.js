@@ -202,11 +202,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     batchNumber:{
       type:DataTypes.STRING,
-      allowNull:false
+      allowNull:false,
     },
     serialNumber:{
       type:DataTypes.STRING,
-      allowNull:false
+      allowNull:false,
+      unique: true
     },
     isScrapped:{
       type:DataTypes.BOOLEAN,
@@ -223,6 +224,17 @@ module.exports = (sequelize, DataTypes) => {
     status:{
       type:DataTypes.BOOLEAN,
       allowNull:false
+    },
+    grossWeight: {
+      type: DataTypes.FLOAT,
+      allowNull: false
+    },
+    tareWeight: {
+      type: DataTypes.FLOAT,
+      allowNull: false
+    },
+    extraComment:{
+      type:DataTypes.STRING
     },
     createdBy:{
       type:DataTypes.STRING,
