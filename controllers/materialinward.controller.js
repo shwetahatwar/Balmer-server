@@ -5,6 +5,7 @@ const Op = db.Sequelize.Op;
 const Material = db.materials;
 const InventoryTransaction = db.inventorytransactions;
 const MaterialTransaction = db.materialtransactions;
+const PackagingType = db.packagingtypes;
 
 // Create and Save a new MaterialInward
 exports.create = async (req, res) => {
@@ -578,7 +579,161 @@ exports.findMaterialForReprint = async (req, res) => {
       message: "Error retrieving MaterialInward with id=" + id
     });
   });
-}
+};
+
+exports.findMaterialBySearchQuery= async (req, res) => {
+  var queryString = req.query;
+  var offset = 0;
+  var limit = 50;
+  if(req.query.offset != null || req.query.offset != undefined){
+    offset = parseInt(req.query.offset)
+  }
+  if(req.query.offset != null || req.query.offset != undefined){
+    limit = parseInt(req.query.limit)
+  }
+  delete queryString['offset'];
+  delete queryString['limit'];
+  
+  var whereClaus = {};
+  var materialClause = {};
+  if(req.query.genericName == undefined){
+    req.query.genericName="";
+  }
+  if(req.query.batchNumber == undefined){
+    req.query.batchNumber="";
+  }
+  if(req.query.serialNumber == undefined){
+    req.query.serialNumber="";
+  }
+  if(req.query.materialCode == undefined){
+    req.query.materialCode="";
+  }
+  if(req.query.packSize == undefined){
+    req.query.packSize="";
+  }
+  if(req.query.packType == undefined){
+    req.query.packType="";
+  }
+  whereClaus.status = true;
+  if(req.query.batchNumber){
+    whereClaus.batchNumber = {
+      [Op.like]: '%'+req.query.batchNumber+'%'
+    }
+  }
+  if(req.query.materialCode){
+    whereClaus.materialCode = {
+      [Op.like]: '%'+req.query.materialCode+'%'
+    }
+  }
+  if(req.query.serialNumber){
+    whereClaus.serialNumber = {
+      [Op.like]: '%'+req.query.serialNumber+'%'
+    }
+  }
+  if(req.query.isScrapped){
+    whereClaus.isScrapped = req.query.isScrapped
+  }
+  if(req.query.genericName){
+    materialClause.genericName = {
+      [Op.like]: '%'+req.query.genericName+'%'
+    }  
+  }
+  if(req.query.packSize){
+    materialClause.packSize = {
+      [Op.like]: '%'+req.query.packSize+'%'
+    } 
+  }
+  console.log(req.query.packSize,materialClause)
+  var packingTypeClause = {};
+  if(req.query.packingType){
+    packingTypeClause.name = {
+      [Op.like]: '%'+req.query.packingType+'%'
+    }
+  }
+  var materialData = await MaterialInward.findAll({ 
+    where: whereClaus,
+    order: [
+    ['materialCode', 'ASC'],
+    ],
+    include: [{
+      model: Material,
+      required: true,
+      where:materialClause,
+      include:[{
+        model: PackagingType,
+        required: true,
+        where:packingTypeClause
+      }]
+    }],
+    offset:offset,
+    limit:limit
+  });
+  var countArray =[];
+  var responseData =[];
+  responseData.push(materialData);
+
+  var stockValues = 0;
+  var scrapValue = 0;
+  var bucketStockValue=0;
+  var drumStockValue=0;
+  var cartonStockValue=0;
+  var carboyStockValue=0;
+  var data = await MaterialInward.findAll({ 
+    where: whereClaus,
+    order: [
+    ['materialCode', 'ASC'],
+    ],
+    include: [{
+      model: Material,
+      required: true,
+      where:materialClause,
+      include:[{
+        model: PackagingType,
+        required: true,
+        where:packingTypeClause
+      }]
+    }]})
+  if(!materialData){
+    res.status(500).send({
+        message:
+        err.message || "Some error occurred while retrieving materialinwards."
+      });
+  }
+  else{
+    for(var i=0; i < data.length; i++){
+      if(data[i]["isScrapped"] == req.query.isScrapped){
+        stockValues++
+        if(data[i]["material"]["packingType"] == 5){
+          bucketStockValue++;
+        }
+        else if(data[i]["material"]["packingType"] == 6){
+          drumStockValue++;
+        }
+        else if(data[i]["material"]["packingType"] == 7){
+          cartonStockValue++;
+        }
+        else if(data[i]["material"]["packingType"] == 8){
+          carboyStockValue++;
+        }
+      }
+      else{
+        scrapValue++;
+      }
+    }
+    var totalStock = {
+      scrapCount: scrapValue,
+      stockCount: stockValues,
+      bucketStockValue:bucketStockValue,
+      drumStockValue:drumStockValue,
+      cartonStockValue:cartonStockValue,
+      carboyStockValue:carboyStockValue
+    }
+    countArray.push(totalStock);
+    responseData.push(countArray);
+    res.send(responseData);
+  }
+};
+
 //Get Stock for Material Stock Report
 exports.findMaterialByQuery = async (req, res) => {
   var queryString = req.query;
@@ -590,7 +745,8 @@ exports.findMaterialByQuery = async (req, res) => {
   if(req.query.offset != null || req.query.offset != undefined){
     limit = parseInt(req.query.limit)
   }
-   let nestedWhereClause="";
+  let nestedWhereClause="";
+
   delete queryString['offset'];
   delete queryString['limit'];
   console.log("Generic Name",req.query.genericName);
