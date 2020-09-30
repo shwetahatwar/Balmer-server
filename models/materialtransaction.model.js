@@ -236,6 +236,9 @@ module.exports = (sequelize, DataTypes) => {
     extraComment:{
       type:DataTypes.STRING
     },
+    mfgDate:{
+      type:DataTypes.STRING
+    },
     createdBy:{
       type:DataTypes.STRING,
       allowNull:true

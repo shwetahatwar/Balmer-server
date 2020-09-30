@@ -191,7 +191,9 @@ exports.updateByBarcodeSerial = async (req,res) => {
   if(req.body.status == 0){
     req.body.status = false;
   }
-  req.body.serialNumber = req.body.serialNumber.trim();
+  if(req.body.serialNumber){
+    req.body.serialNumber = req.body.serialNumber.trim();
+  }
   console.log("Barcode ",req.body.serialNumber);
   await MaterialInward.findAll({
     serialNumber:req.body.serialNumber

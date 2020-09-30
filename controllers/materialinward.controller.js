@@ -81,6 +81,7 @@ exports.create = async (req, res) => {
       status:true,
       grossWeight:req.body.grossWeight,
       tareWeight:req.body.tareWeight,
+      mfgDate:req.body.mfgDate,
       extraComment:req.body.extraComment,
       createdBy:req.user.username,
       updatedBy:req.user.username

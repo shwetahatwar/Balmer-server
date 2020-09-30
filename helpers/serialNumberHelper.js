@@ -1,7 +1,7 @@
 
 
 exports.getSerailNumbers = (req, res, next) => {
-  var { materialCode,extraComment, batchNumber, totalPack, grossWeight, tareWeight } = req.body;
+  var { materialCode,extraComment, batchNumber, totalPack, grossWeight, tareWeight,mfgDate } = req.body;
   var materialinward = [];
   var serialNumberId;
   
@@ -12,7 +12,7 @@ exports.getSerailNumbers = (req, res, next) => {
     serialNumberId = req.materialInward["serialNumber"];
   }
 
-  for (var i = 0; i < totalPack; i++) {
+  for (var i = 0; i <totalPack; i++) {
     serialNumberId = serialNumberId.substring(serialNumberId.length - 6, serialNumberId.length);
     serialNumberId = (parseInt(serialNumberId) + 1).toString();
     var str = '' + serialNumberId;
@@ -32,6 +32,7 @@ exports.getSerailNumbers = (req, res, next) => {
       status:true,
       grossWeight:grossWeight,
       tareWeight:tareWeight,
+      mfgDate:mfgDate,
       extraComment:extraComment,
       createdBy:req.user.username,
       updatedBy:req.user.username
