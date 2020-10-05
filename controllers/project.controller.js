@@ -37,13 +37,13 @@ exports.create = (req, res) => {
       }
     })
     .then(async materialInwardData => {
-      console.log("Line 40",materialInwardData);
-      for(var i=0;i < materialInwardData.length;i++){
-        console.log("Line 38",materialInwardData[i]["dataValues"]["materialCode"]);
-        var materialCode = materialInwardData[i]["dataValues"]["materialCode"];
-        var batchNumber = materialInwardData[i]["dataValues"]["batchNumber"];
-        var serialNumber = materialInwardData[i]["dataValues"]["serialNumber"];
-        await ProjectAuditItems.create({
+
+      var auditItems = materialInwardData.map(el => {
+        var materialCode = el["dataValues"]["materialCode"];
+        var batchNumber = el["dataValues"]["batchNumber"];
+        var serialNumber = el["dataValues"]["serialNumber"];
+        
+        return {
           projectId: projectId,
           materialCode:materialCode,
           batchNumber:batchNumber,
@@ -52,8 +52,11 @@ exports.create = (req, res) => {
           itemStatus:"Not Found",
           createdBy:req.user.username,
           updatedBy:req.user.username
-        });
-      }
+        }
+      });
+
+      var auditItemsList = await ProjectAuditItems.bulkCreate(auditItems);
+      
     })
     .catch(err=>{
       console.log(err);
