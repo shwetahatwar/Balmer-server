@@ -453,7 +453,7 @@ exports.countOfScrappedForDashboard = (req, res) => {
   MaterialInward.count({ 
     where: {
       isScrapped:true,
-      status:true
+      status:false
     }
   })
   .then(data => {
